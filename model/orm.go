@@ -29,10 +29,22 @@ func init() {
 	// }
 }
 
-func Add(tableName string, model interface{}) (result bool, err error) {
-	fmt.Println(model)
-	// db.AutoMigrate(&model{})
-	db.Table(tableName).Create(&model)
-	// result = db.NewRecord(model)
-	return result, err
+//Get model to database
+func Get(model interface{}) (result interface{}) {
+	result = db.First(model)
+	return
+}
+
+//Add model to database
+// interface can't get origin variable only get variable at memory location
+func Add(model interface{}) (status bool, err error) {
+	db.AutoMigrate(model)
+	if dbc := db.Create(model); dbc.Error != nil {
+		//error
+		status = false
+		err = dbc.Error
+	} else {
+		status = true
+	}
+	return
 }
