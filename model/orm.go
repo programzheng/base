@@ -29,7 +29,7 @@ func init() {
 	// }
 }
 
-//Get model to database
+//Get first model to database
 func Get(model interface{}) (result interface{}) {
 	result = db.First(model)
 	return
@@ -38,6 +38,7 @@ func Get(model interface{}) (result interface{}) {
 //Add model to database
 // interface can't get origin variable only get variable at memory location
 func Add(model interface{}) (status bool, err error) {
+	//create table for the struct
 	db.AutoMigrate(model)
 	if dbc := db.Create(model); dbc.Error != nil {
 		//error
