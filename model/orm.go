@@ -14,6 +14,11 @@ var (
 	err error
 )
 
+type Result struct {
+	Value interface{}
+	Error error
+}
+
 func init() {
 	setting := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", viper.Get("DB_USERNAME"), viper.Get("DB_PASSWORD"), viper.Get("DB_HOST"), viper.Get("DB_PORT"), viper.Get("DB_DATABASE"))
 
@@ -37,15 +42,16 @@ func Get(model interface{}) (result interface{}) {
 
 //Add model to database
 // interface can't get origin variable only get variable at memory location
-func Add(model interface{}) (status bool, err error) {
+func Add(model interface{}) (result Result) {
 	//create table for the struct
+	result = Result{
+		Value: nil,
+		Error: nil,
+	}
 	db.AutoMigrate(model)
 	if dbc := db.Create(model); dbc.Error != nil {
 		//error
-		status = false
-		err = dbc.Error
-	} else {
-		status = true
+		result.Error = dbc.Error
 	}
 	return
 }

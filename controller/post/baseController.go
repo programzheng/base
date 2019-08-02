@@ -19,12 +19,12 @@ func Get(ctx *gin.Context) {
 	var postStruct = post.Post{
 		ID: id,
 	}
-	fmt.Println(postStruct)
 	result := post.Get(postStruct)
+	fmt.Println(result)
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"code":   http.StatusOK,
-		"result": result,
-		// "message": err,
+		"Code":   http.StatusOK,
+		"Result": result,
 	})
 }
 
@@ -34,10 +34,9 @@ func Add(ctx *gin.Context) {
 		UpdateTime: time.Now().Unix(),
 	}
 	ctx.BindJSON(&postStruct)
-	result, err := post.Add(postStruct)
+	result := post.Add(postStruct)
 	ctx.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"result":  result,
-		"message": err,
+		"Code":   http.StatusOK,
+		"Result": result,
 	})
 }
