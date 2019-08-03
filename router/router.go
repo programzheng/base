@@ -12,6 +12,7 @@ func init() {
 }
 
 func SetRouter() {
-	Router.GET("/post/:id", post.Get)
 	Router.POST("/post", post.Add)
+	Router.GET("/post/:id", post.Get)
+	Router.PATCH("/post/:id", post.Save)
 }

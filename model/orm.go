@@ -34,12 +34,6 @@ func init() {
 	// }
 }
 
-//Get first model to database
-func Get(model interface{}) (result interface{}) {
-	result = db.First(model)
-	return
-}
-
 //Add model to database
 // interface can't get origin variable only get variable at memory location
 func Add(model interface{}) (result Result) {
@@ -53,5 +47,22 @@ func Add(model interface{}) (result Result) {
 		//error
 		result.Error = dbc.Error
 	}
+	return
+}
+
+//Get first model For ID from database
+func GetForID(model interface{}, id int) (result interface{}) {
+	result = db.First(model, id)
+	return
+}
+
+//Get first model to database
+func Get(model interface{}) (result interface{}) {
+	result = db.First(model)
+	return
+}
+
+func Save(model interface{}, update interface{}) (result interface{}) {
+	result = db.Model(model).Updates(update)
 	return
 }
