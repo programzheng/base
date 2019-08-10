@@ -12,9 +12,14 @@ func init() {
 }
 
 func SetRouter() {
-	Router.POST("/post", post.Add)
-	Router.GET("/post/:id", post.GetForID)
-	Router.GET("/post", post.Get)
-	Router.PATCH("/post/:id", post.SaveForID)
-	Router.DELETE("post/:id", post.DelForID)
+	postGroup := Router.Group("/post")
+	{
+		postGroup.POST("", post.Add)
+		postGroup.GET("/:id", post.GetForID)
+		postGroup.GET("", post.Get)
+		postGroup.PATCH("/:id", post.SaveForID)
+		postGroup.PATCH("", post.Save)
+		postGroup.DELETE("/:id", post.DelForID)
+		postGroup.DELETE("", post.Del)
+	}
 }

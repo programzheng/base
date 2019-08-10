@@ -63,14 +63,26 @@ func Get(model interface{}, where interface{}) (result interface{}) {
 	return
 }
 
-//Save is get first model then update data to database
-func Save(model interface{}, id int, update interface{}) (result interface{}) {
+//SaveForID is get first model then update data to database
+func SaveForID(model interface{}, id int, update interface{}) (result interface{}) {
 	result = db.First(model, id).Updates(update)
 	return
 }
 
-//Del is del find model to database
-func Del(model interface{}, id int) (result interface{}) {
+//Save is get ID's list For table name then update data to database
+func Save(model interface{}, ids interface{}, update interface{}) (result interface{}) {
+	result = db.Table(db.NewScope(model).TableName()).Where("id IN (?)", ids).Updates(update)
+	return
+}
+
+//DelForID is del find model to database
+func DelForID(model interface{}, id int) (result interface{}) {
 	result = db.Delete(model, id)
+	return
+}
+
+//Del is get ID's list For table name then delete data to database
+func Del(model interface{}, ids interface{}) (result interface{}) {
+	result = db.Table(db.NewScope(model).TableName()).Where("id IN (?)", ids).Delete(model)
 	return
 }

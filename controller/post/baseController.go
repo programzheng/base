@@ -61,12 +61,40 @@ func SaveForID(ctx *gin.Context) {
 	})
 }
 
+func Save(ctx *gin.Context) {
+	params := map[string]interface{}{}
+	ctx.BindJSON(&params)
+	ids, ok := params["ids"]
+	if ok {
+		delete(params, "ids")
+	}
+	update := params
+	result := post.Save(post.Post{}, ids, update)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"Code":   http.StatusOK,
+		"Result": result,
+	})
+}
+
 func DelForID(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	result := post.DelForID(post.Post{}, id)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"Code":   http.StatusOK,
+		"Result": result,
+	})
+}
+
+func Del(ctx *gin.Context) {
+	params := map[string]interface{}{}
+	ctx.BindJSON(&params)
+	ids := params["ids"]
+	result := post.Del(post.Post{}, ids)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"Code":   http.StatusOK,
