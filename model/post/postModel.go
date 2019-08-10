@@ -2,14 +2,13 @@ package post
 
 import (
 	"github.com/ProgramZheng/base/model"
+	"github.com/jinzhu/gorm"
 )
 
 type Post struct {
-	ID         int
-	Title      string `json:title`
-	Text       string `json:text`
-	CreateTime int64
-	UpdateTime int64
+	gorm.Model
+	Title string `json:title`
+	Text  string `json:text`
 }
 
 func Add(post Post) (result interface{}) {
@@ -22,12 +21,17 @@ func GetForID(post Post, id int) (result interface{}) {
 	return
 }
 
-func Get(post Post) (result interface{}) {
-	result = model.Get(&post)
+func Get(post Post, where interface{}) (result interface{}) {
+	result = model.Get(&post, where)
 	return
 }
 
-func Save(post Post, update interface{}) (result interface{}) {
-	result = model.Save(&post, update)
+func Save(post Post, id int, update interface{}) (result interface{}) {
+	result = model.Save(&post, id, update)
+	return
+}
+
+func DelForID(post Post, id int) (result interface{}) {
+	result = model.Del(&post, id)
 	return
 }

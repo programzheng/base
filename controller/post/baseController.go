@@ -5,19 +5,16 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/ProgramZheng/base/model/post"
 	"github.com/gin-gonic/gin"
 )
 
 func Add(ctx *gin.Context) {
-	var postStruct = post.Post{
-		CreateTime: time.Now().Unix(),
-		UpdateTime: time.Now().Unix(),
-	}
+	var postStruct = post.Post{}
 	ctx.BindJSON(&postStruct)
 	result := post.Add(postStruct)
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"Code":   http.StatusOK,
 		"Result": result,
@@ -29,7 +26,6 @@ func GetForID(ctx *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	result := post.GetForID(post.Post{}, id)
 
 	ctx.JSON(http.StatusOK, gin.H{
@@ -39,14 +35,11 @@ func GetForID(ctx *gin.Context) {
 }
 
 func Get(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	var postStruct = post.Post{
-		ID: id,
-	}
-	result := post.Get(postStruct)
+	where := map[string]interface{}{}
+	ctx.BindUri(&where)
+	fmt.Println(where)
+	result := post.Get(post.Post{}, where)
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"Code":   http.StatusOK,
 		"Result": result,
@@ -58,12 +51,25 @@ func Save(ctx *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var postStruct = post.Post{
-		ID:         id,
-		UpdateTime: time.Now().Unix(),
-	}
 	update := map[string]interface{}{}
 	ctx.BindJSON(&update)
-	result := post.Save(postStruct, update)
-	fmt.Println(result)
+	result := post.Save(post.Post{}, id, update)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"Code":   http.StatusOK,
+		"Result": result,
+	})
+}
+
+func DelForID(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	result := post.DelForID(post.Post{}, id)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"Code":   http.StatusOK,
+		"Result": result,
+	})
 }

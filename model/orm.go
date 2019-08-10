@@ -20,7 +20,8 @@ type Result struct {
 }
 
 func init() {
-	setting := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", viper.Get("DB_USERNAME"), viper.Get("DB_PASSWORD"), viper.Get("DB_HOST"), viper.Get("DB_PORT"), viper.Get("DB_DATABASE"))
+	//?parseTime=true for the database table column type is TIMESTAMP
+	setting := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=true", viper.Get("DB_USERNAME"), viper.Get("DB_PASSWORD"), viper.Get("DB_HOST"), viper.Get("DB_PORT"), viper.Get("DB_DATABASE"))
 
 	db, err = gorm.Open("mysql", setting)
 
@@ -34,7 +35,7 @@ func init() {
 	// }
 }
 
-//Add model to database
+//Add is add model to database
 // interface can't get origin variable only get variable at memory location
 func Add(model interface{}) (result Result) {
 	//create table for the struct
@@ -50,19 +51,26 @@ func Add(model interface{}) (result Result) {
 	return
 }
 
-//Get first model For ID from database
+//GetForID is get first model For ID from database
 func GetForID(model interface{}, id int) (result interface{}) {
 	result = db.First(model, id)
 	return
 }
 
-//Get first model to database
-func Get(model interface{}) (result interface{}) {
-	result = db.First(model)
+//Get is get first model to database
+func Get(model interface{}, where interface{}) (result interface{}) {
+	result = db.Where(where).Find(model)
 	return
 }
 
-func Save(model interface{}, update interface{}) (result interface{}) {
-	result = db.Model(model).Updates(update)
+//Save is get first model then update data to database
+func Save(model interface{}, id int, update interface{}) (result interface{}) {
+	result = db.First(model, id).Updates(update)
+	return
+}
+
+//Del is del find model to database
+func Del(model interface{}, id int) (result interface{}) {
+	result = db.Delete(model, id)
 	return
 }
