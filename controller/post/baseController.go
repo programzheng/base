@@ -46,14 +46,14 @@ func Get(ctx *gin.Context) {
 	})
 }
 
-func Save(ctx *gin.Context) {
+func SaveForID(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	update := map[string]interface{}{}
 	ctx.BindJSON(&update)
-	result := post.Save(post.Post{}, id, update)
+	result := post.SaveForID(post.Post{}, id, update)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"Code":   http.StatusOK,

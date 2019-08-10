@@ -26,7 +26,7 @@ func Get(post Post, where interface{}) (result interface{}) {
 	return
 }
 
-func Save(post Post, id int, update interface{}) (result interface{}) {
+func SaveForID(post Post, id int, update interface{}) (result interface{}) {
 	result = model.Save(&post, id, update)
 	return
 }
