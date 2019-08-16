@@ -20,15 +20,23 @@ func setMiddleware() {
 }
 
 func SetRouter() {
-	Router.POST("login", admin.Login)
-	postGroup := Router.Group("/post")
+	adminGroup := Router.Group("/admin")
 	{
-		postGroup.POST("", post.Add)
-		postGroup.GET("/:id", post.GetForID)
-		postGroup.GET("", post.Get)
-		postGroup.PATCH("/:id", post.SaveForID)
-		postGroup.PATCH("", post.Save)
-		postGroup.DELETE("/:id", post.DelForID)
-		postGroup.DELETE("", post.Del)
+		adminGroup.POST("register", admin.Register)
+		adminGroup.POST("login", admin.Login)
 	}
+	apiGroup := Router.Group("/api")
+	{
+		postGroup := apiGroup.Group("/post")
+		{
+			postGroup.POST("", post.Add)
+			postGroup.GET("/:id", post.GetForID)
+			postGroup.GET("", post.Get)
+			postGroup.PATCH("/:id", post.SaveForID)
+			postGroup.PATCH("", post.Save)
+			postGroup.DELETE("/:id", post.DelForID)
+			postGroup.DELETE("", post.Del)
+		}
+	}
+
 }
