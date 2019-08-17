@@ -26,11 +26,11 @@ func Login(ctx *gin.Context) {
 		"account": login.Account,
 	}
 	admin, err := admin.Get(admin.Admin{}, where)
-	// admin := value.(*admin.Admin)
-	fmt.Println(admin.Password)
-	function.Response(ctx, vaild, admin, err)
-}
-
-func vaildLogin() {
-
+	check := function.CheckHash(admin.Password, login.Password)
+	if check == true {
+		token := function.CreateJWT()
+		fmt.Println(token)
+	}
+	value := "登入失敗"
+	function.Response(ctx, vaild, value, err)
 }

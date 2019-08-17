@@ -3,6 +3,7 @@ module github.com/ProgramZheng/base
 require (
 	cloud.google.com/go v0.41.0 // indirect
 	github.com/denisenkom/go-mssqldb v0.0.0-20190710001350-29e7b2419f38 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/protobuf v1.3.2 // indirect

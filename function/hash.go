@@ -1,18 +1,20 @@
 package function
 
 import (
+	"log"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateHash(secret string) string {
 	hash, err := bcrypt.GenerateFromPassword([]byte(secret), bcrypt.DefaultCost)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return string(hash)
 }
 
-func CheckHash(secret, hash string) bool {
+func CheckHash(hash string, secret string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(secret))
 	return err == nil
 }
