@@ -1,29 +1,36 @@
 package admin
 
 import (
-	"net/http"
+	"fmt"
 
+	"github.com/ProgramZheng/base/function"
 	"github.com/ProgramZheng/base/model/admin"
 	"github.com/gin-gonic/gin"
 )
 
 func Register(ctx *gin.Context) {
 	adminStruct := admin.Admin{}
-	ctx.BindJSON(&adminStruct)
-	result := admin.Add(adminStruct)
+	vaild := ctx.BindJSON(&adminStruct)
+	//hash password
+	adminStruct.Password = function.CreateHash(adminStruct.Password)
+	value, err := admin.Add(adminStruct)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func Login(ctx *gin.Context) {
-	query := map[string]interface{}{}
-	ctx.BindJSON(&query)
+	login := admin.Login{}
+	vaild := ctx.BindJSON(&login)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": query,
-	})
+	where := map[string]interface{}{
+		"account": login.Account,
+	}
+	admin, err := admin.Get(admin.Admin{}, where)
+	// admin := value.(*admin.Admin)
+	fmt.Println(admin.Password)
+	function.Response(ctx, vaild, admin, err)
+}
+
+func vaildLogin() {
+
 }

@@ -11,7 +11,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
-	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/exp v0.0.0-20190627132806-fd42eb6b336f // indirect
 	golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 // indirect
 	golang.org/x/mobile v0.0.0-20190711165009-e47acb2ca7f9 // indirect

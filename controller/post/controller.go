@@ -1,103 +1,80 @@
 package post
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 	"strconv"
 
+	"github.com/ProgramZheng/base/function"
 	"github.com/ProgramZheng/base/model/post"
 	"github.com/gin-gonic/gin"
 )
 
 func Add(ctx *gin.Context) {
 	var postStruct = post.Post{}
-	ctx.BindJSON(&postStruct)
-	result := post.Add(postStruct)
+	vaild := ctx.BindJSON(&postStruct)
+	value, err := post.Add(postStruct)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func GetForID(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		log.Fatal(err)
+	id, vaild := strconv.Atoi(ctx.Param("id"))
+	if vaild != nil {
+		log.Fatal(vaild)
 	}
-	result := post.GetForID(post.Post{}, id)
+	value, err := post.GetForID(post.Post{}, id)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func Get(ctx *gin.Context) {
 	where := map[string]interface{}{}
-	ctx.BindUri(&where)
-	fmt.Println(where)
-	result := post.Get(post.Post{}, where)
+	vaild := ctx.BindUri(&where)
+	value, err := post.Get(post.Post{}, where)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func SaveForID(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		log.Fatal(err)
+	id, vaild := strconv.Atoi(ctx.Param("id"))
+	if vaild != nil {
+		log.Fatal(vaild)
 	}
 	update := map[string]interface{}{}
-	ctx.BindJSON(&update)
-	result := post.SaveForID(post.Post{}, id, update)
+	vaild = ctx.BindJSON(&update)
+	value, err := post.SaveForID(post.Post{}, id, update)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func Save(ctx *gin.Context) {
 	params := map[string]interface{}{}
-	ctx.BindJSON(&params)
+	vaild := ctx.BindJSON(&params)
 	ids, ok := params["ids"]
 	if ok {
 		delete(params, "ids")
 	}
 	update := params
-	result := post.Save(post.Post{}, ids, update)
+	value, err := post.Save(post.Post{}, ids, update)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func DelForID(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		log.Fatal(err)
+	id, vaild := strconv.Atoi(ctx.Param("id"))
+	if vaild != nil {
+		log.Fatal(vaild)
 	}
-	result := post.DelForID(post.Post{}, id)
+	value, err := post.DelForID(post.Post{}, id)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }
 
 func Del(ctx *gin.Context) {
 	params := map[string]interface{}{}
-	ctx.BindJSON(&params)
+	vaild := ctx.BindJSON(&params)
 	ids := params["ids"]
-	result := post.Del(post.Post{}, ids)
+	value, err := post.Del(post.Post{}, ids)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"Code":   http.StatusOK,
-		"Result": result,
-	})
+	function.Response(ctx, vaild, value, err)
 }

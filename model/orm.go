@@ -37,52 +37,61 @@ func init() {
 
 //Add is add model to database
 // interface can't get origin variable only get variable at memory location
-func Add(model interface{}) (result Result) {
+func Add(model interface{}) (value interface{}, err error) {
 	//create table for the struct
-	result = Result{
-		Value: nil,
-		Error: nil,
-	}
 	db.AutoMigrate(model)
 	if dbc := db.Create(model); dbc.Error != nil {
 		//error
-		result.Error = dbc.Error
+		value = nil
+		err = dbc.Error
 	}
 	return
 }
 
 //GetForID is get first model For ID from database
-func GetForID(model interface{}, id int) (result interface{}) {
-	result = db.First(model, id)
+func GetForID(model interface{}, id int) (value interface{}, err error) {
+	result := db.First(model, id)
+	value = result.Value
+	err = result.Error
 	return
 }
 
 //Get is get first model to database
-func Get(model interface{}, where interface{}) (result interface{}) {
-	result = db.Where(where).Find(model)
+func Get(model interface{}, where interface{}) (value interface{}, err error) {
+	result := db.Where(where).Find(model)
+	value = result.Value
+	err = result.Error
 	return
 }
 
 //SaveForID is get first model then update data to database
-func SaveForID(model interface{}, id int, update interface{}) (result interface{}) {
-	result = db.First(model, id).Updates(update)
+func SaveForID(model interface{}, id int, update interface{}) (value interface{}, err error) {
+	result := db.First(model, id).Updates(update)
+	value = result.Value
+	err = result.Error
 	return
 }
 
 //Save is get ID's list For table name then update data to database
-func Save(model interface{}, ids interface{}, update interface{}) (result interface{}) {
-	result = db.Table(db.NewScope(model).TableName()).Where("id IN (?)", ids).Updates(update)
+func Save(model interface{}, ids interface{}, update interface{}) (value interface{}, err error) {
+	result := db.Table(db.NewScope(model).TableName()).Where("id IN (?)", ids).Updates(update)
+	value = result.Value
+	err = result.Error
 	return
 }
 
 //DelForID is del find model to database
-func DelForID(model interface{}, id int) (result interface{}) {
-	result = db.Delete(model, id)
+func DelForID(model interface{}, id int) (value interface{}, err error) {
+	result := db.Delete(model, id)
+	value = result.Value
+	err = result.Error
 	return
 }
 
 //Del is get ID's list For table name then delete data to database
-func Del(model interface{}, ids interface{}) (result interface{}) {
-	result = db.Table(db.NewScope(model).TableName()).Where("id IN (?)", ids).Delete(model)
+func Del(model interface{}, ids interface{}) (value interface{}, err error) {
+	result := db.Table(db.NewScope(model).TableName()).Where("id IN (?)", ids).Delete(model)
+	value = result.Value
+	err = result.Error
 	return
 }
