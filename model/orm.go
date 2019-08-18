@@ -21,7 +21,7 @@ type Result struct {
 
 func init() {
 	//?parseTime=true for the database table column type is TIMESTAMP
-	setting := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=true", viper.Get("DB_USERNAME"), viper.Get("DB_PASSWORD"), viper.Get("DB_HOST"), viper.Get("DB_PORT"), viper.Get("DB_DATABASE"))
+	setting := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?loc=Local&parseTime=true", viper.Get("DB_USERNAME"), viper.Get("DB_PASSWORD"), viper.Get("DB_HOST"), viper.Get("DB_PORT"), viper.Get("DB_DATABASE"))
 
 	db, err = gorm.Open("mysql", setting)
 
