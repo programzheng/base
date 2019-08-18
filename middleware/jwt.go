@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"strings"
 
 	"github.com/ProgramZheng/base/function"
@@ -14,7 +13,9 @@ func ValidJSONWebToken() gin.HandlerFunc {
 		requestToken := ctx.GetHeader("Authorization")
 		splitToken := strings.Split(requestToken, "Bearer")
 		if len(splitToken) != 2 {
-			log.Fatal("Token is error")
+			//return not vaild
+			ctx.AbortWithStatus(401)
+			return
 		}
 		requestToken = strings.TrimSpace(splitToken[1])
 
