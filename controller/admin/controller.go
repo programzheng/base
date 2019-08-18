@@ -1,8 +1,6 @@
 package admin
 
 import (
-	"fmt"
-
 	"github.com/ProgramZheng/base/function"
 	"github.com/ProgramZheng/base/model/admin"
 	"github.com/gin-gonic/gin"
@@ -29,8 +27,9 @@ func Login(ctx *gin.Context) {
 	check := function.CheckHash(admin.Password, login.Password)
 	if check == true {
 		token := function.CreateJWT()
-		fmt.Println(token)
+		function.Response(ctx, vaild, token, err)
+		return
 	}
-	value := "登入失敗"
-	function.Response(ctx, vaild, value, err)
+	function.Response(ctx, vaild, nil, err)
+	return
 }
