@@ -8,7 +8,7 @@ import (
 
 type Result struct {
 	Value interface{}
-	Error error
+	Error interface{}
 }
 
 func Response(ctx *gin.Context, vaild error, value interface{}, err error) {
@@ -17,9 +17,15 @@ func Response(ctx *gin.Context, vaild error, value interface{}, err error) {
 			"message": vaild.Error(),
 		})
 	} else {
+		var customError interface{}
+		if err != nil {
+			customError = err.Error()
+		} else {
+			customError = nil
+		}
 		result := Result{
 			Value: value,
-			Error: err,
+			Error: customError,
 		}
 		ctx.JSON(http.StatusOK, gin.H{
 			"Code":   http.StatusOK,
