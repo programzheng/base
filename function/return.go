@@ -13,7 +13,7 @@ type Result struct {
 
 func Response(ctx *gin.Context, vaild error, value interface{}, err error) {
 	if vaild != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"message": vaild.Error(),
 		})
 	} else {
@@ -27,7 +27,7 @@ func Response(ctx *gin.Context, vaild error, value interface{}, err error) {
 			Value: value,
 			Error: customError,
 		}
-		ctx.JSON(http.StatusOK, gin.H{
+		ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
 			"Code":   http.StatusOK,
 			"Result": result,
 		})
