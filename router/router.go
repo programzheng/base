@@ -29,9 +29,9 @@ func SetRouter() {
 	adminGroup := apiGroup.Group("/admin")
 	{
 		adminGroup.POST("/login", admin.Login)
+		adminGroup.POST("/auth", auth.Vaild)
 	}
 	apiGroup.Use(middleware.ValidJSONWebToken())
-	apiGroup.POST("auth", auth.Vaild)
 	{
 		postGroup := apiGroup.Group("/post")
 		{

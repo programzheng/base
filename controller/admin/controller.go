@@ -2,7 +2,6 @@ package admin
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/ProgramZheng/base/function"
 	"github.com/ProgramZheng/base/model/admin"
@@ -27,7 +26,6 @@ func Login(ctx *gin.Context) {
 		"account": login.Account,
 	}
 	admin, err := admin.Get(admin.Admin{}, where)
-	fmt.Println(admin.ID)
 	if admin.ID == 0 {
 		err = errors.New("帳號錯誤")
 	}
