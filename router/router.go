@@ -4,6 +4,7 @@ import (
 	"github.com/ProgramZheng/base/middleware"
 
 	"github.com/ProgramZheng/base/controller/admin"
+	"github.com/ProgramZheng/base/controller/auth"
 	"github.com/ProgramZheng/base/controller/post"
 	"github.com/gin-gonic/gin"
 )
@@ -20,13 +21,17 @@ func setMiddleware() {
 }
 
 func SetRouter() {
-	adminGroup := Router.Group("/admin")
-	{
-		adminGroup.POST("register", admin.Register)
-		adminGroup.POST("login", admin.Login)
-	}
+	// adminGroup := Router.Group("/admin")
+	// {
+	// 	adminGroup.POST("register", admin.Register)
+	// }
 	apiGroup := Router.Group("/api")
+	adminGroup := apiGroup.Group("/admin")
+	{
+		adminGroup.POST("/login", admin.Login)
+	}
 	apiGroup.Use(middleware.ValidJSONWebToken())
+	apiGroup.POST("auth", auth.Vaild)
 	{
 		postGroup := apiGroup.Group("/post")
 		{

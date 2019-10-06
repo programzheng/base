@@ -15,6 +15,7 @@ var (
 
 type Token struct {
 	Token string
+	Exp   int64
 }
 
 func init() {
@@ -22,9 +23,10 @@ func init() {
 }
 
 func CreateJWT() (token Token) {
+	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"test": "test",
-		"exp":  time.Now().Add(time.Hour * time.Duration(1)).Unix(),
+		"exp":  exp,
 		"iat":  time.Now().Unix(),
 		"nbf":  time.Now().Unix(),
 	})
@@ -34,6 +36,7 @@ func CreateJWT() (token Token) {
 	}
 
 	token.Token = jwtTokenString
+	token.Exp = exp
 
 	return token
 }
