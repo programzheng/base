@@ -1,6 +1,9 @@
 package admin
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/ProgramZheng/base/function"
 	"github.com/ProgramZheng/base/model/admin"
 	"github.com/gin-gonic/gin"
@@ -24,12 +27,21 @@ func Login(ctx *gin.Context) {
 		"account": login.Account,
 	}
 	admin, err := admin.Get(admin.Admin{}, where)
-	check := function.CheckHash(admin.Password, login.Password)
-	if check == true {
-		token := function.CreateJWT()
-		function.Response(ctx, vaild, token, err)
+	fmt.Println(admin.ID)
+	if admin.ID == 0 {
+		err = errors.New("帳號錯誤")
+	}
+	if err != nil {
+		function.Response(ctx, vaild, nil, err)
 		return
 	}
-	function.Response(ctx, vaild, nil, err)
+	err = function.CheckHash(admin.Password, login.Password)
+	if err != nil {
+		err = errors.New("密碼錯誤")
+		function.Response(ctx, vaild, nil, err)
+		return
+	}
+	token := function.CreateJWT()
+	function.Response(ctx, vaild, token, err)
 	return
 }

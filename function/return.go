@@ -1,6 +1,7 @@
 package function
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,6 @@ func Response(ctx *gin.Context, vaild error, value interface{}, err error) {
 			Error: customError,
 		}
 		ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-			"Code":   http.StatusOK,
 			"Result": result,
 		})
 	}

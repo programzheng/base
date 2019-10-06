@@ -14,7 +14,7 @@ func CreateHash(secret string) string {
 	return string(hash)
 }
 
-func CheckHash(hash string, secret string) bool {
+func CheckHash(hash string, secret string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(secret))
-	return err == nil
+	return err
 }
