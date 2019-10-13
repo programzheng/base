@@ -14,7 +14,8 @@ func Register(ctx *gin.Context) {
 	vaild := ctx.BindJSON(&adminStruct)
 	//hash password
 	adminStruct.Password = function.CreateHash(adminStruct.Password)
-	value, err := model.Migrate(&adminStruct, &adminStruct.Profile).model.Add(&adminStruct)
+	model.Migrate(&adminStruct, &adminStruct.Profile)
+	value, err := model.Add(&adminStruct)
 	if err != nil {
 		err = errors.New("新增失敗")
 		function.Response(ctx, vaild, value, err)
