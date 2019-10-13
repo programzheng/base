@@ -21,15 +21,12 @@ func setMiddleware() {
 }
 
 func SetRouter() {
-	// adminGroup := Router.Group("/admin")
-	// {
-	// 	adminGroup.POST("register", admin.Register)
-	// }
 	apiGroup := Router.Group("/api")
 	adminGroup := apiGroup.Group("/admin")
 	{
-		adminGroup.POST("/login", admin.Login)
-		adminGroup.POST("/auth", auth.Vaild)
+		adminGroup.POST("register", admin.Register)
+		adminGroup.POST("login", admin.Login)
+		adminGroup.POST("auth", auth.Vaild)
 	}
 	apiGroup.Use(middleware.ValidJSONWebToken())
 	{

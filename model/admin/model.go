@@ -17,6 +17,13 @@ type Admin struct {
 	Password string `json:"password" gorm:"unique; not null"`
 	GroupID  int    `gorm:"index"`
 	Status   int    `gorm:"defalut:0"`
+	Profile  AdminProfile
+}
+
+type AdminProfile struct {
+	gorm.Model
+	AdminID uint
+	Name    string `json:"name"`
 }
 
 func Add(admin Admin) (value interface{}, err error) {

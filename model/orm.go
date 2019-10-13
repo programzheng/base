@@ -35,16 +35,18 @@ func init() {
 	// }
 }
 
+func Migrate(models ...interface{}) {
+	//TODO 檢查struct裡面有沒有struct
+	db.AutoMigrate(models...)
+}
+
 //Add is add model to database
 // interface can't get origin variable only get variable at memory location
 func Add(model interface{}) (value interface{}, err error) {
 	//create table for the struct
-	db.AutoMigrate(model)
-	if dbc := db.Create(model); dbc.Error != nil {
-		//error
-		value = nil
-		err = dbc.Error
-	}
+	result := db.Save(model)
+	value = result.Value
+	err = result.Error
 	return
 }
 
