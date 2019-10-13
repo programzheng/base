@@ -36,7 +36,6 @@ func init() {
 }
 
 func Migrate(models ...interface{}) {
-	//TODO 檢查struct裡面有沒有struct
 	db.AutoMigrate(models...)
 }
 

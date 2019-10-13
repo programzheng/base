@@ -21,7 +21,6 @@ func Register(ctx *gin.Context) {
 		function.Response(ctx, vaild, value, err)
 		return
 	}
-	// value, err = model.Add(&adminStruct.Profile)
 
 	function.Response(ctx, vaild, value, err)
 }
