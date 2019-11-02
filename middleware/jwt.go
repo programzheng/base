@@ -21,8 +21,7 @@ func ValidJSONWebToken() gin.HandlerFunc {
 
 		claims, err := function.ValidJSONWebToken(requestToken)
 		if err != nil {
-			function.Response(ctx, nil, claims, err)
-			ctx.AbortWithStatus(200)
+			function.Success(ctx, claims, err)
 			return
 		}
 

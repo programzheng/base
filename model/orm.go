@@ -41,10 +41,9 @@ func Migrate(models ...interface{}) {
 
 //Add is add model to database
 // interface can't get origin variable only get variable at memory location
-func Add(model interface{}) (value interface{}, err error) {
+func Add(model interface{}) (err error) {
 	//create table for the struct
 	result := db.Save(model)
-	value = result.Value
 	err = result.Error
 	return
 }

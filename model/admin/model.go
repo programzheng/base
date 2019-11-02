@@ -27,7 +27,7 @@ type AdminProfile struct {
 }
 
 func Add(admin Admin) (value interface{}, err error) {
-	value, err = model.Add(&admin)
+	err = model.Add(&admin)
 	return
 }
 

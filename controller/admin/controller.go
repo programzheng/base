@@ -11,41 +11,42 @@ import (
 
 func Register(ctx *gin.Context) {
 	adminStruct := admin.Admin{}
-	vaild := ctx.BindJSON(&adminStruct)
+	if err := ctx.Bind(&adminStruct); err != nil {
+		function.BadRequest(ctx, err)
+		return
+	}
 	//hash password
 	adminStruct.Password = function.CreateHash(adminStruct.Password)
 	model.Migrate(&adminStruct, &adminStruct.Profile)
-	value, err := model.Add(&adminStruct)
-	if err != nil {
-		err = errors.New("新增失敗")
-		function.Response(ctx, vaild, value, err)
+	if err := model.Add(&adminStruct); err != nil {
+		function.BadRequest(ctx, err)
 		return
 	}
 
-	function.Response(ctx, vaild, value, err)
+	function.Success(ctx, adminStruct, nil)
+	return
 }
 
 func Login(ctx *gin.Context) {
 	login := admin.Login{}
-	vaild := ctx.BindJSON(&login)
+	if err := ctx.Bind(&login); err != nil {
+		function.BadRequest(ctx, err)
+		return
+	}
 	where := map[string]interface{}{
 		"account": login.Account,
 	}
 	adminStruct, err := model.Get(&admin.Admin{}, where)
-	if adminStruct.(*admin.Admin).ID == 0 {
-		err = errors.New("帳號錯誤")
-	}
-	if err != nil {
-		function.Response(ctx, vaild, nil, err)
+	if adminStruct.(*admin.Admin).ID == 0 || err != nil {
+		function.Fail(ctx, errors.New("帳號錯誤"))
 		return
 	}
 	err = function.CheckHash(adminStruct.(*admin.Admin).Password, login.Password)
 	if err != nil {
-		err = errors.New("密碼錯誤")
-		function.Response(ctx, vaild, nil, err)
+		function.Fail(ctx, errors.New("密碼錯誤"))
 		return
 	}
 	token := function.CreateJWT()
-	function.Response(ctx, vaild, token, err)
+	function.Success(ctx, token, nil)
 	return
 }
