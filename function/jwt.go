@@ -25,10 +25,9 @@ func init() {
 func CreateJWT() (token Token) {
 	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"test": "test",
-		"exp":  exp,
-		"iat":  time.Now().Unix(),
-		"nbf":  time.Now().Unix(),
+		"exp": exp,
+		"iat": time.Now().Unix(),
+		"nbf": time.Now().Unix(),
 	})
 	jwtTokenString, err := jwtToken.SignedString(secret)
 	if err != nil {

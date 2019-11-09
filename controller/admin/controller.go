@@ -19,7 +19,7 @@ func Register(ctx *gin.Context) {
 	adminStruct.Password = function.CreateHash(adminStruct.Password)
 	model.Migrate(&adminStruct, &adminStruct.Profile)
 	if err := model.Add(&adminStruct); err != nil {
-		function.BadRequest(ctx, err)
+		function.Fail(ctx, err)
 		return
 	}
 
@@ -47,6 +47,17 @@ func Login(ctx *gin.Context) {
 		return
 	}
 	token := function.CreateJWT()
+	adminLoginStruct := admin.AdminLogin{
+		AdminID: adminStruct.(*admin.Admin).ID,
+		Token:   token.Token,
+		IP:      ctx.ClientIP(),
+	}
+	model.Migrate(&adminLoginStruct)
+	if err := model.Add(&adminLoginStruct); err != nil {
+		function.Fail(ctx, err)
+		return
+	}
+
 	function.Success(ctx, token, nil)
 	return
 }
