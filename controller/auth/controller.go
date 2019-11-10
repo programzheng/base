@@ -21,7 +21,7 @@ func VaildAdmin(ctx *gin.Context) {
 
 	vaildResult := function.ValidJSONWebToken(token)
 	if !vaildResult {
-		function.Unauthorized(ctx, errors.New("請重新登入2"))
+		function.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}
 

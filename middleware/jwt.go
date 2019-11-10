@@ -15,7 +15,7 @@ func ValidJSONWebToken() gin.HandlerFunc {
 		splitToken := strings.Split(requestToken, "Bearer")
 		if len(splitToken) != 2 {
 			//return not vaild
-			function.Unauthorized(ctx, errors.New("請重新登入1"))
+			function.Unauthorized(ctx, errors.New("請重新登入"))
 			return
 		}
 		requestToken = strings.TrimSpace(splitToken[1])
