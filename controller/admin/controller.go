@@ -4,56 +4,55 @@ import (
 	"errors"
 
 	"github.com/ProgramZheng/base/function"
-	"github.com/ProgramZheng/base/model"
-	"github.com/ProgramZheng/base/model/admin"
+	"github.com/ProgramZheng/base/service/admin_service"
+	"github.com/ProgramZheng/base/service/auth_service"
 	"github.com/gin-gonic/gin"
 )
 
 func Register(ctx *gin.Context) {
-	adminStruct := admin.Admin{}
-	if err := ctx.Bind(&adminStruct); err != nil {
+	adminService := admin_service.Admin{}
+	if err := ctx.Bind(&adminService); err != nil {
 		function.BadRequest(ctx, err)
 		return
 	}
+
 	//hash password
-	adminStruct.Password = function.CreateHash(adminStruct.Password)
-	model.Migrate(&adminStruct, &adminStruct.Profile)
-	if err := model.Add(&adminStruct); err != nil {
+	adminService.Password = function.CreateHash(adminService.Password)
+	if err := adminService.Add(); err != nil {
 		function.Fail(ctx, err)
 		return
 	}
 
-	function.Success(ctx, adminStruct, nil)
+	function.Success(ctx, nil, nil)
 	return
 }
 
 func Login(ctx *gin.Context) {
-	login := admin.Login{}
+	login := auth_service.Login{}
 	if err := ctx.Bind(&login); err != nil {
 		function.BadRequest(ctx, err)
 		return
 	}
-	where := map[string]interface{}{
-		"account": login.Account,
+	adminService := admin_service.Admin{
+		Account: login.Account,
 	}
-	adminStruct, err := model.Get(&admin.Admin{}, where)
-	if adminStruct.(*admin.Admin).ID == 0 || err != nil {
+	admin, err := adminService.Get()
+	if err != nil {
 		function.Fail(ctx, errors.New("帳號錯誤"))
 		return
 	}
-	err = function.CheckHash(adminStruct.(*admin.Admin).Password, login.Password)
+	err = function.CheckHash(admin.Password, login.Password)
 	if err != nil {
 		function.Fail(ctx, errors.New("密碼錯誤"))
 		return
 	}
 	token := function.CreateJWT()
-	adminLoginStruct := admin.AdminLogin{
-		AdminID: adminStruct.(*admin.Admin).ID,
+	adminLogin := auth_service.AdminLogin{
+		AdminID: admin.ID,
 		Token:   token.Token,
 		IP:      ctx.ClientIP(),
 	}
-	model.Migrate(&adminLoginStruct)
-	if err := model.Add(&adminLoginStruct); err != nil {
+	if err := adminLogin.AddAdminLogin(); err != nil {
 		function.Fail(ctx, err)
 		return
 	}

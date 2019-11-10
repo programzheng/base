@@ -35,25 +35,26 @@ func CreateJWT() (token Token) {
 	}
 
 	token.Token = jwtTokenString
-	token.Exp = exp
 
 	return token
 }
 
-func ValidJSONWebToken(requestToken string) (value interface{}, err error) {
+func ValidJSONWebToken(requestToken string) bool {
 	token, err := jwt.Parse(requestToken, func(token *jwt.Token) (interface{}, error) {
 		// validate the alg
-		if _, err := token.Method.(*jwt.SigningMethodHMAC); !err {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
 		return secret, nil
 	})
-
-	if claims, err := token.Claims.(jwt.MapClaims); err && token.Valid {
-		value = claims
+	if err != nil {
+		return false
 	}
-
-	return
+	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return ok
+	} else {
+		return false
+	}
 
 }

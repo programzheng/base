@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/ProgramZheng/base/function"
@@ -14,17 +15,14 @@ func ValidJSONWebToken() gin.HandlerFunc {
 		splitToken := strings.Split(requestToken, "Bearer")
 		if len(splitToken) != 2 {
 			//return not vaild
-			ctx.AbortWithStatus(401)
+			function.Unauthorized(ctx, errors.New("請重新登入1"))
 			return
 		}
 		requestToken = strings.TrimSpace(splitToken[1])
 
-		claims, err := function.ValidJSONWebToken(requestToken)
-		if err != nil {
-			function.Success(ctx, claims, err)
-			return
+		result := function.ValidJSONWebToken(requestToken)
+		if result {
+			ctx.Next()
 		}
-
-		ctx.Next()
 	}
 }
