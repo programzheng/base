@@ -7,8 +7,7 @@ import (
 type Admin struct {
 	gorm.Model
 	Account  string `gorm:"unique; not null"`
-	Password string `gorm:"unique; not null"`
-	GroupID  int    `gorm:"index"`
+	Password string `gorm:"unique; not null" json:"-"`
 	Status   int    `gorm:"defalut:0"`
 	Profile  AdminProfile
 }
@@ -33,4 +32,14 @@ func GetAdmin(admin Admin) (*Admin, error) {
 		return nil, err
 	}
 	return &admin, nil
+}
+
+func GetAdmins(pageNum int, pageSize int, maps interface{}) ([]*Admin, error) {
+	var admins []*Admin
+	err := db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&admins).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return admins, nil
 }

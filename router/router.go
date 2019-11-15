@@ -29,6 +29,10 @@ func SetRouter() {
 	}
 	apiGroup.Use(middleware.ValidJSONWebToken())
 	{
+		administratorGroup := apiGroup.Group("/administrator")
+		{
+			administratorGroup.GET("administrators", admin.GetAdmins)
+		}
 		// postGroup := apiGroup.Group("/post")
 		// {
 		// 	postGroup.POST("", post.Add)

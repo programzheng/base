@@ -11,8 +11,8 @@ type Admin struct {
 	Status   int
 	Profile  AdminProfile `json:"profile"`
 
-	PageNum  int
-	PageSize int
+	PageNum  int `form:"page_num"`  //頁數*筆數,從0(代表第一頁)開始
+	PageSize int `form:"page_size"` //從PageNum之後取出的筆數
 }
 
 type AdminProfile struct {
@@ -44,4 +44,18 @@ func (a *Admin) Get() (*model.Admin, error) {
 		return nil, err
 	}
 	return admin, nil
+}
+
+func (a *Admin) GetAdmins() ([]*model.Admin, error) {
+	admins, err := model.GetAdmins(a.PageNum, a.PageSize, a.getMaps())
+	if err != nil {
+		return nil, err
+	}
+	return admins, nil
+}
+
+func (a *Admin) getMaps() map[string]interface{} {
+	maps := make(map[string]interface{})
+	maps["deleted_at"] = nil
+	return maps
 }

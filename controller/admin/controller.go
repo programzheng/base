@@ -60,3 +60,21 @@ func Login(ctx *gin.Context) {
 	function.Success(ctx, token, nil)
 	return
 }
+
+func GetAdmins(ctx *gin.Context) {
+	adminService := admin_service.Admin{}
+	if err := ctx.Bind(&adminService); err != nil {
+		function.BadRequest(ctx, err)
+		return
+	}
+	admins, err := adminService.GetAdmins()
+	if err != nil {
+		function.Fail(ctx, err)
+		return
+	}
+	data := make(map[string]interface{})
+	data["List"] = admins
+	// data["Total"] = total
+	function.Success(ctx, data, nil)
+	return
+}
