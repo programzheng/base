@@ -36,7 +36,7 @@ func GetAdmin(admin Admin) (*Admin, error) {
 
 func GetAdmins(pageNum int, pageSize int, maps interface{}) ([]*Admin, error) {
 	var admins []*Admin
-	err := db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&admins).Error
+	err := db.Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&admins).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
