@@ -73,7 +73,7 @@ func GetAdmins(ctx *gin.Context) {
 		return
 	}
 	data := make(map[string]interface{})
-	data["List"] = admins
+	data["list"] = admins
 	// data["Total"] = total
 	function.Success(ctx, data, nil)
 	return
