@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/ProgramZheng/base/function"
+	"github.com/ProgramZheng/base/service/auth_service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,20 +20,25 @@ func VaildAdmin(ctx *gin.Context) {
 
 	token := strings.TrimSpace(splitToken[1])
 
+	//曾經有登入記錄
+	adminLogin, err := (&auth_service.AdminLogin{
+		Token: token,
+	}).GetAdminLogin()
+
+	if adminLogin.ID == 0 && err != nil {
+		function.Unauthorized(ctx, errors.New("請重新登入"))
+		return
+	}
+
 	vaildResult := function.ValidJSONWebToken(token)
 	if !vaildResult {
 		function.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}
 
-	// authService := auth_service.AdminLogin{
-	// 	Token: token,
-	// }
-	// adminLogin, err := authService.GetAdminLogin()
-	// if adminLogin.ID == 0 && err != nil {
-	// 	function.Unauthorized(ctx, errors.New("請重新登入"))
-	// 	return
-	// }
+	if adminLogin.Remember {
+
+	}
 
 	function.Success(ctx, nil, nil)
 	return

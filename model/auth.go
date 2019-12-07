@@ -4,9 +4,10 @@ import "github.com/jinzhu/gorm"
 
 type AdminLogin struct {
 	gorm.Model
-	AdminID uint   `gorm:"not null"`
-	Token   string `gorm:"not null"`
-	IP      string `gorm:"not null"`
+	AdminID  uint   `gorm:"not null"`
+	Token    string `gorm:"not null"`
+	Remember bool   `gorm:"default:false"`
+	IP       string `gorm:"not null"`
 }
 
 func AddAdminLogin(adminLogin AdminLogin) error {

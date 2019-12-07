@@ -11,16 +11,18 @@ type Login struct {
 }
 
 type AdminLogin struct {
-	AdminID uint
-	Token   string
-	IP      string
+	AdminID  uint
+	Token    string
+	Remember bool
+	IP       string
 }
 
 func (al *AdminLogin) AddAdminLogin() error {
 	adminLogin := model.AdminLogin{
-		AdminID: al.AdminID,
-		Token:   al.Token,
-		IP:      al.IP,
+		AdminID:  al.AdminID,
+		Token:    al.Token,
+		Remember: al.Remember,
+		IP:       al.IP,
 	}
 	if err := model.AddAdminLogin(adminLogin); err != nil {
 		return err
@@ -40,3 +42,7 @@ func (al *AdminLogin) GetAdminLogin() (*model.AdminLogin, error) {
 	}
 	return adminLogin, nil
 }
+
+// func (al *AddAdminLogin) Edit() (*model.AddAdminLogin) {
+
+// }
