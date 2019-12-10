@@ -33,10 +33,9 @@ func Login(ctx *gin.Context) {
 		function.BadRequest(ctx, err)
 		return
 	}
-	adminService := admin_service.Admin{
+	admin, err := (&admin_service.Admin{
 		Account: login.Account,
-	}
-	admin, err := adminService.Get()
+	}).Get()
 	if err != nil {
 		function.Fail(ctx, errors.New("帳號錯誤"))
 		return
