@@ -1,7 +1,7 @@
 package auth_service
 
 import (
-	"github.com/ProgramZheng/base/model"
+	"github.com/ProgramZheng/base/pkg/model"
 )
 
 //Login is vaildation struct

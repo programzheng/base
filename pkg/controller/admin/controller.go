@@ -3,9 +3,9 @@ package admin
 import (
 	"errors"
 
-	"github.com/ProgramZheng/base/function"
-	"github.com/ProgramZheng/base/service/admin_service"
-	"github.com/ProgramZheng/base/service/auth_service"
+	"github.com/ProgramZheng/base/pkg/function"
+	"github.com/ProgramZheng/base/pkg/service/admin_service"
+	"github.com/ProgramZheng/base/pkg/service/auth_service"
 	"github.com/gin-gonic/gin"
 )
 

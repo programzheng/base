@@ -1,7 +1,7 @@
 package admin_service
 
 import (
-	"github.com/ProgramZheng/base/model"
+	"github.com/ProgramZheng/base/pkg/model"
 )
 
 type Admin struct {

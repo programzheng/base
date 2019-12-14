@@ -1,10 +1,10 @@
 package router
 
 import (
-	"github.com/ProgramZheng/base/middleware"
+	"github.com/ProgramZheng/base/pkg/middleware"
 
-	"github.com/ProgramZheng/base/controller/admin"
-	"github.com/ProgramZheng/base/controller/auth"
+	"github.com/ProgramZheng/base/pkg/controller/admin"
+	"github.com/ProgramZheng/base/pkg/controller/auth"
 	"github.com/gin-gonic/gin"
 )
 

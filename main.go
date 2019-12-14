@@ -17,11 +17,10 @@ package main
 
 import (
 	_ "github.com/ProgramZheng/base/config"
-	"github.com/ProgramZheng/base/router"
+	"github.com/ProgramZheng/base/pkg/router"
 )
 
 func main() {
-	// var db = config.DateBaseInit()
 	r := router.Router
 	router.SetRouter()
 	r.Run(":8080")
