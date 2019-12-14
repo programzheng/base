@@ -1,4 +1,4 @@
-module github.com/ProgramZheng/base
+module github.com/programzheng/base
 
 require (
 	cloud.google.com/go v0.41.0 // indirect

@@ -16,8 +16,8 @@ limitations under the License.
 package main
 
 import (
-	_ "github.com/ProgramZheng/base/config"
-	"github.com/ProgramZheng/base/pkg/router"
+	_ "github.com/programzheng/base/config"
+	"github.com/programzheng/base/pkg/router"
 )
 
 func main() {
