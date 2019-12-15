@@ -16,12 +16,17 @@ limitations under the License.
 package main
 
 import (
+	"fmt"
+
 	_ "github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/router"
+	"github.com/spf13/viper"
 )
 
 func main() {
 	r := router.Router
 	router.SetRouter()
-	r.Run(":8080")
+	port := fmt.Sprintf(":%v", viper.GetString("APP_PORT"))
+	fmt.Println(port)
+	r.Run(port)
 }

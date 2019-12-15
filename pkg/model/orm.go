@@ -22,7 +22,7 @@ func init() {
 		viper.GetString("DB_HOST"),
 		viper.GetString("DB_PORT"),
 		viper.GetString("DB_DATABASE"))
-
+	fmt.Println(setting)
 	db, err = gorm.Open(viper.GetString("DB_CONNECTION"), setting)
 
 	if err != nil {

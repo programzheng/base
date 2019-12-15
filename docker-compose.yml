@@ -1,0 +1,45 @@
+version: '3'
+services: 
+    #app
+    web:
+        container_name: web
+        build: .
+        ports:
+            - ${APP_PORT}:${APP_PORT}
+        environment: 
+            - APP_NAME=${APP_NAME}
+            - APP_ENV=${APP_ENV}
+            - JWT_SECRET=${JWT_SECRET}
+        links:
+            - mysql
+    #mysql
+    mysql:
+        container_name: mysql
+        build: ./docker/mysql
+        ports:
+            - ${DB_PORT}:${DB_PORT}
+        env_file: 
+            ./docker/mysql/.env
+        volumes: 
+            - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
+            - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    #adminer
+    adminer:
+        container_name: adminer
+        build: ./docker/adminer
+        ports:
+          - ${ADMIMER_PORT}:${ADMIMER_PORT}
+        env_file: 
+            ./docker/adminer/.env
+    #phpmyadmin
+    # phpmyadmin:
+    #     build: ./docker/phpmyadmin
+    #     ports: 
+    #         - ${PMA_PORT}:80
+    #     env_file:
+    #         ./docker/phpmyadmin/.env
+    #     depends_on: 
+    #         - mysql
+            
+
+        
