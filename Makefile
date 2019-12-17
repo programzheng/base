@@ -1,12 +1,14 @@
 IMAGE=base
 
-.PHONY: dev, init, down
+.PHONY: dev, up, init, down
 dev:
 	docker-compose build web
 	docker-compose up web
-init:
-	docker-compose build --force-rm --no-cache
+up:
 	docker-compose up -d mysql
 	docker-compose up -d web adminer
+init:
+	docker-compose build --force-rm --no-cache
+	$(CMD) up
 down:
 	docker-compose down
