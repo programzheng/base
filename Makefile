@@ -1,6 +1,6 @@
 IMAGE=base
-all: dev, down
-.PHONY: all
+
+.PHONY: dev, down
 dev:
 	docker-compose build --force-rm
 	docker-compose up -d mysql
