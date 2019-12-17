@@ -27,6 +27,5 @@ func main() {
 	r := router.Router
 	router.SetRouter()
 	port := fmt.Sprintf(":%v", viper.GetString("APP_PORT"))
-	fmt.Println(port)
 	r.Run(port)
 }
