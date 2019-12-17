@@ -21,12 +21,22 @@ services:
         volumes: 
             - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
             - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+        environment: 
+            - MYSQL_VERSION=${MYSQL_VERSION}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_PORT=${MYSQL_PORT}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_ENTRYPOINT_INITDB=${MYSQL_ENTRYPOINT_INITDB}
     #adminer
     adminer:
         container_name: adminer
         build: ./docker/adminer
         ports:
-          - ${ADMIMER_PORT}:${ADMIMER_PORT}
+            - ${ADMIMER_PORT}:${ADMIMER_PORT}
+        environment: 
+            - ADMINER_DEFAULT_SERVER=${ADMINER_DEFAULT_SERVER}
     #phpmyadmin
     # phpmyadmin:
     #     build: ./docker/phpmyadmin
