@@ -18,8 +18,6 @@ services:
         build: ./docker/mysql
         ports:
             - ${DB_PORT}:${DB_PORT}
-        env_file: 
-            ./docker/mysql/.env
         volumes: 
             - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
             - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
@@ -29,8 +27,6 @@ services:
         build: ./docker/adminer
         ports:
           - ${ADMIMER_PORT}:${ADMIMER_PORT}
-        env_file: 
-            ./docker/adminer/.env
     #phpmyadmin
     # phpmyadmin:
     #     build: ./docker/phpmyadmin
