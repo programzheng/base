@@ -23,9 +23,9 @@ services:
             - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
         environment: 
             - MYSQL_VERSION=${MYSQL_VERSION}
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
-            - MYSQL_USER=${MYSQL_USER}
-            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_DATABASE=${APP_NAME}
+            - MYSQL_USER=${APP_NAME}
+            - MYSQL_PASSWORD=${APP_NAME}
             - MYSQL_PORT=${MYSQL_PORT}
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
             - MYSQL_ENTRYPOINT_INITDB=${MYSQL_ENTRYPOINT_INITDB}
