@@ -6,7 +6,7 @@ dev:
 	docker-compose up web
 up:
 	docker-compose up -d mysql
-	docker-compose up -d web adminer
+	docker-compose up -d web adminer minio
 init:
 	docker-compose build --force-rm --no-cache
 	$(MAKE) up

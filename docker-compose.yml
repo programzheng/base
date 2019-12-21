@@ -37,6 +37,24 @@ services:
             - ${ADMIMER_PORT}:${ADMIMER_PORT}
         environment: 
             - ADMINER_DEFAULT_SERVER=${ADMINER_DEFAULT_SERVER}
+    #minio
+    minio:
+        container_name: minio
+        build: ./docker/minio
+        volumes:
+          - ${DATA_PATH_HOST}/minio:/data
+        #   - ${CONFIG_PATH_HOST}/minio:/root/.minio
+        ports:
+          - "9000:9000"
+        environment:
+          - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+          - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+        command: server /data
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+          interval: 30s
+          timeout: 20s
+          retries: 3
     #phpmyadmin
     # phpmyadmin:
     #     build: ./docker/phpmyadmin
