@@ -10,5 +10,7 @@ up:
 init:
 	docker-compose build --force-rm --no-cache
 	$(MAKE) up
+ps:
+	docker-compose ps
 down:
 	docker-compose down
