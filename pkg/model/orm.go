@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	db *gorm.DB
+	DB *gorm.DB
 )
 
 func init() {
@@ -22,7 +22,7 @@ func init() {
 		viper.Get("DB_HOST").(string),
 		viper.Get("DB_PORT").(string),
 		viper.Get("DB_DATABASE"))
-	db, err = gorm.Open(viper.Get("DB_CONNECTION").(string), setting)
+	DB, err = gorm.Open(viper.Get("DB_CONNECTION").(string), setting)
 
 	if err != nil {
 		log.Println("DataBase error:", err)
@@ -30,5 +30,5 @@ func init() {
 }
 
 func Migrate(models ...interface{}) {
-	db.AutoMigrate(models...)
+	DB.AutoMigrate(models...)
 }

@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/programzheng/base/pkg/model"
+	"github.com/programzheng/base/pkg/model/auth"
 )
 
 //Login is vaildation struct
@@ -18,31 +18,31 @@ type AdminLogin struct {
 }
 
 func (al *AdminLogin) AddAdminLogin() error {
-	adminLogin := model.AdminLogin{
+	adminLogin := auth.AdminLogin{
 		AdminID:  al.AdminID,
 		Token:    al.Token,
 		Remember: al.Remember,
 		IP:       al.IP,
 	}
-	if err := model.AddAdminLogin(adminLogin); err != nil {
+	if err := auth.AddAdminLogin(adminLogin); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (al *AdminLogin) GetAdminLogin() (*model.AdminLogin, error) {
-	where := model.AdminLogin{
+func (al *AdminLogin) GetAdminLogin() (*auth.AdminLogin, error) {
+	where := auth.AdminLogin{
 		AdminID: al.AdminID,
 		Token:   al.Token,
 		IP:      al.IP,
 	}
-	adminLogin, err := model.GetAdminLogin(where)
+	adminLogin, err := auth.GetAdminLogin(where)
 	if err != nil {
 		return nil, err
 	}
 	return adminLogin, nil
 }
 
-// func (al *AddAdminLogin) Edit() (*model.AddAdminLogin) {
+// func (al *AddAdminLogin) Edit() (*auth.AddAdminLogin) {
 
 // }

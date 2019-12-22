@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"github.com/programzheng/base/pkg/model"
+	"github.com/programzheng/base/pkg/model/admin"
 )
 
 type Admin struct {
@@ -21,37 +21,37 @@ type AdminProfile struct {
 }
 
 func (a *Admin) Add() error {
-	admin := model.Admin{
+	model := admin.Admin{
 		Account:  a.Account,
 		Password: a.Password,
-		Profile: model.AdminProfile{
+		Profile: admin.AdminProfile{
 			Name: a.Profile.Name,
 		},
 	}
-	if err := model.AddAdmin(admin); err != nil {
+	if err := admin.AddAdmin(model); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *Admin) Get() (*model.Admin, error) {
-	where := model.Admin{
+func (a *Admin) Get() (*admin.Admin, error) {
+	where := admin.Admin{
 		Account:  a.Account,
 		Password: a.Password,
 	}
-	admin, err := model.GetAdmin(where)
+	model, err := admin.GetAdmin(where)
 	if err != nil {
 		return nil, err
 	}
-	return admin, nil
+	return model, nil
 }
 
-func (a *Admin) GetAdmins() ([]*model.Admin, error) {
-	admins, err := model.GetAdmins(a.PageNum, a.PageSize, a.getMaps())
+func (a *Admin) GetAdmins() ([]*admin.Admin, error) {
+	models, err := admin.GetAdmins(a.PageNum, a.PageSize, a.getMaps())
 	if err != nil {
 		return nil, err
 	}
-	return admins, nil
+	return models, nil
 }
 
 func (a *Admin) getMaps() map[string]interface{} {

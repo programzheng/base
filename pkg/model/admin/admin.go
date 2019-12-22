@@ -1,7 +1,8 @@
-package model
+package admin
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/programzheng/base/pkg/model"
 )
 
 type Admin struct {
@@ -19,8 +20,8 @@ type AdminProfile struct {
 }
 
 func AddAdmin(admin Admin) error {
-	Migrate(&admin, &admin.Profile)
-	if err := db.Save(&admin).Error; err != nil {
+	model.Migrate(&admin, &admin.Profile)
+	if err := model.DB.Save(&admin).Error; err != nil {
 		return err
 	}
 
@@ -28,7 +29,7 @@ func AddAdmin(admin Admin) error {
 }
 
 func GetAdmin(admin Admin) (*Admin, error) {
-	if err := db.Where(&admin).First(&admin).Error; err != nil {
+	if err := model.DB.Where(&admin).First(&admin).Error; err != nil {
 		return nil, err
 	}
 	return &admin, nil
@@ -36,7 +37,7 @@ func GetAdmin(admin Admin) (*Admin, error) {
 
 func GetAdmins(pageNum int, pageSize int, maps interface{}) ([]*Admin, error) {
 	var admins []*Admin
-	err := db.Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&admins).Error
+	err := model.DB.Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&admins).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

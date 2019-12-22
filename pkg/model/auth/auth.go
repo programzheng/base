@@ -1,6 +1,9 @@
-package model
+package auth
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"github.com/programzheng/base/pkg/model"
+)
 
 type AdminLogin struct {
 	gorm.Model
@@ -11,8 +14,8 @@ type AdminLogin struct {
 }
 
 func AddAdminLogin(adminLogin AdminLogin) error {
-	Migrate(&adminLogin)
-	if err := db.Create(&adminLogin).Error; err != nil {
+	model.Migrate(&adminLogin)
+	if err := model.DB.Create(&adminLogin).Error; err != nil {
 		return err
 	}
 
@@ -20,7 +23,7 @@ func AddAdminLogin(adminLogin AdminLogin) error {
 }
 
 func GetAdminLogin(adminLogin AdminLogin) (*AdminLogin, error) {
-	if err := db.Where(&adminLogin).First(&adminLogin).Error; err != nil {
+	if err := model.DB.Where(&adminLogin).First(&adminLogin).Error; err != nil {
 		return nil, err
 	}
 	return &adminLogin, nil
