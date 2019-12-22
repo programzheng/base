@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/controller/admin"
 	"github.com/programzheng/base/pkg/controller/auth"
+	"github.com/programzheng/base/pkg/controller/post"
 	"github.com/programzheng/base/pkg/controller/upload"
 )
 
@@ -30,23 +31,33 @@ func SetRouter() {
 	}
 	apiGroup.Use(middleware.ValidJSONWebToken())
 	{
-		administratorGroup := apiGroup.Group("/administrator")
+		adminsGroup := apiGroup.Group("/admins")
 		{
-			administratorGroup.GET("administrators", admin.GetAdmins)
+			adminsGroup.GET("", admin.Get)
 		}
 		uploadGroup := apiGroup.Group("/upload")
 		{
 			uploadGroup.POST("file", upload.File)
 		}
-		// postGroup := apiGroup.Group("/post")
+		postsGroup := apiGroup.Group("/posts")
+		{
+			postsGroup.POST("", post.Add)
+			// postsGroup.GET("/:id", post.GetForID)
+			postsGroup.GET("", post.Get)
+			// postsGroup.PATCH("/:id", post.SaveForID)
+			// postsGroup.PATCH("", post.Save)
+			// postsGroup.DELETE("/:id", post.DelForID)
+			// postsGroup.DELETE("", post.Del)
+		}
+		// postsGroup := apiGroup.Group("/post")
 		// {
-		// 	postGroup.POST("", post.Add)
-		// 	postGroup.GET("/:id", post.GetForID)
-		// 	postGroup.GET("", post.Get)
-		// 	postGroup.PATCH("/:id", post.SaveForID)
-		// 	postGroup.PATCH("", post.Save)
-		// 	postGroup.DELETE("/:id", post.DelForID)
-		// 	postGroup.DELETE("", post.Del)
+		// 	postsGroup.POST("", post.Add)
+		// 	postsGroup.GET("/:id", post.GetForID)
+		// 	postsGroup.GET("", post.Get)
+		// 	postsGroup.PATCH("/:id", post.SaveForID)
+		// 	postsGroup.PATCH("", post.Save)
+		// 	postsGroup.DELETE("/:id", post.DelForID)
+		// 	postsGroup.DELETE("", post.Del)
 		// }
 	}
 

@@ -19,7 +19,7 @@ type AdminProfile struct {
 	Name    string
 }
 
-func AddAdmin(admin Admin) error {
+func Add(admin Admin) error {
 	model.Migrate(&admin, &admin.Profile)
 	if err := model.DB.Save(&admin).Error; err != nil {
 		return err
@@ -28,19 +28,19 @@ func AddAdmin(admin Admin) error {
 	return nil
 }
 
-func GetAdmin(admin Admin) (*Admin, error) {
+func GetForLogin(admin Admin) (*Admin, error) {
 	if err := model.DB.Where(&admin).First(&admin).Error; err != nil {
 		return nil, err
 	}
 	return &admin, nil
 }
 
-func GetAdmins(pageNum int, pageSize int, maps interface{}) ([]*Admin, error) {
-	var admins []*Admin
-	err := model.DB.Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&admins).Error
+func Get(pageNum int, pageSize int, maps interface{}) ([]*Admin, error) {
+	var models []*Admin
+	err := model.DB.Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&models).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 
-	return admins, nil
+	return models, nil
 }

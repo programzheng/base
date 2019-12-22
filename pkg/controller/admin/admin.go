@@ -35,7 +35,7 @@ func Login(ctx *gin.Context) {
 	}
 	admin, err := (&admin.Admin{
 		Account: login.Account,
-	}).Get()
+	}).GetForLogin()
 	if err != nil {
 		function.Fail(ctx, errors.New("帳號錯誤"))
 		return
@@ -60,13 +60,13 @@ func Login(ctx *gin.Context) {
 	return
 }
 
-func GetAdmins(ctx *gin.Context) {
+func Get(ctx *gin.Context) {
 	adminService := admin.Admin{}
 	if err := ctx.Bind(&adminService); err != nil {
 		function.BadRequest(ctx, err)
 		return
 	}
-	admins, err := adminService.GetAdmins()
+	admins, err := adminService.Get()
 	if err != nil {
 		function.Fail(ctx, err)
 		return

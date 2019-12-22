@@ -28,26 +28,26 @@ func (a *Admin) Add() error {
 			Name: a.Profile.Name,
 		},
 	}
-	if err := admin.AddAdmin(model); err != nil {
+	if err := admin.Add(model); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *Admin) Get() (*admin.Admin, error) {
+func (a *Admin) GetForLogin() (*admin.Admin, error) {
 	where := admin.Admin{
 		Account:  a.Account,
 		Password: a.Password,
 	}
-	model, err := admin.GetAdmin(where)
+	model, err := admin.GetForLogin(where)
 	if err != nil {
 		return nil, err
 	}
 	return model, nil
 }
 
-func (a *Admin) GetAdmins() ([]*admin.Admin, error) {
-	models, err := admin.GetAdmins(a.PageNum, a.PageSize, a.getMaps())
+func (a *Admin) Get() ([]*admin.Admin, error) {
+	models, err := admin.Get(a.PageNum, a.PageSize, a.getMaps())
 	if err != nil {
 		return nil, err
 	}
