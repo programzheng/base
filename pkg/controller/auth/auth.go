@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/programzheng/base/pkg/function"
-	"github.com/programzheng/base/pkg/service/auth_service"
+	"github.com/programzheng/base/pkg/service/auth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +21,7 @@ func VaildAdmin(ctx *gin.Context) {
 	token := strings.TrimSpace(splitToken[1])
 
 	//曾經有登入記錄
-	adminLogin, err := (&auth_service.AdminLogin{
+	adminLogin, err := (&auth.AdminLogin{
 		Token: token,
 	}).GetAdminLogin()
 

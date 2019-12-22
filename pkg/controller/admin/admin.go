@@ -3,14 +3,14 @@ package admin
 import (
 	"errors"
 
-	"github.com/programzheng/base/pkg/function"
-	"github.com/programzheng/base/pkg/service/admin_service"
-	"github.com/programzheng/base/pkg/service/auth_service"
 	"github.com/gin-gonic/gin"
+	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/service/admin"
+	"github.com/programzheng/base/pkg/service/auth"
 )
 
 func Register(ctx *gin.Context) {
-	adminService := admin_service.Admin{}
+	adminService := admin.Admin{}
 	if err := ctx.Bind(&adminService); err != nil {
 		function.BadRequest(ctx, err)
 		return
@@ -28,12 +28,12 @@ func Register(ctx *gin.Context) {
 }
 
 func Login(ctx *gin.Context) {
-	login := auth_service.Login{}
+	login := auth.Login{}
 	if err := ctx.Bind(&login); err != nil {
 		function.BadRequest(ctx, err)
 		return
 	}
-	admin, err := (&admin_service.Admin{
+	admin, err := (&admin.Admin{
 		Account: login.Account,
 	}).Get()
 	if err != nil {
@@ -46,7 +46,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 	token := function.CreateJWT()
-	adminLogin := auth_service.AdminLogin{
+	adminLogin := auth.AdminLogin{
 		AdminID: admin.ID,
 		Token:   token.Token,
 		IP:      ctx.ClientIP(),
@@ -61,7 +61,7 @@ func Login(ctx *gin.Context) {
 }
 
 func GetAdmins(ctx *gin.Context) {
-	adminService := admin_service.Admin{}
+	adminService := admin.Admin{}
 	if err := ctx.Bind(&adminService); err != nil {
 		function.BadRequest(ctx, err)
 		return

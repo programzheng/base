@@ -1,4 +1,4 @@
-package admin_service
+package admin
 
 import (
 	"github.com/programzheng/base/pkg/model"
