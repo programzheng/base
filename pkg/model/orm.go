@@ -17,12 +17,12 @@ func init() {
 	var err error
 	//?parseTime=true for the database table column type is TIMESTAMP
 	setting := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?loc=Local&parseTime=true",
-		viper.GetString("DB_USERNAME"),
-		viper.GetString("DB_PASSWORD"),
-		viper.GetString("DB_HOST"),
-		viper.GetString("DB_PORT"),
-		viper.GetString("DB_DATABASE"))
-	db, err = gorm.Open(viper.GetString("DB_CONNECTION"), setting)
+		viper.Get("DB_USERNAME").(string),
+		viper.Get("DB_PASSWORD").(string),
+		viper.Get("DB_HOST").(string),
+		viper.Get("DB_PORT").(string),
+		viper.Get("DB_DATABASE"))
+	db, err = gorm.Open(viper.Get("DB_CONNECTION").(string), setting)
 
 	if err != nil {
 		log.Println("DataBase error:", err)

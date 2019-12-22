@@ -14,4 +14,9 @@ func init() {
 	if err := viper.ReadInConfig(); err != nil {
 		log.Println("Using config file:", err)
 	}
+	setDefault()
+}
+
+func setDefault() {
+	viper.SetDefault("FILESYSTEM_DRIVER", "local")
 }

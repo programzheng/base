@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	_ "github.com/programzheng/base/config"
+	_ "github.com/programzheng/base/config/filesystem"
 	"github.com/programzheng/base/pkg/router"
 	"github.com/spf13/viper"
 )
@@ -26,6 +27,6 @@ import (
 func main() {
 	r := router.Router
 	router.SetRouter()
-	port := fmt.Sprintf(":%v", viper.GetString("APP_PORT"))
+	port := fmt.Sprintf(":%v", viper.Get("APP_PORT").(string))
 	r.Run(port)
 }
