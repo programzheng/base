@@ -3,9 +3,10 @@ package router
 import (
 	"github.com/programzheng/base/pkg/middleware"
 
+	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/controller/admin"
 	"github.com/programzheng/base/pkg/controller/auth"
-	"github.com/gin-gonic/gin"
+	"github.com/programzheng/base/pkg/controller/upload"
 )
 
 var Router *gin.Engine
@@ -32,6 +33,10 @@ func SetRouter() {
 		administratorGroup := apiGroup.Group("/administrator")
 		{
 			administratorGroup.GET("administrators", admin.GetAdmins)
+		}
+		uploadGroup := apiGroup.Group("/upload")
+		{
+			uploadGroup.POST("file", upload.File)
 		}
 		// postGroup := apiGroup.Group("/post")
 		// {
