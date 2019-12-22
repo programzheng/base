@@ -20,7 +20,7 @@ func setMiddleware() {
 }
 
 func SetRouter() {
-	apiGroup := Router.Group("/api")
+	apiGroup := Router.Group("/API")
 	adminGroup := apiGroup.Group("/admin")
 	{
 		adminGroup.POST("register", admin.Register)
