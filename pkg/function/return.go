@@ -84,3 +84,20 @@ func Success(ctx *gin.Context, value interface{}, message interface{}) {
 	ctx.AbortWithStatus(http.StatusOK)
 
 }
+
+func UploadSuccess(ctx *gin.Context, value interface{}, message interface{}) {
+	if message != nil {
+		ctx.JSON(http.StatusCreated, gin.H{
+			"Code":    http.StatusCreated,
+			"Value":   value,
+			"Message": message,
+		})
+	} else {
+		ctx.JSON(http.StatusCreated, gin.H{
+			"Code":  http.StatusCreated,
+			"Value": value,
+		})
+	}
+	ctx.AbortWithStatus(http.StatusCreated)
+
+}

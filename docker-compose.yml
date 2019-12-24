@@ -1,11 +1,13 @@
 version: '3'
 services: 
-    #app
+    #web
     web:
         container_name: web
         build: .
         ports:
             - ${APP_PORT}:${APP_PORT}
+        volumes: 
+            - ${DATA_PATH_HOST}/web/${APP_NAME}/${FILESYSTEM_LOCAL_PATH}:/web/${FILESYSTEM_LOCAL_PATH}
         environment: 
             - APP_NAME=${APP_NAME}
             - APP_ENV=${APP_ENV}

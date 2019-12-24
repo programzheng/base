@@ -1,16 +1,19 @@
-IMAGE=base
+COMPOSE=docker-compose
+BASH?=bash
 
 .PHONY: dev, up, init, down
 dev:
-	docker-compose build web
-	docker-compose up web
+	$(COMPOSE) build web
+	$(COMPOSE) up web
 up:
-	docker-compose up -d mysql adminer minio
+	$(COMPOSE) up -d mysql adminer minio
 	$(MAKE) dev
+bash:
+	$(COMPOSE) exec web $(BASH)
 init:
-	docker-compose build --force-rm --no-cache
+	$(COMPOSE) build --force-rm --no-cache
 	$(MAKE) up
 ps:
-	docker-compose ps
+	$(COMPOSE) ps
 down:
-	docker-compose down
+	$(COMPOSE) down

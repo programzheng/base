@@ -3,14 +3,15 @@ package filesystem
 import (
 	"log"
 
-	"github.com/programzheng/base/pkg/function"
 	"github.com/spf13/viper"
 )
 
-var driver struct {
+type FileSystem struct {
 	Name string
 	Path string
 }
+
+var Driver FileSystem
 
 func init() {
 	//get file system config
@@ -22,8 +23,12 @@ func init() {
 	if err != nil {
 		log.Println("file system config error:", err)
 	}
-	//driver value
-	driver.Name = viper.Get("FILESYSTEM_DRIVER").(string)
-	driver.Path = fileSystemViper.Get(driver.Name + ".path").(string)
-	function.GetStruct(driver)
+	switch Driver.Name {
+	case "local":
+		Driver.Path = viper.Get("FILESYSTEM_LOCAL_PATH").(string)
+	}
 }
+
+// func driverSetValue() (Driver FileSystem) {
+
+// }

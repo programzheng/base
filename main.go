@@ -19,7 +19,6 @@ import (
 	"fmt"
 
 	_ "github.com/programzheng/base/config"
-	_ "github.com/programzheng/base/config/filesystem"
 	"github.com/programzheng/base/pkg/router"
 	"github.com/spf13/viper"
 )
