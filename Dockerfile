@@ -1,6 +1,9 @@
 FROM golang:1.12-alpine as build_base
 RUN apk add bash ca-certificates git gcc g++ libc-dev
-WORKDIR /web
+
+ARG WORKDIR
+WORKDIR /${WORKDIR}
+
 # Force the go compiler to use modules
 ENV GO111MODULE=on
 # Copy go mod and sum files

@@ -3,13 +3,13 @@ BASH?=bash
 
 .PHONY: dev, up, init, down
 dev:
-	$(COMPOSE) build web
-	$(COMPOSE) up web
+	$(COMPOSE) build api
+	$(COMPOSE) up api
 up:
 	$(COMPOSE) up -d mysql adminer minio
 	$(MAKE) dev
 bash:
-	$(COMPOSE) exec web $(BASH)
+	$(COMPOSE) exec api $(BASH)
 init:
 	$(COMPOSE) build --force-rm --no-cache
 	$(MAKE) up

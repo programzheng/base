@@ -1,13 +1,16 @@
 version: '3'
 services: 
     #web
-    web:
-        container_name: web
-        build: .
+    api:
+        container_name: api
+        build:
+            context: .
+            args: 
+                - WORKDIR=api
         ports:
             - ${APP_PORT}:${APP_PORT}
         volumes: 
-            - ${DATA_PATH_HOST}/web/${APP_NAME}/${FILESYSTEM_LOCAL_PATH}:/web/${FILESYSTEM_LOCAL_PATH}
+            - ${DATA_PATH_HOST}/api/${APP_NAME}/upload:/api/upload
         environment: 
             - APP_NAME=${APP_NAME}
             - APP_ENV=${APP_ENV}
@@ -31,6 +34,7 @@ services:
             - MYSQL_PORT=${MYSQL_PORT}
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
             - MYSQL_ENTRYPOINT_INITDB=${MYSQL_ENTRYPOINT_INITDB}
+            - TZ=${TZ}
     #adminer
     adminer:
         container_name: adminer
