@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/controller/admin"
 	"github.com/programzheng/base/pkg/controller/auth"
+	"github.com/programzheng/base/pkg/controller/file"
 	"github.com/programzheng/base/pkg/controller/post"
-	"github.com/programzheng/base/pkg/controller/upload"
 )
 
 var Router *gin.Engine
@@ -35,9 +35,9 @@ func SetRouter() {
 		{
 			adminsGroup.GET("", admin.Get)
 		}
-		uploadGroup := apiGroup.Group("/upload")
+		uploadGroup := apiGroup.Group("/file")
 		{
-			uploadGroup.POST("file", upload.File)
+			uploadGroup.POST("upload", file.Upload)
 		}
 		postsGroup := apiGroup.Group("/posts")
 		{
