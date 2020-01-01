@@ -7,10 +7,10 @@ import (
 
 type Post struct {
 	gorm.Model
+	Image   string `sql:"type:json`
 	Title   string
 	Summary string
 	Detail  string `sql:"type:text"`
-	Images  string `sql:"type:json`
 }
 
 func Add(post Post) error {

@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -39,10 +40,16 @@ func Upload(ctx *gin.Context) {
 	fileName := header.Filename
 	//檔案副檔名
 	fileExtension := filepath.Ext(fileName)
+	//檔案mimeType
+	fileType := function.GetFileContentType(fileExtension)
+	if fileType == "" {
+		function.Fail(ctx, errors.New("file upload mime type not found"))
+		return
+	}
 	//建立空檔案
 	out, err := os.Create(filePath + "/" + fileName)
 	if err != nil {
-		function.Fail(ctx, err)
+		function.BadRequest(ctx, err)
 		return
 	}
 	defer out.Close()
@@ -50,7 +57,7 @@ func Upload(ctx *gin.Context) {
 	//複製檔案內容
 	_, err = io.Copy(out, uploadFile)
 	if err != nil {
-		function.Fail(ctx, err)
+		function.BadRequest(ctx, err)
 		return
 	}
 
@@ -62,7 +69,7 @@ func Upload(ctx *gin.Context) {
 	}
 
 	if err := fileService.Add(); err != nil {
-		function.Fail(ctx, err)
+		function.BadRequest(ctx, err)
 		return
 	}
 

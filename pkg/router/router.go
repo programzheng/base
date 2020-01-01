@@ -35,9 +35,9 @@ func SetRouter() {
 		{
 			adminsGroup.GET("", admin.Get)
 		}
-		fileGroup := apiGroup.Group("/file")
+		fileGroup := apiGroup.Group("/files")
 		{
-			fileGroup.POST("upload", file.Upload)
+			fileGroup.POST("", file.Upload)
 		}
 		postsGroup := apiGroup.Group("/posts")
 		{
