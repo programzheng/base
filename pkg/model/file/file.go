@@ -13,11 +13,10 @@ type File struct {
 	Name   string
 }
 
-func Add(file File) error {
+func Add(file File) (uint, error) {
 	model.Migrate(&file)
 	if err := model.DB.Save(&file).Error; err != nil {
-		return err
+		return 0, err
 	}
-
-	return nil
+	return file.ID, nil
 }

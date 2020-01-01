@@ -2,10 +2,13 @@ package file
 
 import (
 	"errors"
-	"io"
+	// "io"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+
+	// "encoding/binary"
 
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/filesystem"
@@ -29,49 +32,46 @@ func init() {
 }
 
 func Upload(ctx *gin.Context) {
-	uploadFile, header, err := ctx.Request.FormFile("upload")
+	//取得所有Mulitpart Form
+	form, err := ctx.MultipartForm()
 	if err != nil {
-		function.Fail(ctx, err)
+		function.BadRequest(ctx, errors.New(fmt.Sprintf("get form error: %s", err.Error())))
 		return
 	}
-	//檔案位置
-	filePath := filesystem.Driver.Path
-	//檔案名稱
-	fileName := header.Filename
-	//檔案副檔名
-	fileExtension := filepath.Ext(fileName)
-	//檔案mimeType
-	fileType := function.GetFileContentType(fileExtension)
-	if fileType == "" {
-		function.Fail(ctx, errors.New("file upload mime type not found"))
-		return
-	}
-	//建立空檔案
-	out, err := os.Create(filePath + "/" + fileName)
-	if err != nil {
-		function.BadRequest(ctx, err)
-		return
-	}
-	defer out.Close()
+	//取得所有File map[]
+	uploadFileList := form.File
+	//因為這樣取出來還會有一層map[]所以只能跑兩次
+	IDList := []uint{}
+	//TODO: 調整迴圈
+	for _, uploadFiles := range uploadFileList {
+		for _, uploadFile := range uploadFiles {
+			//檔案位置
+			filePath := filesystem.Driver.Path
+			//檔案名稱
+			fileName := filepath.Base(uploadFile.Filename)
+			//檔案副檔名
+			fileExtension := filepath.Ext(fileName)
+			//檔案mimeType
+			fileType := function.GetFileContentType(fileExtension)
+			//利用gin的上傳檔案function
+			if err := ctx.SaveUploadedFile(uploadFile, filePath+"/"+fileName); err != nil {
+				function.BadRequest(ctx, errors.New(fmt.Sprintf("upload file err: %s", err.Error())))
+				return
+			}
 
-	//複製檔案內容
-	_, err = io.Copy(out, uploadFile)
-	if err != nil {
-		function.BadRequest(ctx, err)
-		return
+			fileService := file.File{
+				System: filesystem.Driver.System,
+				Type:   fileType,
+				Path:   filePath,
+				Name:   fileName,
+			}
+			ID, err := fileService.Add()
+			if err != nil {
+				function.BadRequest(ctx, errors.New(fmt.Sprintf("add file row error: %s", err.Error())))
+				return
+			}
+			IDList = append(IDList, ID)
+		}
 	}
-
-	fileService := file.File{
-		System: filesystem.Driver.System,
-		Type:   function.GetFileContentType(fileExtension),
-		Path:   filePath,
-		Name:   fileName,
-	}
-
-	if err := fileService.Add(); err != nil {
-		function.BadRequest(ctx, err)
-		return
-	}
-
-	function.UploadSuccess(ctx, nil, "上傳成功")
+	function.UploadSuccess(ctx, IDList, "上傳成功")
 }

@@ -11,15 +11,16 @@ type File struct {
 	Name   string
 }
 
-func (f *File) Add() error {
+func (f *File) Add() (uint, error) {
 	model := file.File{
 		System: f.System,
 		Type:   f.Type,
 		Path:   f.Path,
 		Name:   f.Name,
 	}
-	if err := file.Add(model); err != nil {
-		return err
+	ID, err := file.Add(model)
+	if err != nil {
+		return 0, err
 	}
-	return nil
+	return ID, nil
 }
