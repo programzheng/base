@@ -6,7 +6,7 @@ services:
         build:
             context: .
             args: 
-                - WORKDIR=api
+                - WORKDIR=${WORKDIR}
         ports:
             - ${APP_PORT}:${APP_PORT}
         volumes: 
