@@ -42,6 +42,10 @@ logs-%:
 down:
 	$(COMPOSE) down
 
+#移除多餘的image
+prune:
+	docker system prune
+
 #備份mysql all database
 mysql-backup:
 	$(COMPOSE) up -d mysql
