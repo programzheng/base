@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/controller/admin"
 	"github.com/programzheng/base/pkg/controller/auth"
+	"github.com/programzheng/base/pkg/controller/bot"
 	"github.com/programzheng/base/pkg/controller/file"
 	"github.com/programzheng/base/pkg/controller/post"
 )
@@ -15,14 +16,17 @@ var Router *gin.Engine
 func init() {
 	Router = gin.Default()
 	setMiddleware()
-	setRouter()
+	//設置API Router
+	setAPIRouter()
+	//設置Bot Router
+	setBotRouter()
 }
 
 func setMiddleware() {
 	Router.Use(middleware.CORSMiddleware())
 }
 
-func setRouter() {
+func setAPIRouter() {
 	apiGroup := Router.Group("/API")
 	adminGroup := apiGroup.Group("/admin")
 	{
@@ -62,4 +66,12 @@ func setRouter() {
 		// }
 	}
 
+}
+
+func setBotRouter() {
+	botGroup := Router.Group("/bot")
+	lineGroup := botGroup.Group("/line")
+	{
+		lineGroup.POST("", bot.LineWebHook)
+	}
 }
