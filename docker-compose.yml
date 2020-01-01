@@ -10,7 +10,7 @@ services:
         ports:
             - ${APP_PORT}:${APP_PORT}
         volumes: 
-            - ${DATA_PATH_HOST}/api/${APP_NAME}/upload:/api/${APP_NAME}/upload
+            - ${DATA_PATH_HOST}/api/${APP_NAME}/upload:/api/upload
         environment: 
             - APP_NAME=${APP_NAME}
             - APP_ENV=${APP_ENV}
