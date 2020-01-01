@@ -15,13 +15,14 @@ var Router *gin.Engine
 func init() {
 	Router = gin.Default()
 	setMiddleware()
+	setRouter()
 }
 
 func setMiddleware() {
 	Router.Use(middleware.CORSMiddleware())
 }
 
-func SetRouter() {
+func setRouter() {
 	apiGroup := Router.Group("/API")
 	adminGroup := apiGroup.Group("/admin")
 	{
