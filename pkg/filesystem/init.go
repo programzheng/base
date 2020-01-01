@@ -1,7 +1,6 @@
 package filesystem
 
 import (
-	"github.com/programzheng/base/pkg/function"
 	"github.com/spf13/viper"
 )
 
@@ -19,5 +18,4 @@ func init() {
 	case "local":
 		Driver.Path = viper.Get("FILESYSTEM_LOCAL_PATH").(string)
 	}
-	function.GetStruct(Driver)
 }

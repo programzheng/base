@@ -13,7 +13,7 @@ func GetPostJSON(ctx *gin.Context) {
 	fmt.Printf("ctx.Request.body: %v", string(data))
 }
 
-func GetStruct(value interface{}) {
+func GetJSON(value interface{}) {
 	result, _ := json.Marshal(value)
 	fmt.Println(string(result))
 }
