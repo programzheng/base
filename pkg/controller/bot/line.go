@@ -48,14 +48,15 @@ func LineWebHook(ctx *gin.Context) {
 			function.Fail(ctx, err)
 			return
 		}
-		// function.GetType(event.Message)
-		// switch t := event.Message.(type) {
-		// case *linebot.TextMessage:
-		// 	fmt.Println(event.Message)
-		// }
-		// message := defaultMessage(event.Message())
-		message := defaultTemplateMessage()
-		lineReplyMessage(botClient, event.ReplyToken, message)
+		if event.Type == linebot.EventTypeMessage {
+			switch t := event.Message.(type) {
+			case *linebot.TextMessage:
+				fmt.Println(t)
+				message := defaultTemplateMessage()
+				lineReplyMessage(botClient, event.ReplyToken, message)
+			}
+		}
+
 	}
 }
 
