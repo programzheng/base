@@ -1,21 +1,30 @@
 package filesystem
 
 import (
+	"mime/multipart"
+
+	"github.com/gin-gonic/gin"
+	"github.com/programzheng/base/pkg/function"
 	"github.com/spf13/viper"
 )
 
-type FileSystem struct {
-	System string
-	Path   string
+type FileSystem interface {
+	Check()
+	GetSystem() string
+	GetPath() string
+	Upload(*gin.Context, *multipart.FileHeader) error
 }
 
 var Driver FileSystem
 
 func init() {
-	//driver value
-	Driver.System = viper.Get("FILESYSTEM_DRIVER").(string)
-	switch Driver.System {
+	system := viper.Get("FILESYSTEM_DRIVER").(string)
+	switch system {
 	case "local":
-		Driver.Path = viper.Get("FILESYSTEM_LOCAL_PATH").(string)
+		Driver = Local{
+			System: viper.Get("FILESYSTEM_DRIVER").(string),
+			Path:   viper.Get("FILESYSTEM_LOCAL_PATH").(string),
+		}
 	}
+	function.GetJSON(Driver)
 }

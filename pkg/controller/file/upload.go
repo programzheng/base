@@ -2,13 +2,8 @@ package file
 
 import (
 	"errors"
-	// "io"
 	"fmt"
-	"log"
-	"os"
 	"path/filepath"
-
-	// "encoding/binary"
 
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/filesystem"
@@ -17,18 +12,7 @@ import (
 )
 
 func init() {
-	switch filesystem.Driver.System {
-	case "local":
-		//檢查local路徑的資料夾有沒有存在
-		if _, err := os.Stat(filesystem.Driver.Path); os.IsNotExist(err) {
-			//建立資料夾,權限設為0777(-rwxrwxrwx)
-			os.MkdirAll(filesystem.Driver.Path, os.ModePerm)
-			if err != nil {
-				log.Println("File system create directory error:", err)
-				return
-			}
-		}
-	}
+	filesystem.Driver.Check()
 }
 
 func Upload(ctx *gin.Context) {
@@ -46,21 +30,21 @@ func Upload(ctx *gin.Context) {
 	for _, uploadFiles := range uploadFileList {
 		for _, uploadFile := range uploadFiles {
 			//檔案位置
-			filePath := filesystem.Driver.Path
+			filePath := filesystem.Driver.GetPath()
 			//檔案名稱
 			fileName := filepath.Base(uploadFile.Filename)
 			//檔案副檔名
 			fileExtension := filepath.Ext(fileName)
 			//檔案mimeType
 			fileType := function.GetFileContentType(fileExtension)
-			//利用gin的上傳檔案function
-			if err := ctx.SaveUploadedFile(uploadFile, filePath+"/"+fileName); err != nil {
+			//上傳檔案
+			if err := filesystem.Driver.Upload(ctx, uploadFile); err != nil {
 				function.BadRequest(ctx, errors.New(fmt.Sprintf("upload file err: %s", err.Error())))
 				return
 			}
 
 			fileService := file.File{
-				System: filesystem.Driver.System,
+				System: filesystem.Driver.GetSystem(),
 				Type:   fileType,
 				Path:   filePath,
 				Name:   fileName,
