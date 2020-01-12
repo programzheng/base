@@ -40,9 +40,9 @@ func setAPIRouter() {
 		{
 			adminsGroup.GET("", admin.Get)
 		}
-		fileGroup := apiGroup.Group("/files")
+		filesGroup := apiGroup.Group("/files")
 		{
-			fileGroup.POST("", file.Upload)
+			filesGroup.POST("", file.Upload)
 		}
 		postsGroup := apiGroup.Group("/posts")
 		{
@@ -54,16 +54,6 @@ func setAPIRouter() {
 			// postsGroup.DELETE("/:id", post.DelForID)
 			// postsGroup.DELETE("", post.Del)
 		}
-		// postsGroup := apiGroup.Group("/post")
-		// {
-		// 	postsGroup.POST("", post.Add)
-		// 	postsGroup.GET("/:id", post.GetForID)
-		// 	postsGroup.GET("", post.Get)
-		// 	postsGroup.PATCH("/:id", post.SaveForID)
-		// 	postsGroup.PATCH("", post.Save)
-		// 	postsGroup.DELETE("/:id", post.DelForID)
-		// 	postsGroup.DELETE("", post.Del)
-		// }
 	}
 
 }
