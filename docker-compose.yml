@@ -2,11 +2,11 @@ version: '3'
 services: 
     #web
     api:
-        container_name: api
+        container_name: ${WORKSPACE}
         build:
             context: .
             args: 
-                - WORKDIR=${WORKDIR}
+                - WORKSPACE=${WORKSPACE}
         ports:
             - ${APP_PORT}:${APP_PORT}
         volumes: 
@@ -61,15 +61,20 @@ services:
           interval: 30s
           timeout: 20s
           retries: 3
-    #phpmyadmin
-    # phpmyadmin:
-    #     build: ./docker/phpmyadmin
-    #     ports: 
-    #         - ${PMA_PORT}:80
-    #     env_file:
-    #         ./docker/phpmyadmin/.env
-    #     depends_on: 
-    #         - mysql
+    #ngrok
+    ngrok:
+        container_name: ngrok
+        build:
+          context: ./docker/ngrok
+        ports:
+          - "${NGROK_PORT}:4040"
+        environment:
+          - NGROK_AUTH=${NGROK_AUTHTOKEN}
+          - NGROK_PROTOCOL=http
+          - NGROK_REGION=ap
+          - NGROK_PORT=${WORKSPACE}:80
+        depends_on:
+          - ${WORKSPACE}
             
 
         

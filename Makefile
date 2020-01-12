@@ -6,15 +6,16 @@ export $(shell sed 's/=.*//' ./.env)
 DATE=$(shell date +"%F")
 COMPOSE=docker-compose
 BASH?=bash
+WEB=api
 
 .PHONY: dev, up, init, down
 bash:
-	$(COMPOSE) exec api $(BASH)
+	$(COMPOSE) exec $(WEB) $(BASH)
 
 #重新編譯
 dev:
-	$(COMPOSE) build api
-	$(COMPOSE) up api
+	$(COMPOSE) build $(WEB)
+	$(COMPOSE) up $(WEB)
 
 #啟動服務
 up:
@@ -33,6 +34,8 @@ init:
 ps:
 	$(COMPOSE) ps
 
+ngrok:
+	$(COMPOSE) up ngrok
 #服務log
 #%=service name
 logs-%:

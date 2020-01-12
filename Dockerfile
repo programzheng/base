@@ -1,8 +1,8 @@
 FROM golang:1.13-alpine as build_base
 RUN apk add bash ca-certificates git gcc g++ libc-dev
 
-ARG WORKDIR
-WORKDIR /${WORKDIR}
+ARG WORKSPACE
+WORKDIR /${WORKSPACE}
 
 # Force the go compiler to use modules
 ENV GO111MODULE=on
