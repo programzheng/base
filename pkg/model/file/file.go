@@ -7,16 +7,27 @@ import (
 
 type File struct {
 	gorm.Model
-	System string
-	Type   string
-	Path   string
-	Name   string
+	Reference string
+	System    string
+	Type      string
+	Path      string
+	Name      string
 }
 
-func Add(file File) (uint, error) {
-	model.Migrate(&file)
-	if err := model.DB.Save(&file).Error; err != nil {
-		return 0, err
+func (f File) Add() (File, error) {
+	model.Migrate(&f)
+	if err := model.DB.Save(&f).Error; err != nil {
+		return File{}, err
 	}
-	return file.ID, nil
+	return f, nil
+}
+
+func Get(maps interface{}) ([]*File, error) {
+	var files []*File
+	err := model.DB.Where(maps).Find(&files).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return files, nil
 }

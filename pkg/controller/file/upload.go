@@ -25,7 +25,7 @@ func Upload(ctx *gin.Context) {
 	//取得所有File map[]
 	uploadFileList := form.File
 	//因為這樣取出來還會有一層map[]所以只能跑兩次
-	IDList := []uint{}
+	fileList := []file.ResponseFile{}
 	//TODO: 調整迴圈
 	for _, uploadFiles := range uploadFileList {
 		for _, uploadFile := range uploadFiles {
@@ -49,13 +49,13 @@ func Upload(ctx *gin.Context) {
 				Path:   filePath,
 				Name:   fileName,
 			}
-			ID, err := fileService.Add()
+			file, err := fileService.Add()
 			if err != nil {
 				function.BadRequest(ctx, errors.New(fmt.Sprintf("add file row error: %s", err.Error())))
 				return
 			}
-			IDList = append(IDList, ID)
+			fileList = append(fileList, file)
 		}
 	}
-	function.UploadSuccess(ctx, IDList, "上傳成功")
+	function.UploadSuccess(ctx, fileList, "上傳成功")
 }

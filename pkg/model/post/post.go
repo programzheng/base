@@ -3,23 +3,31 @@ package post
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/programzheng/base/pkg/model"
+	"github.com/programzheng/base/pkg/model/file"
 )
 
 type Post struct {
 	gorm.Model
-	Image   string `sql:"type:json`
-	Title   string
-	Summary string
-	Detail  string `sql:"type:text"`
+	Title         string
+	Summary       string
+	Detail        string `sql:"type:text"`
+	FileReference string
+	Files         []file.File `gorm:"unique;foreignkey:Reference;association_foreignkey:FileReference"`
 }
 
-func Add(post Post) error {
-	model.Migrate(&post)
-	if err := model.DB.Save(&post).Error; err != nil {
-		return err
+func (p *Post) AfterCreate(tx *gorm.DB) (err error) {
+	// 利用建立後的id建立reference
+	tx.Model(p).Update("file_reference", p.ID)
+	return
+}
+
+func (p Post) Add() (Post, error) {
+	model.Migrate(&p)
+	if err := model.DB.Create(&p).Error; err != nil {
+		return Post{}, err
 	}
 
-	return nil
+	return p, nil
 }
 
 func Get(pageNum int, pageSize int, maps interface{}) ([]*Post, error) {

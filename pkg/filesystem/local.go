@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 type Local struct {
@@ -42,4 +43,8 @@ func (l Local) Upload(ctx *gin.Context, uploadFile *multipart.FileHeader) error 
 	//利用gin的上傳檔案function
 	err := ctx.SaveUploadedFile(uploadFile, filePath+"/"+fileName)
 	return err
+}
+
+func (l Local) GetHostURL() string {
+	return viper.Get("APP_URL").(string) + "/"
 }

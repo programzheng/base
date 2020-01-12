@@ -13,6 +13,7 @@ type FileSystem interface {
 	GetSystem() string
 	GetPath() string
 	Upload(*gin.Context, *multipart.FileHeader) error
+	GetHostURL() string
 }
 
 var Driver FileSystem
