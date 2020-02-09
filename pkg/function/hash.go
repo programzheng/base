@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha1"
 	"encoding/gob"
+	"fmt"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
@@ -27,9 +28,9 @@ func CreateSHA1(secret interface{}) string {
 	hash.Write([]byte(secret.(string)))
 
 	// 最終hash結果
-	result := hash.Sum(nil)
+	bs := hash.Sum(nil)
 
-	return string(result)
+	return fmt.Sprintf("%x", bs)
 }
 
 func CreateHash(secret string) string {
