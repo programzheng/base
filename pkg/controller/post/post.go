@@ -13,13 +13,13 @@ func Add(ctx *gin.Context) {
 		function.BadRequest(ctx, err)
 		return
 	}
-
-	if err := postService.Add(); err != nil {
+	result, err := postService.Add()
+	if err != nil {
 		function.Fail(ctx, err)
 		return
 	}
 
-	function.Success(ctx, nil, nil)
+	function.Success(ctx, result, nil)
 	return
 }
 

@@ -46,5 +46,5 @@ func (l Local) Upload(ctx *gin.Context, uploadFile *multipart.FileHeader) error 
 }
 
 func (l Local) GetHostURL() string {
-	return viper.Get("APP_URL").(string) + "/"
+	return viper.Get("APP_URL").(string)
 }

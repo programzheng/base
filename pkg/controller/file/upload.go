@@ -25,7 +25,7 @@ func Upload(ctx *gin.Context) {
 	//取得所有File map[]
 	uploadFileList := form.File
 	//因為這樣取出來還會有一層map[]所以只能跑兩次
-	fileList := []file.ResponseFile{}
+	fileList := file.Files{}
 	//TODO: 調整迴圈
 	for _, uploadFiles := range uploadFileList {
 		for _, uploadFile := range uploadFiles {

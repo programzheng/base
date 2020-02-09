@@ -1,47 +1,63 @@
 package post
 
 import (
+	"encoding/json"
 	"log"
 
+	"github.com/jinzhu/copier"
 	"github.com/programzheng/base/pkg/function"
 	"github.com/programzheng/base/pkg/model/post"
 	"github.com/programzheng/base/pkg/service/file"
 )
 
 type Post struct {
-	ID      uint          `json:"id"`
-	Title   string        `json:"title"`
-	Summary string        `json:"summary"`
-	Detail  string        `json:"detail"`
-	Files   []interface{} `json:"files"`
+	ID      uint        `json:"id"`
+	Title   string      `json:"title"`
+	Summary string      `json:"summary"`
+	Detail  string      `json:"detail"`
+	Files   interface{} `json:"files"`
 
-	PageNum  int `form:"page_num"`  //頁數*筆數,從0(代表第一頁)開始
-	PageSize int `form:"page_size"` //從PageNum之後取出的筆數
+	PageNum  int `form:"page_num" json:"page_num"`   //頁數*筆數,從0(代表第一頁)開始
+	PageSize int `form:"page_size" json:"page_size"` //從PageNum之後取出的筆數
 }
+
+type Posts []Post
 
 var (
 	module string = "posts"
 )
 
-func (p *Post) Add() error {
-	files := function.ConvertInterfaceToIntMap(p.Files)
-	fileReferenceByte, err := function.GetBytes(files)
+func (p *Post) Add() (Post, error) {
+	fileReferenceJSON, err := json.Marshal(p.Files)
 	if err != nil {
 		log.Fatal("add "+module+" error", err)
 	}
-	fileReference := function.CreateSHA1(fileReferenceByte)
-	model := post.Post{
+	fileReferenceJSONString := string(fileReferenceJSON)
+	fileReference := function.CreateSHA1(fileReferenceJSONString)
+	modelPost := post.Post{
 		Title:         p.Title,
 		Summary:       p.Summary,
 		Detail:        p.Detail,
 		FileReference: fileReference,
 	}
-	result, err := model.Add()
+
+	result, err := modelPost.Add()
 	if err != nil {
-		return err
+		return Post{}, err
 	}
-	function.GetJSON(result)
-	return nil
+
+	post := Post{}
+
+	copier.Copy(&post, &result)
+
+	batchUpdates := make(map[string]interface{})
+	batchUpdates["reference"] = fileReference
+	files, err := file.BatchUpdates(p.Files, nil, batchUpdates)
+	if err != nil {
+		return Post{}, err
+	}
+	post.Files = files
+	return post, nil
 }
 
 func (p *Post) Get() ([]Post, error) {
@@ -49,19 +65,8 @@ func (p *Post) Get() ([]Post, error) {
 	if err != nil {
 		return nil, err
 	}
-	servicePosts := []Post{}
-	for _, modelPost := range modelPosts {
-		// TODO: response file 類型錯誤
-		files := file.NewResponseFiles(modelPost.Files)
-		servicePost := Post{
-			ID:      modelPost.ID,
-			Title:   modelPost.Title,
-			Summary: modelPost.Summary,
-			Detail:  modelPost.Detail,
-			Files:   files,
-		}
-		servicePosts = append(servicePosts, servicePost)
-	}
+	servicePosts := Posts{}
+	copier.Copy(&servicePosts, &modelPosts)
 	return servicePosts, nil
 }
 
