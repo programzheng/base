@@ -19,7 +19,7 @@ dev:
 
 #啟動服務
 up:
-	$(COMPOSE) up -d mysql adminer minio
+	$(COMPOSE) up -d mysql adminer minio ngrok
 	$(MAKE) dev
 
 #重啟服務
