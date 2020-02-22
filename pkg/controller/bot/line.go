@@ -1,15 +1,15 @@
 package bot
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/programzheng/base/pkg/function"
 	"github.com/programzheng/base/pkg/service/bot"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+const lineOfficalID = "Udeadbeefdeadbeefdeadbeefdeadbeef"
 
 func setLineBot() *linebot.Client {
 	channelSecret := viper.Get("LINE_CHANNEL_SECRET").(string)
@@ -29,13 +29,17 @@ func LineWebHook(ctx *gin.Context) {
 	}
 
 	for _, event := range events {
-		fmt.Println(event.Source.UserID)
+		log.Println(event.Source.UserID)
 		request, err := event.MarshalJSON()
 		if err != nil {
 			log.Println("LINE Message API event to json error:", err)
 		}
+		if event.Source.UserID == lineOfficalID {
+			function.Success(ctx, nil, nil)
+			return
+		}
 		requestString := string(request)
-		fmt.Println(requestString)
+		log.Println(requestString)
 		botService := bot.LineBotRequest{
 			Type:       string(event.Source.Type),
 			GroupID:    event.Source.GroupID,
@@ -51,7 +55,7 @@ func LineWebHook(ctx *gin.Context) {
 		if event.Type == linebot.EventTypeMessage {
 			switch t := event.Message.(type) {
 			case *linebot.TextMessage:
-				fmt.Println(t)
+				log.Println(t)
 				message := defaultTemplateMessage()
 				lineReplyMessage(botClient, event.ReplyToken, message)
 			}
