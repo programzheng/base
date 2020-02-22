@@ -5,7 +5,8 @@ import (
 	"crypto/sha1"
 	"encoding/gob"
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"golang.org/x/crypto/bcrypt"
 )

@@ -2,7 +2,8 @@ package post
 
 import (
 	"encoding/json"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/copier"
 	"github.com/programzheng/base/pkg/function"
