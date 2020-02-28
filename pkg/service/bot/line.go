@@ -1,7 +1,17 @@
 package bot
 
 import (
+	"log"
+	"strings"
+	"time"
+
+	"github.com/bamzi/jobrunner"
+	"github.com/line/line-bot-sdk-go/linebot"
+	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/job/line"
+	"github.com/programzheng/base/pkg/library/line/bot/template"
 	"github.com/programzheng/base/pkg/model/bot"
+	"github.com/spf13/viper"
 )
 
 type LineBotRequest struct {
@@ -13,6 +23,18 @@ type LineBotRequest struct {
 	Request    string
 }
 
+var botClient = SetLineBot()
+
+func SetLineBot() *linebot.Client {
+	channelSecret := viper.Get("LINE_CHANNEL_SECRET").(string)
+	channelAccessToken := viper.Get("LINE_CHANNEL_ACCESS_TOKEN").(string)
+	botClient, err := linebot.New(channelSecret, channelAccessToken)
+	if err != nil {
+		log.Println("LINE bot error:", err)
+	}
+	return botClient
+}
+
 func (lineBotRequest *LineBotRequest) Add() (uint, error) {
 	model := bot.LineBotRequest{
 		Type:       lineBotRequest.Type,
@@ -22,9 +44,44 @@ func (lineBotRequest *LineBotRequest) Add() (uint, error) {
 		ReplyToken: lineBotRequest.ReplyToken,
 		Request:    lineBotRequest.Request,
 	}
-	ID, err := bot.Add(model)
+	ID, err := model.Add()
 	if err != nil {
 		return 0, err
 	}
 	return ID, nil
+}
+
+func ParseTextGenTemplate(toID string, text string) linebot.SendingMessage {
+	parseText := strings.Split(text, "|")
+
+	if len(parseText) == 1 {
+
+	}
+	switch parseText[0] {
+	case "TODO":
+		todoAction(toID, parseText[1], template.TODO(parseText[2]))
+		return template.Text("設置完成將於:" + parseText[1] + "\n傳送訊息:" + parseText[2])
+	}
+	return template.Text(text)
+}
+
+func LineReplyMessage(replyToken string, messages ...linebot.SendingMessage) {
+	_, err := botClient.ReplyMessage(replyToken, messages...).Do()
+	if err != nil {
+		log.Println("LINE Message API parse Request error:", err)
+	}
+}
+
+func LinePushMessage(toID string, messages ...linebot.SendingMessage) {
+	botClient.PushMessage(toID, messages...).Do()
+}
+
+func todoAction(toID string, date string, template *linebot.TextMessage) {
+	timeRange := function.CalcTimeRange(time.Now().Format(function.GetTimeLayout()), date)
+	jobrunner.Start()
+	jobrunner.In(time.Duration(timeRange)*time.Second, line.Todo{
+		BotClient: botClient,
+		ToID:      toID,
+		Template:  template,
+	})
 }

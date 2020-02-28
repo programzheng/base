@@ -15,7 +15,7 @@ type LineBotRequest struct {
 	Request    string `sql:"type:text" gorm:"not null"`
 }
 
-func Add(lineBotRequest LineBotRequest) (uint, error) {
+func (lineBotRequest LineBotRequest) Add() (uint, error) {
 	model.Migrate(&lineBotRequest)
 	if err := model.DB.Save(&lineBotRequest).Error; err != nil {
 		return 0, err
