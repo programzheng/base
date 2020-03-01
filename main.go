@@ -18,12 +18,14 @@ package main
 import (
 	"fmt"
 
+	"github.com/bamzi/jobrunner"
 	_ "github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/router"
 	"github.com/spf13/viper"
 )
 
 func main() {
+	jobrunner.Start()
 	port := fmt.Sprintf(":%v", viper.Get("APP_PORT").(string))
 	r := router.Router
 	r.Run(port)

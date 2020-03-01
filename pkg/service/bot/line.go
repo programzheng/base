@@ -59,8 +59,20 @@ func ParseTextGenTemplate(toID string, text string) linebot.SendingMessage {
 	}
 	switch parseText[0] {
 	case "TODO":
-		todoAction(toID, parseText[1], template.TODO(parseText[2]))
-		return template.Text("設置完成將於:" + parseText[1] + "\n傳送訊息:" + parseText[2])
+		date := parseText[1]
+		replyText := parseText[2]
+		parseDate := strings.Split(date, " ")
+		switch parseDate[0] {
+		case "every":
+			// TODO|every 19:55|測試29號13:30送出
+			todoAction(toID, "every", parseDate[1], template.TODO(replyText))
+			return template.Text("設置完成將於每天" + parseDate[1] + "\n傳送訊息:" + replyText)
+		default:
+			// TODO|2020/02/29 13:00|測試29號13:30送出
+			todoAction(toID, "once", date, template.TODO(replyText))
+			return template.Text("設置完成將於" + date + "\n傳送訊息:" + replyText)
+		}
+
 	}
 	return template.Text(text)
 }
@@ -76,12 +88,20 @@ func LinePushMessage(toID string, messages ...linebot.SendingMessage) {
 	botClient.PushMessage(toID, messages...).Do()
 }
 
-func todoAction(toID string, date string, template *linebot.TextMessage) {
-	timeRange := function.CalcTimeRange(time.Now().Format(function.GetTimeLayout()), date)
-	jobrunner.Start()
-	jobrunner.In(time.Duration(timeRange)*time.Second, line.Todo{
+func todoAction(toID string, cycle string, date string, template *linebot.TextMessage) {
+	job := line.Todo{
 		BotClient: botClient,
 		ToID:      toID,
 		Template:  template,
-	})
+	}
+	switch cycle {
+	case "every":
+		parseTime := strings.Split(date, ":")
+		hour := parseTime[0]
+		minute := parseTime[1]
+		jobrunner.Schedule(minute+" "+hour+" * * *", job)
+	default:
+		timeRange := function.CalcTimeRange(time.Now().Format(function.GetTimeLayout()), date)
+		jobrunner.In(time.Duration(timeRange)*time.Second, job)
+	}
 }

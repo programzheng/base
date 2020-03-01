@@ -8,6 +8,7 @@ import (
 	"github.com/programzheng/base/pkg/controller/auth"
 	"github.com/programzheng/base/pkg/controller/bot"
 	"github.com/programzheng/base/pkg/controller/file"
+	"github.com/programzheng/base/pkg/controller/job"
 	"github.com/programzheng/base/pkg/controller/post"
 )
 
@@ -16,6 +17,8 @@ var Router *gin.Engine
 func init() {
 	Router = gin.Default()
 	setMiddleware()
+	//設置default Route
+	setRoute()
 	//設置API Router
 	setAPIRouter()
 	//設置Bot Router
@@ -24,6 +27,14 @@ func init() {
 
 func setMiddleware() {
 	Router.Use(middleware.CORSMiddleware())
+}
+
+func setRoute() {
+	Router.GET("/jobrunner/json", job.JobJson)
+
+	Router.LoadHTMLGlob("dist/view/*")
+
+	Router.GET("/jobrunner/html", job.JobHtml)
 }
 
 func setAPIRouter() {
