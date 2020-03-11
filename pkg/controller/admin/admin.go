@@ -9,8 +9,9 @@ import (
 	"github.com/programzheng/base/pkg/service/auth"
 )
 
+var adminService admin.Admin
+
 func Register(ctx *gin.Context) {
-	adminService := admin.Admin{}
 	if err := ctx.Bind(&adminService); err != nil {
 		function.BadRequest(ctx, err)
 		return
@@ -18,12 +19,13 @@ func Register(ctx *gin.Context) {
 
 	//hash password
 	adminService.Password = function.CreateHash(adminService.Password)
-	if err := adminService.Add(); err != nil {
+	result, err := adminService.Add()
+	if err != nil {
 		function.Fail(ctx, err)
 		return
 	}
 
-	function.Success(ctx, nil, nil)
+	function.Success(ctx, result, nil)
 	return
 }
 

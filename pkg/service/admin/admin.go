@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"github.com/jinzhu/copier"
 	"github.com/programzheng/base/pkg/model/admin"
 )
 
@@ -20,26 +21,32 @@ type AdminProfile struct {
 	Name    string `json:"name"`
 }
 
-func (a *Admin) Add() error {
-	model := admin.Admin{
+func (a *Admin) Add() (Admin, error) {
+	modelAdmin := admin.Admin{
 		Account:  a.Account,
 		Password: a.Password,
 		Profile: admin.AdminProfile{
 			Name: a.Profile.Name,
 		},
 	}
-	if err := admin.Add(model); err != nil {
-		return err
+
+	result, err := modelAdmin.Add()
+	if err != nil {
+		return Admin{}, err
 	}
-	return nil
+
+	admin := Admin{}
+	copier.Copy(&admin, &result)
+
+	return admin, nil
 }
 
 func (a *Admin) GetForLogin() (*admin.Admin, error) {
-	where := admin.Admin{
+	modelAdmin := admin.Admin{
 		Account:  a.Account,
 		Password: a.Password,
 	}
-	model, err := admin.GetForLogin(where)
+	model, err := modelAdmin.GetForLogin()
 	if err != nil {
 		return nil, err
 	}
