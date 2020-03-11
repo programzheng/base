@@ -22,7 +22,6 @@ func init() {
 }
 
 func (p Post) Add() (Post, error) {
-	model.Migrate(&p)
 	if err := model.DB.Create(&p).Error; err != nil {
 		return Post{}, err
 	}

@@ -50,10 +50,13 @@ func (p *Post) Add() (Post, error) {
 	post := Post{}
 
 	copier.Copy(&post, &result)
-
+	maps := make(map[string]interface{})
+	for _, value := range p.Files.([]interface{}) {
+		maps["hash_id"] = value
+	}
 	batchUpdates := make(map[string]interface{})
 	batchUpdates["reference"] = fileReference
-	files, err := file.BatchUpdates(p.Files, nil, batchUpdates)
+	files, err := file.BatchUpdates(maps, batchUpdates)
 	if err != nil {
 		return Post{}, err
 	}

@@ -6,10 +6,11 @@ import (
 )
 
 type File struct {
-	ID     uint   `json:"id"`
+	ID     uint `json:"-"`
+	HashID string
 	System string `json:"-"`
-	Type   string `json:"type"`
-	Path   string `json:"path"`
+	Type   string
+	Path   string `json:"-"`
 	Name   string `json:"-"`
 }
 
@@ -32,33 +33,33 @@ func (f *File) Add() (File, error) {
 }
 
 func Get(ids []interface{}) (Files, error) {
-	modelFiles, err := file.Get(ids, getMaps())
-	if err != nil {
-		return nil, err
-	}
-	serviceFiles := Files{}
-	copier.Copy(&serviceFiles, &modelFiles)
-	// for _, serviceFile := range serviceFiles {
-	// 	serviceFile.Path = getResponseFilePath() + "/" + serviceFile.Path + serviceFile.Name
-	// }
-	return serviceFiles, nil
-}
-
-func BatchUpdates(ids interface{}, maps interface{}, updates interface{}) (Files, error) {
-	modelFiles, err := file.BatchUpdates(ids, getMaps(), updates)
-	if err != nil {
-		return nil, err
-	}
-	serviceFiles := Files{}
-	copier.Copy(&serviceFiles, &modelFiles)
-	// for _, serviceFile := range serviceFiles {
-	// 	serviceFile.Path = getResponseFilePath() + "/" + serviceFile.Path + serviceFile.Name
-	// }
-	return serviceFiles, nil
-}
-
-func getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
+	modelFiles, err := file.Get(ids, getMaps(maps))
+	if err != nil {
+		return nil, err
+	}
+	serviceFiles := Files{}
+	copier.Copy(&serviceFiles, &modelFiles)
+	// for _, serviceFile := range serviceFiles {
+	// 	serviceFile.Path = getResponseFilePath() + "/" + serviceFile.Path + serviceFile.Name
+	// }
+	return serviceFiles, nil
+}
+
+func BatchUpdates(maps map[string]interface{}, updates interface{}) (Files, error) {
+	modelFiles, err := file.BatchUpdates(getMaps(maps), updates)
+	if err != nil {
+		return nil, err
+	}
+	serviceFiles := Files{}
+	copier.Copy(&serviceFiles, &modelFiles)
+	// for _, serviceFile := range serviceFiles {
+	// 	serviceFile.Path = getResponseFilePath() + "/" + serviceFile.Path + serviceFile.Name
+	// }
+	return serviceFiles, nil
+}
+
+func getMaps(maps map[string]interface{}) map[string]interface{} {
 	maps["deleted_at"] = nil
 	return maps
 }

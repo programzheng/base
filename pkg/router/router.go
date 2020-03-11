@@ -35,13 +35,15 @@ func setRoute() {
 	Router.LoadHTMLGlob("dist/view/*")
 
 	Router.GET("/jobrunner/html", job.JobHtml)
+
+	Router.GET("files/:hash_id", file.Get)
 }
 
 func setAPIRouter() {
 	apiGroup := Router.Group("/API")
-	adminGroup := apiGroup.Group("/admin")
+	adminGroup := apiGroup.Group("/admins")
 	{
-		adminGroup.POST("register", admin.Register)
+		adminGroup.POST("", admin.Register)
 		adminGroup.POST("login", admin.Login)
 		adminGroup.POST("auth", auth.VaildAdmin)
 	}
