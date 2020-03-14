@@ -1,3 +1,4 @@
 build:
     docker:
+        mysql: ./dokcer/mysql/Dockerfile
         web: Dockerfile
