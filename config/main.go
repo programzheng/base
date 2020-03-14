@@ -3,6 +3,8 @@ package config
 import (
 
 	//use this read .env
+
+	"log"
 	"os"
 	"time"
 
@@ -15,7 +17,13 @@ import (
 
 func init() {
 	setViper()
+	setTimeZone()
 	setLog()
+}
+
+func setTimeZone() {
+	TZ := viper.Get("TZ").(string)
+	os.Setenv("TZ", TZ)
 }
 
 func setLog() {
@@ -36,12 +44,7 @@ func setLog() {
 
 func setViper() {
 	viper.AutomaticEnv()
-	// if err := viper.ReadInConfig(); err != nil {
-	// 	log.Println("Using config file:", err)
-	// }
-	setVoiperDefault()
-}
-
-func setVoiperDefault() {
-	viper.SetDefault("FILESYSTEM_DRIVER", "local")
+	if err := viper.ReadInConfig(); err != nil {
+		log.Println("Using config file:", err)
+	}
 }
