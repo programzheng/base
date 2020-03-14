@@ -19,10 +19,16 @@ import (
 	"github.com/bamzi/jobrunner"
 	_ "github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/router"
+	"github.com/spf13/viper"
 )
 
 func main() {
 	jobrunner.Start()
 	r := router.Router
-	r.Run()
+	port := viper.Get("APP_PORT")
+	if port != nil {
+		r.Run(":" + port.(string))
+	} else {
+		r.Run()
+	}
 }
