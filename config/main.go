@@ -19,7 +19,8 @@ func init() {
 }
 
 func setLog() {
-	switch viper.Get("LOG_SYSTEM").(string) {
+	system := viper.Get("LOG_SYSTEM").(string)
+	switch system {
 	case "file":
 		path := viper.Get("LOG_PATH").(string) + "/"
 		fileName := time.Now().Format("20060102") + ".log"
