@@ -15,7 +15,7 @@ import (
 
 func init() {
 	setViper()
-	setLog()
+	// setLog()
 }
 
 func setLog() {
