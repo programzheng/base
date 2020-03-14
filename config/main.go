@@ -4,7 +4,6 @@ import (
 
 	//use this read .env
 
-	"log"
 	"os"
 	"time"
 
@@ -44,7 +43,4 @@ func setLog() {
 
 func setViper() {
 	viper.AutomaticEnv()
-	if err := viper.ReadInConfig(); err != nil {
-		log.Println("Using config file:", err)
-	}
 }
