@@ -17,9 +17,10 @@ package main
 
 import (
 	_ "github.com/programzheng/base/config"
-	"github.com/programzheng/base/server"
+
+	"github.com/programzheng/base/cmd"
 )
 
 func main() {
-	server.Run()
+	cmd.Execute()
 }

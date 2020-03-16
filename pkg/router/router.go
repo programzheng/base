@@ -12,35 +12,32 @@ import (
 	"github.com/programzheng/base/pkg/controller/post"
 )
 
-var Router *gin.Engine
-
-func init() {
-	Router = gin.Default()
-	setMiddleware()
+func SetRouter(router *gin.Engine) {
+	setMiddleware(router)
 	//設置default Route
-	setRoute()
+	setRoute(router)
 	//設置API Router
-	setAPIRouter()
+	setAPIRoute(router)
 	//設置Bot Router
-	setBotRouter()
+	setBotRouter(router)
 }
 
-func setMiddleware() {
-	Router.Use(middleware.CORSMiddleware())
+func setMiddleware(router *gin.Engine) {
+	router.Use(middleware.CORSMiddleware())
 }
 
-func setRoute() {
-	Router.GET("/jobrunner/json", job.JobJson)
+func setRoute(router *gin.Engine) {
+	router.GET("/jobrunner/json", job.JobJson)
 
-	Router.LoadHTMLGlob("dist/view/*")
+	router.LoadHTMLGlob("dist/view/*")
 
-	Router.GET("/jobrunner/html", job.JobHtml)
+	router.GET("/jobrunner/html", job.JobHtml)
 
-	Router.GET("files/:hash_id", file.Get)
+	router.GET("files/:hash_id", file.Get)
 }
 
-func setAPIRouter() {
-	apiGroup := Router.Group("/API")
+func setAPIRoute(router *gin.Engine) {
+	apiGroup := router.Group("/API")
 	adminGroup := apiGroup.Group("/admins")
 	{
 		adminGroup.POST("", admin.Register)
@@ -71,8 +68,8 @@ func setAPIRouter() {
 
 }
 
-func setBotRouter() {
-	botGroup := Router.Group("/bot")
+func setBotRouter(router *gin.Engine) {
+	botGroup := router.Group("/bot")
 	lineGroup := botGroup.Group("/line")
 	{
 		lineGroup.POST("", bot.LineWebHook)

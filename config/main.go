@@ -1,13 +1,10 @@
 package config
 
 import (
-
-	//use this read .env
-
+	"fmt"
 	"os"
 	"time"
 
-	_ "github.com/joho/godotenv/autoload"
 	"github.com/sirupsen/logrus"
 
 	//use this get .env setting
@@ -42,5 +39,10 @@ func setLog() {
 }
 
 func setViper() {
+	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %s \n", viper.ConfigFileUsed()))
+	}
 }

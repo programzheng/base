@@ -1,33 +1,31 @@
 version: '3'
-services: 
+services:
     #web
     api:
         container_name: ${WORKSPACE}
         build:
             context: .
-            args: 
+            args:
                 - WORKSPACE=${WORKSPACE}
         ports:
             - ${APP_PORT}:${APP_PORT}
-        volumes: 
+        volumes:
             - ${DATA_PATH_HOST}/api/${APP_NAME}/upload:/api/upload
             - ${DATA_PATH_HOST}/api/${APP_NAME}/log:/api/log
-        environment: 
-            - APP_NAME=${APP_NAME}
-            - APP_ENV=${APP_ENV}
-            - JWT_SECRET=${JWT_SECRET}
         links:
             - mysql
+        command: bash -c "go install &&
+                          ${APP_NAME} server"
     #mysql
     mysql:
         container_name: mysql
         build: ./docker/mysql
         ports:
             - ${DB_PORT}:${DB_PORT}
-        volumes: 
+        volumes:
             - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
             - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-        environment: 
+        environment:
             - MYSQL_VERSION=${MYSQL_VERSION}
             - MYSQL_DATABASE=${APP_NAME}
             - MYSQL_USER=${APP_NAME}
@@ -42,7 +40,7 @@ services:
         build: ./docker/adminer
         ports:
             - ${ADMIMER_PORT}:${ADMIMER_PORT}
-        environment: 
+        environment:
             - ADMINER_DEFAULT_SERVER=${ADMINER_DEFAULT_SERVER}
     #minio
     minio:
@@ -76,6 +74,5 @@ services:
           - NGROK_PORT=${WORKSPACE}:80
         depends_on:
           - ${WORKSPACE}
-            
 
-        
+
