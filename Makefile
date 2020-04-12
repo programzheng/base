@@ -5,6 +5,7 @@ export $(shell sed 's/=.*//' ./.env)
 #當前年-月-日
 DATE=$(shell date +"%F")
 COMPOSE=docker-compose
+SERVICES=mysql adminer minio ngrok
 BASH?=bash
 WEB=api
 
@@ -19,7 +20,7 @@ dev:
 
 #啟動服務
 up:
-	$(COMPOSE) up -d mysql adminer minio ngrok
+	$(COMPOSE) up -d $(SERVICES)
 	$(MAKE) dev
 
 #重啟服務
