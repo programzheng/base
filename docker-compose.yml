@@ -14,7 +14,7 @@ services:
       links:
         - mysql
       command: bash -c "go install &&
-                        ${APP_NAME} server"
+                        ${APP_NAME} http"
       networks:
         - backend
     #mysql

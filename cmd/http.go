@@ -16,15 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/programzheng/base/http"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/programzheng/base/server"
 	"github.com/spf13/cobra"
 )
 
-// serverCmd represents the server command
-var serverCmd = &cobra.Command{
-	Use:   "server",
+// httpCmd represents the http command
+var httpCmd = &cobra.Command{
+	Use:   "http",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -38,21 +37,21 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(serverCmd)
+	rootCmd.AddCommand(httpCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// serverCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// httpCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// httpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func runServer() {
-	if err := server.Run(); err != nil {
+	if err := http.Run(); err != nil {
 		log.Fatal("run api server:", err)
 		panic(err)
 	}
