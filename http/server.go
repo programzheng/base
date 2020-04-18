@@ -9,11 +9,11 @@ import (
 
 func Run() error {
 	jobrunner.Start()
-	api := gin.Default()
-	router.SetRouter(api)
+	route := gin.Default()
+	router.SetRouter(route)
 	port := viper.Get("APP_PORT")
 	if port != nil {
-		return api.Run(":" + port.(string))
+		return route.Run(":" + port.(string))
 	}
-	return api.Run()
+	return route.Run()
 }
