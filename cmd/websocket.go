@@ -16,14 +16,14 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/programzheng/base/server/http"
+	"github.com/programzheng/base/server/websocket"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-// httpCmd represents the http command
-var httpCmd = &cobra.Command{
-	Use:   "http",
+// websocketCmd represents the websocket command
+var websocketCmd = &cobra.Command{
+	Use:   "websocket",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -32,27 +32,27 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		runHttpServer()
+		runWebSocketServer()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(httpCmd)
+	rootCmd.AddCommand(websocketCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// httpCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// websocketCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// httpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// websocketCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func runHttpServer() {
-	if err := http.Run(); err != nil {
-		log.Fatal("run http server:", err)
+func runWebSocketServer() {
+	if err := websocket.Run(); err != nil {
+		log.Fatal("run websocket server:", err)
 		panic(err)
 	}
 }

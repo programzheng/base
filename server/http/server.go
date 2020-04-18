@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/bamzi/jobrunner"
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/http/router"
+	"github.com/programzheng/base/server/http/router"
 	"github.com/spf13/viper"
 )
 
