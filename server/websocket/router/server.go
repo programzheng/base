@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/programzheng/base/pkg/function"
 )
 
 func setWebSocketRouter(router *gin.Engine) {
@@ -15,7 +16,8 @@ func setWebSocketRouter(router *gin.Engine) {
 	}
 	websocketGroup := router.Group("/websocket")
 	{
-		websocketGroup.GET("echo", func(ctx *gin.Context) {
+		websocketGroup.GET("echo/*EIO", func(ctx *gin.Context) {
+			function.GetJSON(ctx)
 			c, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 			if err != nil {
 				log.Println("upgrade:", err)
