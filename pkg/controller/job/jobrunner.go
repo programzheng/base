@@ -10,5 +10,5 @@ func JobJson(ctx *gin.Context) {
 }
 
 func JobHtml(ctx *gin.Context) {
-	ctx.HTML(200, "jobrunner.tmpl", jobrunner.StatusPage())
+	ctx.HTML(200, "jobrunner.html", jobrunner.StatusPage())
 }
