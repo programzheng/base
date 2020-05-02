@@ -9,6 +9,9 @@ import (
 
 func Run() error {
 	jobrunner.Start()
+	if env := viper.Get("APP_ENV"); env == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	route := gin.Default()
 	router.SetRouter(route)
 	port := viper.Get("APP_PORT")
