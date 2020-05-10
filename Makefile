@@ -6,20 +6,20 @@ export $(shell sed 's/=.*//' ./.env)
 DATE=$(shell date +"%F")
 COMPOSE=docker-compose
 BASH?=bash
-WEB=api
+SERVICES=api socketio
 
 .PHONY: dev, up, init, down
 bash:
-	$(COMPOSE) exec $(WEB) $(BASH)
+	$(COMPOSE) exec $(SERVICES) $(BASH)
 
 #重新編譯
 dev:
-	$(COMPOSE) build $(WEB)
-	$(COMPOSE) up $(WEB)
+	$(COMPOSE) build $(SERVICES)
+	$(COMPOSE) up $(SERVICES)
 
 #啟動服務
 up:
-	$(MAKE) dev
+	$(COMPOSE) up -d $(SERVICES)
 
 #重啟服務
 restart:

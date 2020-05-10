@@ -6,13 +6,32 @@ services:
       build:
         context: .
         args:
-          - WORKSPACE=${WORKSPACE}
+          - WORKSPACE=api
       restart: always
       volumes:
         - ${DATA_PATH_HOST}/api/${APP_NAME}/upload:/api/upload
         - ${DATA_PATH_HOST}/api/${APP_NAME}/log:/api/log
       command: bash -c "go install &&
                         ${APP_NAME} http"
+      environment: 
+        - WORKSPACE=api
+      networks:
+        - backend
+
+    #socketio
+    socketio:
+      build:
+        context: .
+        args:
+          - WORKSPACE=socketio
+      restart: always
+      volumes:
+        - ${DATA_PATH_HOST}/socketio/${APP_NAME}/upload:/socketio/upload
+        - ${DATA_PATH_HOST}/socketio/${APP_NAME}/log:/socketio/log
+      command: bash -c "go install &&
+                        ${APP_NAME} socketio"
+      environment: 
+        - WORKSPACE=socketio
       networks:
         - backend
 networks:
