@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/service/admin"
 	"github.com/programzheng/base/pkg/service/auth"
 )
@@ -13,69 +13,69 @@ var adminService admin.Admin
 
 func Register(ctx *gin.Context) {
 	if err := ctx.Bind(&adminService); err != nil {
-		function.BadRequest(ctx, err)
+		helper.BadRequest(ctx, err)
 		return
 	}
 
 	//hash password
-	adminService.Password = function.CreateHash(adminService.Password)
+	adminService.Password = helper.CreateHash(adminService.Password)
 	result, err := adminService.Add()
 	if err != nil {
-		function.Fail(ctx, err)
+		helper.Fail(ctx, err)
 		return
 	}
 
-	function.Success(ctx, result, nil)
+	helper.Success(ctx, result, nil)
 	return
 }
 
 func Login(ctx *gin.Context) {
 	login := auth.Login{}
 	if err := ctx.Bind(&login); err != nil {
-		function.BadRequest(ctx, err)
+		helper.BadRequest(ctx, err)
 		return
 	}
 	admin, err := (&admin.Admin{
 		Account: login.Account,
 	}).GetForLogin()
 	if err != nil {
-		function.Fail(ctx, errors.New("帳號錯誤"))
+		helper.Fail(ctx, errors.New("帳號錯誤"))
 		return
 	}
-	err = function.CheckHash(admin.Password, login.Password)
+	err = helper.CheckHash(admin.Password, login.Password)
 	if err != nil {
-		function.Fail(ctx, errors.New("密碼錯誤"))
+		helper.Fail(ctx, errors.New("密碼錯誤"))
 		return
 	}
-	token := function.CreateJWT()
+	token := helper.CreateJWT()
 	adminLogin := auth.AdminLogin{
 		AdminID: admin.ID,
 		Token:   token.Token,
 		IP:      ctx.ClientIP(),
 	}
 	if err := adminLogin.AddAdminLogin(); err != nil {
-		function.Fail(ctx, err)
+		helper.Fail(ctx, err)
 		return
 	}
 
-	function.Success(ctx, token, nil)
+	helper.Success(ctx, token, nil)
 	return
 }
 
 func Get(ctx *gin.Context) {
 	adminService := admin.Admin{}
 	if err := ctx.Bind(&adminService); err != nil {
-		function.BadRequest(ctx, err)
+		helper.BadRequest(ctx, err)
 		return
 	}
 	admins, err := adminService.Get()
 	if err != nil {
-		function.Fail(ctx, err)
+		helper.Fail(ctx, err)
 		return
 	}
 	data := make(map[string]interface{})
 	data["list"] = admins
 	// data["Total"] = total
-	function.Success(ctx, data, nil)
+	helper.Success(ctx, data, nil)
 	return
 }

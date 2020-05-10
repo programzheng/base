@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/programzheng/base/pkg/function"
 	"github.com/gin-gonic/gin"
+	"github.com/programzheng/base/pkg/helper"
 )
 
 func ValidJSONWebToken() gin.HandlerFunc {
@@ -15,12 +15,12 @@ func ValidJSONWebToken() gin.HandlerFunc {
 		splitToken := strings.Split(requestToken, "Bearer")
 		if len(splitToken) != 2 {
 			//return not vaild
-			function.Unauthorized(ctx, errors.New("請重新登入"))
+			helper.Unauthorized(ctx, errors.New("請重新登入"))
 			return
 		}
 		requestToken = strings.TrimSpace(splitToken[1])
 
-		result := function.ValidJSONWebToken(requestToken)
+		result := helper.ValidJSONWebToken(requestToken)
 		if result {
 			ctx.Next()
 		}

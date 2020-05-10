@@ -4,9 +4,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/programzheng/base/pkg/function"
-	"github.com/programzheng/base/pkg/service/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/service/auth"
 )
 
 func VaildAdmin(ctx *gin.Context) {
@@ -14,7 +14,7 @@ func VaildAdmin(ctx *gin.Context) {
 	splitToken := strings.Split(requestToken, "Bearer")
 	if len(splitToken) != 2 {
 		//return not vaild
-		function.Unauthorized(ctx, errors.New("驗證失敗"))
+		helper.Unauthorized(ctx, errors.New("驗證失敗"))
 		return
 	}
 
@@ -26,13 +26,13 @@ func VaildAdmin(ctx *gin.Context) {
 	}).GetAdminLogin()
 
 	if adminLogin.ID == 0 && err != nil {
-		function.Unauthorized(ctx, errors.New("請重新登入"))
+		helper.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}
 
-	vaildResult := function.ValidJSONWebToken(token)
+	vaildResult := helper.ValidJSONWebToken(token)
 	if !vaildResult {
-		function.Unauthorized(ctx, errors.New("請重新登入"))
+		helper.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}
 
@@ -40,6 +40,6 @@ func VaildAdmin(ctx *gin.Context) {
 
 	}
 
-	function.Success(ctx, nil, nil)
+	helper.Success(ctx, nil, nil)
 	return
 }

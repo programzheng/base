@@ -5,7 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/programzheng/base/pkg/filesystem"
-	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model"
 )
 
@@ -37,8 +37,8 @@ func (f *File) AfterFind() (err error) {
 
 func (f *File) AfterCreate(tx *gorm.DB) (err error) {
 	// 設定給前端呼叫圖片的ID
-	hashID := function.ConvertToString(f.ID) + "_" + function.ConvertToString(time.Now().Unix())
-	hashID = function.CreateMD5(hashID)
+	hashID := helper.ConvertToString(f.ID) + "_" + helper.ConvertToString(time.Now().Unix())
+	hashID = helper.CreateMD5(hashID)
 	tx.Model(f).Update("HashID", hashID)
 	return
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/filesystem"
-	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/service/file"
 )
 
@@ -19,7 +19,7 @@ func Upload(ctx *gin.Context) {
 	//取得所有Mulitpart Form
 	form, err := ctx.MultipartForm()
 	if err != nil {
-		function.BadRequest(ctx, errors.New(fmt.Sprintf("get form error: %s", err.Error())))
+		helper.BadRequest(ctx, errors.New(fmt.Sprintf("get form error: %s", err.Error())))
 		return
 	}
 	//取得所有File map[]
@@ -36,10 +36,10 @@ func Upload(ctx *gin.Context) {
 			//檔案副檔名
 			fileExtension := filepath.Ext(fileName)
 			//檔案mimeType
-			fileType := function.GetFileContentType(fileExtension)
+			fileType := helper.GetFileContentType(fileExtension)
 			//上傳檔案
 			if err := filesystem.Driver.Upload(ctx, uploadFile); err != nil {
-				function.BadRequest(ctx, errors.New(fmt.Sprintf("upload file err: %s", err.Error())))
+				helper.BadRequest(ctx, errors.New(fmt.Sprintf("upload file err: %s", err.Error())))
 				return
 			}
 
@@ -51,11 +51,11 @@ func Upload(ctx *gin.Context) {
 			}
 			file, err := fileService.Add()
 			if err != nil {
-				function.BadRequest(ctx, errors.New(fmt.Sprintf("add file row error: %s", err.Error())))
+				helper.BadRequest(ctx, errors.New(fmt.Sprintf("add file row error: %s", err.Error())))
 				return
 			}
 			fileList = append(fileList, file)
 		}
 	}
-	function.UploadSuccess(ctx, fileList, "上傳成功")
+	helper.UploadSuccess(ctx, fileList, "上傳成功")
 }

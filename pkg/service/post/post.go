@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/copier"
-	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/post"
 	"github.com/programzheng/base/pkg/service/file"
 )
@@ -34,7 +34,7 @@ func (p *Post) Add() (Post, error) {
 		log.Fatal("add "+module+" error", err)
 	}
 	fileReferenceJSONString := string(fileReferenceJSON)
-	fileReference := function.CreateSHA1(fileReferenceJSONString)
+	fileReference := helper.CreateSHA1(fileReferenceJSONString)
 	modelPost := post.Post{
 		Title:         p.Title,
 		Summary:       p.Summary,

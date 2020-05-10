@@ -7,7 +7,7 @@ import (
 
 	"github.com/bamzi/jobrunner"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/job/line"
 	"github.com/programzheng/base/pkg/library/line/bot/template"
 	"github.com/programzheng/base/pkg/model/bot"
@@ -101,7 +101,7 @@ func todoAction(toID string, cycle string, date string, template *linebot.TextMe
 		minute := parseTime[1]
 		jobrunner.Schedule(minute+" "+hour+" * * *", job)
 	default:
-		timeRange := function.CalcTimeRange(time.Now().Format(function.GetTimeLayout()), date)
+		timeRange := helper.CalcTimeRange(time.Now().Format(helper.GetTimeLayout()), date)
 		jobrunner.In(time.Duration(timeRange)*time.Second, job)
 	}
 }

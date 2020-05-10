@@ -3,7 +3,7 @@ package bot
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"github.com/programzheng/base/pkg/function"
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/service/bot"
 	log "github.com/sirupsen/logrus"
 )
@@ -24,7 +24,7 @@ func LineWebHook(ctx *gin.Context) {
 			log.Println("LINE Message API event to json error:", err)
 		}
 		if event.Source.UserID == lineOfficalID {
-			function.Success(ctx, nil, nil)
+			helper.Success(ctx, nil, nil)
 			return
 		}
 		requestString := string(request)
@@ -37,7 +37,7 @@ func LineWebHook(ctx *gin.Context) {
 			Request:    requestString,
 		}
 		if _, err := lineBotRequest.Add(); err != nil {
-			function.Fail(ctx, err)
+			helper.Fail(ctx, err)
 			return
 		}
 		switch event.Source.Type {
