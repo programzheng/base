@@ -1,5 +1,5 @@
 build:
     docker:
-        api: Dockerfile
+        web: Dockerfile
 run:
-    api: go install && base http
+    web: go install && base http
