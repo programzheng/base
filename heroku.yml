@@ -1,5 +1,6 @@
 build:
     docker:
         web: Dockerfile
-run:
-    web: go install && base http
+release:
+    command:
+        - go install && base http
