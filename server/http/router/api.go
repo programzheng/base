@@ -11,7 +11,7 @@ import (
 )
 
 func setAPIRoute(router *gin.Engine) {
-	apiGroup := router.Group("/API")
+	apiGroup := router.Group("/api/v1")
 	adminGroup := apiGroup.Group("/admins")
 	{
 		adminGroup.POST("", admin.Register)
