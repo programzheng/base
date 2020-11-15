@@ -18,7 +18,11 @@ func init() {
 
 func setTimeZone() {
 	TZ := viper.Get("TZ").(string)
-	os.Setenv("TZ", TZ)
+	local, err := time.LoadLocation(TZ)
+	if err != nil {
+		logrus.Error("set timezone error:", err)
+	}
+	time.Local = local
 }
 
 func setLog() {
