@@ -17,6 +17,16 @@ dev:
 	$(COMPOSE) build $(SERVICES)
 	$(COMPOSE) up $(SERVICES)
 
+#build api
+api:
+	$(COMPOSE) build api
+	$(COMPOSE) up $(SERVICES)
+
+#build socketio
+socketio:
+	$(COMPOSE) build socketio
+	$(COMPOSE) up $(SERVICES)
+
 #啟動服務
 up:
 	$(COMPOSE) up -d $(SERVICES)
