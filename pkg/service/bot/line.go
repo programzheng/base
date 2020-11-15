@@ -23,6 +23,11 @@ type LineBotRequest struct {
 	Request    string
 }
 
+type LineBotPushMessage struct {
+	Token string `json:"token"`
+	Text  string `json:"text"`
+}
+
 var botClient = SetLineBot()
 
 func SetLineBot() *linebot.Client {

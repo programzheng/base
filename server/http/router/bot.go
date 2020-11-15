@@ -11,5 +11,6 @@ func setBotRouter(router *gin.Engine) {
 	lineGroup := botGroup.Group("/line")
 	{
 		lineGroup.POST("", bot.LineWebHook)
+		lineGroup.POST("push", bot.LinePush)
 	}
 }

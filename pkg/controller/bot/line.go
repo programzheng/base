@@ -1,11 +1,15 @@
 package bot
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/library/line/bot/template"
 	"github.com/programzheng/base/pkg/service/bot"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 const lineOfficalID = "Udeadbeefdeadbeefdeadbeefdeadbeef"
@@ -60,6 +64,21 @@ func LineWebHook(ctx *gin.Context) {
 		}
 
 	}
+}
+
+var pushMessage bot.LineBotPushMessage
+
+func LinePush(ctx *gin.Context) {
+	if err := ctx.BindJSON(&pushMessage); err != nil {
+		helper.BadRequest(ctx, err)
+		return
+	}
+	token := helper.CreateMD5(time.Now().Format(helper.GetIso8601()))
+	if pushMessage.Token != token {
+		helper.Unauthorized(ctx, nil)
+		return
+	}
+	bot.LinePushMessage(viper.Get("LINE_DEFAULT_PUSH_ID").(string), template.Text(pushMessage.Text))
 }
 
 func defaultTemplateMessage() *linebot.TemplateMessage {
