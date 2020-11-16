@@ -4,5 +4,4 @@ build:
 release:
     image: web
     command:
-        - go install
-        - base http
+        - go install && base http
