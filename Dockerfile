@@ -19,4 +19,4 @@ RUN go build -o main .
 
 EXPOSE 80
 
-CMD ["go install && base http"]
+CMD ["./main", "go install && base http"]
