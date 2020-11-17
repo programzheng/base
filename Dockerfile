@@ -16,7 +16,8 @@ FROM build_base AS server_builder
 COPY . .
 
 RUN go build -o main .
+RUN go install
 
 EXPOSE 80
 
-CMD ["./main", "go install", "base http"]
+CMD ["./main", "base http"]
