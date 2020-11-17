@@ -2,4 +2,4 @@ build:
     docker:
         web: Dockerfile
 run:
-    web: go install && base http
+    web: base http
