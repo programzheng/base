@@ -6,7 +6,7 @@ export $(shell sed 's/=.*//' ./.env)
 DATE=$(shell date +"%F")
 COMPOSE=docker-compose
 BASH?=bash
-SERVICES=api socketio
+SERVICES=api
 
 .PHONY: dev, up, init, down
 bash:
