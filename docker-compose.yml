@@ -5,7 +5,7 @@ services:
     api:
       build:
         context: .
-        dockerfile: ./docker/api/Dockerfile
+        dockerfile: ./Dockerfile.api
         args:
           - WORKSPACE=api
       restart: always
@@ -19,7 +19,7 @@ services:
     socketio:
       build:
         context: .
-        dockerfile: ./docker/socketio/Dockerfile
+        dockerfile: ./Dockerfile.socketio
         args:
           - WORKSPACE=socketio
       restart: always
