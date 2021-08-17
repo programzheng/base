@@ -9,9 +9,13 @@ services:
         args:
           - WORKSPACE=api
       restart: always
+      env_file:
+        - .env
       volumes:
         - ${DATA_PATH_HOST}/api/${APP_NAME}/upload:/api/upload
         - ${DATA_PATH_HOST}/api/${APP_NAME}/log:/api/log
+      ports:
+        - ${APP_PORT}:${APP_PORT}
       networks:
         - backend
 
