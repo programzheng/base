@@ -1,8 +1,9 @@
 package router
 
 import (
+	"base/pkg/middleware"
+
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/pkg/middleware"
 )
 
 func setMiddleware(router *gin.Engine) {

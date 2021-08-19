@@ -16,11 +16,12 @@ limitations under the License.
 package main
 
 import (
-	_ "github.com/programzheng/base/config"
+	_ "base/config"
+
+	"base/server/http/router"
 
 	"github.com/bamzi/jobrunner"
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/server/http/router"
 	"github.com/spf13/viper"
 )
 

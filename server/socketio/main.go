@@ -16,11 +16,12 @@ limitations under the License.
 package main
 
 import (
-	_ "github.com/programzheng/base/config"
+	_ "base/config"
+
+	"base/pkg/module/socketio"
+	"base/server/socketio/router"
 
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/pkg/module/socketio"
-	"github.com/programzheng/base/server/socketio/router"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

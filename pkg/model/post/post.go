@@ -1,9 +1,10 @@
 package post
 
 import (
+	"base/pkg/model"
+	"base/pkg/model/file"
+
 	"github.com/jinzhu/gorm"
-	"github.com/programzheng/base/pkg/model"
-	"github.com/programzheng/base/pkg/model/file"
 )
 
 type Post struct {

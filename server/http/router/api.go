@@ -3,11 +3,11 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/programzheng/base/pkg/controller/admin"
-	"github.com/programzheng/base/pkg/controller/auth"
-	"github.com/programzheng/base/pkg/controller/file"
-	"github.com/programzheng/base/pkg/controller/post"
-	"github.com/programzheng/base/pkg/middleware"
+	"base/pkg/controller/admin"
+	"base/pkg/controller/auth"
+	"base/pkg/controller/file"
+	"base/pkg/controller/post"
+	"base/pkg/middleware"
 )
 
 func setAPIRoute(router *gin.Engine) {

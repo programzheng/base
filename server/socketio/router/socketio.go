@@ -1,8 +1,9 @@
 package router
 
 import (
+	"base/pkg/module/socketio"
+
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/pkg/module/socketio"
 )
 
 func SetSocketIORoute(router *gin.Engine) {

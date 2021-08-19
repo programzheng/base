@@ -1,9 +1,10 @@
 package seed
 
 import (
+	"base/pkg/helper"
+	"base/pkg/model/admin"
+
 	"github.com/jinzhu/gorm"
-	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/model/admin"
 )
 
 func CreateAdmin(db *gorm.DB, account string, password string) error {

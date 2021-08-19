@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"base/pkg/filesystem"
+	"base/pkg/helper"
+	"base/pkg/service/file"
+
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/pkg/filesystem"
-	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/service/file"
 )
 
 func init() {

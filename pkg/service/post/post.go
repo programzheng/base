@@ -5,10 +5,11 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"base/pkg/helper"
+	"base/pkg/model/post"
+	"base/pkg/service/file"
+
 	"github.com/jinzhu/copier"
-	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/model/post"
-	"github.com/programzheng/base/pkg/service/file"
 )
 
 type Post struct {

@@ -1,7 +1,7 @@
 package seed
 
 import (
-	"github.com/programzheng/base/pkg/model"
+	"base/pkg/model"
 )
 
 func All() {

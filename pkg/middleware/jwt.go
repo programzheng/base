@@ -4,8 +4,9 @@ import (
 	"errors"
 	"strings"
 
+	"base/pkg/helper"
+
 	"github.com/gin-gonic/gin"
-	"github.com/programzheng/base/pkg/helper"
 )
 
 func ValidJSONWebToken() gin.HandlerFunc {

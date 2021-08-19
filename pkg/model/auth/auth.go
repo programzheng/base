@@ -1,8 +1,9 @@
 package auth
 
 import (
+	"base/pkg/model"
+
 	"github.com/jinzhu/gorm"
-	"github.com/programzheng/base/pkg/model"
 )
 
 type AdminLogin struct {

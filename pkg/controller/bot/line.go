@@ -3,11 +3,12 @@ package bot
 import (
 	"time"
 
+	"base/pkg/helper"
+	"base/pkg/library/line/bot/template"
+	"base/pkg/service/bot"
+
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/library/line/bot/template"
-	"github.com/programzheng/base/pkg/service/bot"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

@@ -1,8 +1,9 @@
 package file
 
 import (
+	"base/pkg/model/file"
+
 	"github.com/jinzhu/copier"
-	"github.com/programzheng/base/pkg/model/file"
 )
 
 type File struct {

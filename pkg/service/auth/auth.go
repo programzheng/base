@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/programzheng/base/pkg/model/auth"
+	"base/pkg/model/auth"
 )
 
 //Login is vaildation struct

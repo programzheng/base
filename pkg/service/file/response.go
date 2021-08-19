@@ -1,7 +1,7 @@
 package file
 
 import (
-	"github.com/programzheng/base/pkg/filesystem"
+	"base/pkg/filesystem"
 )
 
 func getResponseFilePath() string {

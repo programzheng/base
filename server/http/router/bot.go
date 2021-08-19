@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/programzheng/base/pkg/controller/bot"
+	"base/pkg/controller/bot"
 )
 
 func setBotRouter(router *gin.Engine) {

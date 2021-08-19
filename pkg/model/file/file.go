@@ -3,10 +3,11 @@ package file
 import (
 	"time"
 
+	"base/pkg/filesystem"
+	"base/pkg/helper"
+	"base/pkg/model"
+
 	"github.com/jinzhu/gorm"
-	"github.com/programzheng/base/pkg/filesystem"
-	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/model"
 )
 
 type File struct {
