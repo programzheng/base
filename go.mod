@@ -10,6 +10,7 @@ require (
 	github.com/googollee/go-socket.io v1.6.0
 	github.com/jinzhu/copier v0.3.2
 	github.com/jinzhu/gorm v1.9.16
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/programzheng/base v0.0.0-20201124164127-2b5e5ccf5a14
