@@ -1,6 +1,8 @@
 package model
 
 import (
+	_ "base/config"
+
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
