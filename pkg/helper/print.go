@@ -1,6 +1,8 @@
 package helper
 
 import (
+	log "github.com/sirupsen/logrus"
+
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -19,7 +21,10 @@ func GetPostJSON(ctx *gin.Context) {
 }
 
 func GetJSON(value interface{}) {
-	result, _ := json.Marshal(value)
+	result, err := json.Marshal(value)
+	if err != nil {
+		log.Fatal("helper GetJSON func:", err)
+	}
 	fmt.Println(string(result))
 }
 

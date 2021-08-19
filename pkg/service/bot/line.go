@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"base/pkg/helper"
 	"base/pkg/job/line"
 	"base/pkg/library/line/bot/template"
@@ -64,6 +66,14 @@ func ParseTextGenTemplate(toID string, text string) linebot.SendingMessage {
 
 	}
 	switch parseText[0] {
+	// 記帳|測試|300|備註
+	case "記帳":
+		title := parseText[1]
+		amount := helper.ConvertToInt(parseText[2])
+		note := parseText[4]
+		billingAction(toID, title, amount, note)
+		amountAvg := amount / 3
+		return template.Text("記帳完成，" + parseText[2] + "/3=" + helper.ConvertToString(amountAvg))
 	case "TODO":
 		date := parseText[1]
 		replyText := parseText[2]
@@ -110,4 +120,21 @@ func todoAction(toID string, cycle string, date string, template *linebot.TextMe
 		timeRange := helper.CalcTimeRange(time.Now().Format(helper.GetTimeLayout()), date)
 		jobrunner.In(time.Duration(timeRange)*time.Second, job)
 	}
+}
+
+func billingAction(toID string, title string, amount int, note string) (billing.Billing, bot.LineBilling) {
+	b := billing.Billing{
+		Title:  title,
+		Amount: amount,
+		Note:   note,
+	}
+	billing, err := b.Add()
+	if err != nil {
+		log.Fatal("billingAction add error:", err)
+	}
+	lb := bot.LineBilling{
+		BillingID: billing.ID,
+		UserID:    toID,
+	}
+	return b, lb
 }

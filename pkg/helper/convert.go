@@ -22,6 +22,20 @@ func ConvertToString(any interface{}) string {
 	return ""
 }
 
+func ConvertToInt(any interface{}) int {
+	switch value := any.(type) {
+	case int:
+		return value
+	case string:
+		i, err := strconv.Atoi(value)
+		if err != nil {
+			log.Panic("ConvertToInt error")
+		}
+		return i
+	}
+	return -1
+}
+
 func ConvertInterfaceToIntMap(i []interface{}) []int {
 	m := make([]int, len(i))
 	for value := range i {
