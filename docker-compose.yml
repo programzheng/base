@@ -34,4 +34,4 @@ services:
         - backend
 networks:
   backend:
-    external: true
+    driver: ${NETWORKS_DRIVER}
