@@ -5,7 +5,12 @@ import (
 	"time"
 )
 
+type Tabler interface {
+	TableName() string
+}
+
 type Billing struct {
+	model.Model
 	ID        uint   `gorm:"primary_key"`
 	Title     string `gorm:"comment:'標題'"`
 	Amount    int    `gorm:"comment:'總付款金額'"`
@@ -16,16 +21,20 @@ type Billing struct {
 	DeletedAt *time.Time `sql:"index"`
 }
 
-func init() {
-	if !model.DB.HasTable(&Billing{}) {
-		model.DB.CreateTable(&Billing{})
-	}
+func (Billing) TableName() string {
+	return "billings"
 }
 
-func (b Billing) Add() (Billing, error) {
-	if err := model.DB.Create(&b).Error; err != nil {
-		return Billing{}, err
-	}
+// func (b Billing) init() {
+// 	if !model.DB.HasTable(&b) {
+// 		model.DB.CreateTable(&b)
+// 	}
+// }
 
-	return b, nil
-}
+// func (b Billing) Add() (interface{}, error) {
+// 	if err := model.DB.Create(&b).Error; err != nil {
+// 		return Billing{}, err
+// 	}
+
+// 	return b, nil
+// }

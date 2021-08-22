@@ -1,13 +1,11 @@
 package billing
 
 import (
-	"base/pkg/model/billing"
 	"base/pkg/service"
-
-	"github.com/jinzhu/copier"
 )
 
 type Billing struct {
+	service.ModelService
 	ID     uint   `json:"id"`
 	Title  string `json:"title"`
 	Amount int    `json:"amount"`
@@ -17,15 +15,15 @@ type Billing struct {
 	service.Page
 }
 
-func (b *Billing) Add() (Billing, error) {
-	model := billing.Billing{}
-	copier.Copy(&model, &b)
-	result, err := model.Add()
-	if err != nil {
-		return Billing{}, err
-	}
-	billing := Billing{}
-	copier.Copy(&billing, &result)
+// func (b *Billing) Add() (Billing, error) {
+// 	model := billing.Billing{}
+// 	copier.Copy(&model, &b)
+// 	result, err := model.Add()
+// 	if err != nil {
+// 		return Billing{}, err
+// 	}
+// 	billing := Billing{}
+// 	copier.Copy(&billing, &result)
 
-	return billing, nil
-}
+// 	return billing, nil
+// }
