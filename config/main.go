@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"syscall"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -29,21 +30,31 @@ func setLog() {
 	system := viper.Get("LOG_SYSTEM").(string)
 	switch system {
 	case "file":
-		path := "." + viper.Get("LOG_PATH").(string) + "/"
+		path := viper.Get("DATA_PATH_HOST").(string) + "/" + viper.Get("APP_NAME").(string) + viper.Get("LOG_PATH").(string) + "/"
 		//check log path directory exist
 		_, err := os.Stat(path)
 		if os.IsNotExist(err) {
-			err = os.Mkdir(path, 0644)
+			//make nested directories
+			mask := syscall.Umask(0)
+			defer syscall.Umask(mask)
+			err = os.MkdirAll(path, 0700)
 			if err != nil {
-				log.Fatal("cerate log directory error:", err)
+				log.Fatal("create log directory error:", err)
 			}
 		}
 		fileName := time.Now().Format("20060102") + ".log"
-		file, err := os.OpenFile(path+fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+		file, err := os.OpenFile(path+fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0700)
 		if err != nil {
 			log.Info("Failed to log to file, using default stderr", err)
 		}
 		log.SetOutput(file)
+		logLevel := viper.Get("LOG_LEVEL").(string)
+		logLevelNumber, err := log.ParseLevel(logLevel)
+		if err != nil {
+			log.Info("log ParseLevel error:", err)
+		}
+		// Only log the warning severity or above.
+		log.SetLevel(logLevelNumber)
 		log.Info("log service running")
 	}
 }
@@ -53,6 +64,6 @@ func setViper() {
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
-		logrus.Error("Fatal error config: ", err)
+		log.Error("Fatal error config: ", err)
 	}
 }
