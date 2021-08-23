@@ -16,6 +16,8 @@ func ConvertToString(any interface{}) string {
 		return strconv.Itoa(int(value))
 	case uint:
 		return strconv.Itoa(int(value))
+	case float64:
+		return strconv.FormatFloat(value, 'f', 2, 64)
 	default:
 		log.Panic("ConvertToString error")
 	}
@@ -26,14 +28,36 @@ func ConvertToInt(any interface{}) int {
 	switch value := any.(type) {
 	case int:
 		return value
+	case float64:
+		return int(value)
 	case string:
 		i, err := strconv.Atoi(value)
 		if err != nil {
-			log.Panic("ConvertToInt error")
+			log.Panic("convert string to int error")
 		}
 		return i
+	default:
+		log.Panic("ConvertToInt error")
 	}
 	return -1
+}
+
+func ConvertToFloat64(any interface{}) float64 {
+	switch value := any.(type) {
+	case int:
+		return float64(value)
+	case float64:
+		return value
+	case string:
+		f, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			log.Panic("convert string to float64  error")
+		}
+		return f
+	default:
+		log.Panic("ConvertToFloat64 error")
+	}
+	return -1.00
 }
 
 func ConvertInterfaceToIntMap(i []interface{}) []int {

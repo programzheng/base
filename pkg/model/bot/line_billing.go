@@ -2,6 +2,7 @@ package bot
 
 import (
 	"base/pkg/model"
+	"base/pkg/model/billing"
 
 	"github.com/jinzhu/gorm"
 )
@@ -12,6 +13,7 @@ type LineBilling struct {
 	GroupID   string
 	RoomID    string
 	UserID    string `gorm:"not null"`
+	Billing   billing.Billing
 }
 
 func init() {
@@ -26,4 +28,14 @@ func (lb LineBilling) Add() (LineBilling, error) {
 	}
 
 	return lb, nil
+}
+
+func (lb LineBilling) Get(pageNum int, pageSize int, maps interface{}) ([]*LineBilling, error) {
+	var lbs []*LineBilling
+	err := model.DB.Preload("Billing").Where(maps).Offset(pageNum).Limit(pageSize).Find(&lbs).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return lbs, nil
 }

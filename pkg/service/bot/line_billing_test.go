@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"base/pkg/helper"
 	"testing"
 )
 
@@ -15,6 +14,14 @@ func TestAdd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Add failed: %v", err)
 	}
+	t.Log(lineBilling)
+}
 
-	helper.GetJSON(lineBilling)
+func TestGet(t *testing.T) {
+	lbs := LineBilling{}
+	results, err := lbs.Get()
+	if err != nil {
+		t.Fatalf("Get failed: %v", err)
+	}
+	t.Log(results)
 }

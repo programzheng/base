@@ -45,12 +45,17 @@ func LineWebHook(ctx *gin.Context) {
 			helper.Fail(ctx, err)
 			return
 		}
+		lineId := bot.LineID{
+			GroupID: event.Source.GroupID,
+			RoomID:  event.Source.RoomID,
+			UserID:  event.Source.UserID,
+		}
 		switch event.Source.Type {
 		case "user":
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					replyTemplateMessage := bot.ParseTextGenTemplate(event.Source.UserID, message.Text)
+					replyTemplateMessage := bot.ParseTextGenTemplate(lineId, message.Text)
 					bot.LineReplyMessage(event.ReplyToken, replyTemplateMessage)
 				}
 			}
@@ -58,7 +63,7 @@ func LineWebHook(ctx *gin.Context) {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					replyTemplateMessage := bot.ParseTextGenTemplate(event.Source.GroupID, message.Text)
+					replyTemplateMessage := bot.ParseTextGenTemplate(lineId, message.Text)
 					bot.LineReplyMessage(event.ReplyToken, replyTemplateMessage)
 				}
 			}
