@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -19,11 +18,7 @@ type Token struct {
 	Exp   int64
 }
 
-func init() {
-	secret = []byte(viper.Get("JWT_SECRET").(string))
-}
-
-func CreateJWT() (token Token) {
+func CreateJWT(sercrt []byte) (token Token) {
 	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp": exp,

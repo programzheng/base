@@ -8,6 +8,7 @@ import (
 	"base/pkg/service/auth"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 var adminService admin.Admin
@@ -48,7 +49,8 @@ func Login(ctx *gin.Context) {
 		helper.Fail(ctx, errors.New("密碼錯誤"))
 		return
 	}
-	token := helper.CreateJWT()
+	secret := []byte(viper.Get("JWT_SECRET").(string))
+	token := helper.CreateJWT(secret)
 	adminLogin := auth.AdminLogin{
 		AdminID: admin.ID,
 		Token:   token.Token,
