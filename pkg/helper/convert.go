@@ -13,7 +13,7 @@ func ConvertToString(any interface{}) string {
 	case int:
 		return strconv.Itoa(value)
 	case int64:
-		return strconv.Itoa(int(value))
+		return strconv.FormatInt(value, 10)
 	case uint:
 		return strconv.Itoa(int(value))
 	case float64:
