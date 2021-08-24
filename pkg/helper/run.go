@@ -1,14 +1,12 @@
 package helper
 
 import (
-	"fmt"
 	"os"
 	"runtime"
 	"strings"
 )
 
 func GetOS() string {
-	fmt.Println(runtime.GOOS)
 	return runtime.GOOS
 }
 
