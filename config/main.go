@@ -2,6 +2,8 @@ package config
 
 import (
 	"os"
+	"path/filepath"
+	"runtime"
 	"syscall"
 	"time"
 
@@ -11,10 +13,25 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	_, b, _, _ = runtime.Caller(0)
+	basepath   = filepath.Dir(b)
+)
+
 func init() {
 	setViper()
 	setTimeZone()
 	setLog()
+}
+
+func setViper() {
+	envFilePath := filepath.Join(basepath, "../.env")
+	viper.SetConfigFile(envFilePath)
+	viper.AutomaticEnv()
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		log.Error("Fatal error config: ", err)
+	}
 }
 
 func setTimeZone() {
@@ -30,7 +47,7 @@ func setLog() {
 	system := viper.Get("LOG_SYSTEM").(string)
 	switch system {
 	case "file":
-		path := viper.Get("DATA_PATH_HOST").(string) + "/" + viper.Get("APP_NAME").(string) + viper.Get("LOG_PATH").(string) + "/"
+		path := filepath.Join(basepath, "../"+viper.Get("LOG_PATH").(string))
 		//check log path directory exist
 		_, err := os.Stat(path)
 		if os.IsNotExist(err) {
@@ -43,7 +60,8 @@ func setLog() {
 			}
 		}
 		fileName := time.Now().Format("20060102") + ".log"
-		file, err := os.OpenFile(path+fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0700)
+		filePath := filepath.Join(path, fileName)
+		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0700)
 		if err != nil {
 			log.Info("Failed to log to file, using default stderr", err)
 		}
@@ -56,14 +74,5 @@ func setLog() {
 		// Only log the warning severity or above.
 		log.SetLevel(logLevelNumber)
 		log.Info("log service running")
-	}
-}
-
-func setViper() {
-	viper.SetConfigFile(".env")
-	viper.AutomaticEnv()
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		log.Error("Fatal error config: ", err)
 	}
 }
