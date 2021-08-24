@@ -16,6 +16,7 @@ func GetPathSeparator() string {
 	case "windows":
 		separator = "\\"
 	case "linux":
+	default:
 		separator = "/"
 	}
 	return separator
