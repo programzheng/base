@@ -17,10 +17,10 @@ type LineBilling struct {
 	RoomID    string
 	UserID    string
 
-	service.Page
+	Page service.Page
 }
 
-type LineBillings []LineBillings
+type LineBillings []LineBilling
 
 func (lb *LineBilling) Add() (LineBilling, error) {
 	model := bot.LineBilling{}
@@ -36,14 +36,12 @@ func (lb *LineBilling) Add() (LineBilling, error) {
 }
 
 func (lb *LineBilling) Get() (LineBillings, error) {
-	model := bot.LineBilling{}
-	result, err := model.Get(lb.PageNum, lb.PageSize, lb.getMaps())
+	results, err := bot.LineBilling{}.Get(lb.getMaps())
 	if err != nil {
 		return nil, err
 	}
 	lineBillings := LineBillings{}
-	copier.Copy(&lineBillings, &result)
-
+	copier.Copy(&lineBillings, &results)
 	return lineBillings, nil
 }
 

@@ -12,8 +12,8 @@ type LineBilling struct {
 	BillingID uint `gorm:"unique; not null"`
 	GroupID   string
 	RoomID    string
-	UserID    string `gorm:"not null"`
-	Billing   billing.Billing
+	UserID    string          `gorm:"not null"`
+	Billing   billing.Billing `gorm:"unique;foreignkey:Reference;association_foreignkey:BillingID"`
 }
 
 func init() {
@@ -30,9 +30,9 @@ func (lb LineBilling) Add() (LineBilling, error) {
 	return lb, nil
 }
 
-func (lb LineBilling) Get(pageNum int, pageSize int, maps interface{}) ([]*LineBilling, error) {
-	var lbs []*LineBilling
-	err := model.DB.Preload("Billing").Where(maps).Offset(pageNum).Limit(pageSize).Find(&lbs).Error
+func (lb LineBilling) Get(maps interface{}) ([]LineBilling, error) {
+	var lbs []LineBilling
+	err := model.DB.Preload("Billing").Where(maps).Find(&lbs).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
