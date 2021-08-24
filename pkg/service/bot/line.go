@@ -84,7 +84,7 @@ func ParseTextGenTemplate(lineId LineID, text string) linebot.SendingMessage {
 		amountFloat64 := helper.ConvertToFloat64(amount)
 		amountAvgBase := helper.ConvertToFloat64(3)
 		amountAvg := amountFloat64 / amountAvgBase
-		return template.Text(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + "=" + "*" + helper.ConvertToString(amountAvg) + "*")
+		return template.Text(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
 	case "TODO":
 		date := parseText[1]
 		replyText := parseText[2]
