@@ -79,7 +79,7 @@ func LinePush(ctx *gin.Context) {
 		helper.BadRequest(ctx, err)
 		return
 	}
-	token := helper.CreateMD5(time.Now().Format(helper.GetIso8601()))
+	token := helper.CreateMD5(time.Now().Format(helper.Iso8601))
 	if pushMessage.Token != token {
 		helper.Unauthorized(ctx, nil)
 		return

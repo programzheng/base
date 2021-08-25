@@ -128,7 +128,7 @@ func todoAction(toID string, cycle string, date string, template *linebot.TextMe
 		minute := parseTime[1]
 		jobrunner.Schedule(minute+" "+hour+" * * *", job)
 	default:
-		timeRange := helper.CalcTimeRange(time.Now().Format(helper.GetTimeLayout()), date)
+		timeRange := helper.CalcTimeRange(time.Now().Format(helper.Yyyymmddhhmmss), date)
 		jobrunner.In(time.Duration(timeRange)*time.Second, job)
 	}
 }
