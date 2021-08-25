@@ -12,8 +12,8 @@ type LineBilling struct {
 	BillingID uint `gorm:"unique; not null"`
 	GroupID   string
 	RoomID    string
-	UserID    string          `gorm:"not null"`
-	Billing   billing.Billing `gorm:"unique;foreignkey:Reference;association_foreignkey:BillingID"`
+	UserID    string `gorm:"not null"`
+	Billing   billing.Billing
 }
 
 func init() {

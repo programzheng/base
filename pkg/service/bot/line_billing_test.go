@@ -18,10 +18,10 @@ func TestAdd(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	lbs := LineBilling{}
-	results, err := lbs.Get()
+	lb := LineBilling{}
+	results, err := lb.Get()
 	if err != nil {
 		t.Fatalf("Get failed: %v", err)
 	}
-	t.Log(results)
+	t.Logf("%+v\n", results)
 }

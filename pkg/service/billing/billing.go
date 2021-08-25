@@ -3,16 +3,20 @@ package billing
 import (
 	"base/pkg/model/billing"
 	"base/pkg/service"
+	"time"
 
 	"github.com/jinzhu/copier"
 )
 
 type Billing struct {
-	ID     uint   `json:"id"`
-	Title  string `json:"title"`
-	Amount int    `json:"amount"`
-	Payer  string `json:"payer"`
-	Note   string `json:"note"`
+	ID        uint `json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time
+	Title     string `json:"title"`
+	Amount    int    `json:"amount"`
+	Payer     string `json:"payer"`
+	Note      string `json:"note"`
 
 	service.Page
 }

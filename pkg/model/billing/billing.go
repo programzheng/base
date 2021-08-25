@@ -2,18 +2,16 @@ package billing
 
 import (
 	"base/pkg/model"
-	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 type Billing struct {
-	ID        uint   `gorm:"primary_key"`
-	Title     string `gorm:"comment:'標題'"`
-	Amount    int    `gorm:"comment:'總付款金額'"`
-	Payer     string `gorm:"comment:'付款人'"`
-	Note      string `gorm:"comment:'備註'"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time `sql:"index"`
+	gorm.Model
+	Title  string `gorm:"comment:'標題'"`
+	Amount int    `gorm:"comment:'總付款金額'"`
+	Payer  string `gorm:"comment:'付款人'"`
+	Note   string `gorm:"comment:'備註'"`
 }
 
 func init() {

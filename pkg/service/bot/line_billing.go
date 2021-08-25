@@ -3,6 +3,7 @@ package bot
 import (
 	"base/pkg/model/bot"
 	"base/pkg/service"
+	"base/pkg/service/billing"
 
 	"github.com/jinzhu/copier"
 )
@@ -16,6 +17,8 @@ type LineBilling struct {
 	GroupID   string
 	RoomID    string
 	UserID    string
+
+	Billing billing.Billing
 
 	Page service.Page
 }
