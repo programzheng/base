@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"base/pkg/helper"
 	"testing"
 )
 
@@ -19,7 +20,9 @@ func TestAdd(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	lb := LineBilling{}
-	results, err := lb.Get()
+	where := make(map[string]interface{})
+	not := make(map[string]interface{})
+	results, err := lb.Get(where, not)
 	if err != nil {
 		t.Fatalf("Get failed: %v", err)
 	}

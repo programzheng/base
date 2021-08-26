@@ -30,9 +30,9 @@ func (lb LineBilling) Add() (LineBilling, error) {
 	return lb, nil
 }
 
-func (lb LineBilling) Get(maps interface{}) ([]LineBilling, error) {
+func (lb LineBilling) Get(maps map[string]interface{}, not map[string]interface{}) ([]LineBilling, error) {
 	var lbs []LineBilling
-	err := model.DB.Preload("Billing").Where(maps).Find(&lbs).Error
+	err := model.DB.Preload("Billing").Where(maps).Not(not).Find(&lbs).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

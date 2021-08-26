@@ -23,8 +23,6 @@ type LineBilling struct {
 	Page service.Page
 }
 
-type LineBillings []LineBilling
-
 func (lb *LineBilling) Add() (LineBilling, error) {
 	model := bot.LineBilling{}
 	copier.Copy(&model, &lb)
@@ -38,18 +36,12 @@ func (lb *LineBilling) Add() (LineBilling, error) {
 	return lineBilling, nil
 }
 
-func (lb *LineBilling) Get() (LineBillings, error) {
-	results, err := bot.LineBilling{}.Get(lb.getMaps())
+func (lb *LineBilling) Get(where map[string]interface{}, not map[string]interface{}) ([]LineBilling, error) {
+	results, err := bot.LineBilling{}.Get(service.GetDefaultWhere(where), not)
 	if err != nil {
 		return nil, err
 	}
-	lineBillings := LineBillings{}
+	var lineBillings []LineBilling
 	copier.Copy(&lineBillings, &results)
 	return lineBillings, nil
-}
-
-func (lb *LineBilling) getMaps() map[string]interface{} {
-	maps := make(map[string]interface{})
-	maps["deleted_at"] = nil
-	return maps
 }

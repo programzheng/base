@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"base/pkg/helper"
+
 	log "github.com/sirupsen/logrus"
 
 	//use this get .env setting
@@ -61,7 +63,7 @@ func setLog() {
 				log.Fatal("create log directory error:", err)
 			}
 		}
-		fileName := time.Now().Format("20060102") + ".log"
+		fileName := time.Now().Format(helper.Iso8601) + ".log"
 		filePath := filepath.Join(path, fileName)
 		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0700)
 		if err != nil {

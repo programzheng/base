@@ -33,7 +33,7 @@ func ConvertToInt(any interface{}) int {
 	case string:
 		i, err := strconv.Atoi(value)
 		if err != nil {
-			log.Panic("convert string to int error")
+			log.Panic("convert string to int error:", err)
 		}
 		return i
 	default:
@@ -58,6 +58,18 @@ func ConvertToFloat64(any interface{}) float64 {
 		log.Panic("ConvertToFloat64 error")
 	}
 	return -1.00
+}
+
+func ConvertToBool(any interface{}) bool {
+	switch value := any.(type) {
+	case string:
+		b, err := strconv.ParseBool(value)
+		if err != nil {
+			log.Panic("convert string to bool error")
+		}
+		return b
+	}
+	return false
 }
 
 func ConvertInterfaceToIntMap(i []interface{}) []int {
