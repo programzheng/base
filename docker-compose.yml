@@ -20,18 +20,18 @@ services:
         - backend
 
     #socketio
-    socketio:
-      build:
-        context: .
-        dockerfile: ./Dockerfile.socketio
-        args:
-          - WORKSPACE=socketio
-      restart: always
-      volumes:
-        - ${DATA_PATH_HOST}/socketio/${APP_NAME}/upload:/socketio/upload
-        - ${DATA_PATH_HOST}/socketio/${APP_NAME}/log:/socketio/log
-      networks:
-        - backend
+    # socketio:
+    #   build:
+    #     context: .
+    #     dockerfile: ./Dockerfile.socketio
+    #     args:
+    #       - WORKSPACE=socketio
+    #   restart: always
+    #   volumes:
+    #     - ${DATA_PATH_HOST}/socketio/${APP_NAME}/upload:/socketio/upload
+    #     - ${DATA_PATH_HOST}/socketio/${APP_NAME}/log:/socketio/log
+    #   networks:
+    #     - backend
 networks:
   backend:
-    driver: ${NETWORKS_DRIVER}
+    external: true
