@@ -27,12 +27,16 @@ func init() {
 
 func setViper() {
 	envFilePath := filepath.Join(basepath, "../.env")
-	viper.SetConfigFile(envFilePath)
-	viper.AutomaticEnv()
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		log.Error("Fatal error config: ", err)
+	//check .env is exist
+	_, err := os.Stat(envFilePath)
+	if !os.IsNotExist(err) {
+		viper.SetConfigFile(envFilePath)
+		err = viper.ReadInConfig() // Find and read the config file
+		if err != nil {            // Handle errors reading the config file
+			log.Error("Fatal error config: ", err)
+		}
 	}
+	viper.AutomaticEnv()
 }
 
 func setTimeZone() {
