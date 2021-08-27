@@ -3,6 +3,7 @@ module base
 go 1.16
 
 require (
+	github.com/ahl5esoft/golang-underscore v2.0.0+incompatible // indirect
 	github.com/bamzi/jobrunner v1.0.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
