@@ -4,8 +4,6 @@ RUN apk add bash ca-certificates git gcc g++ libc-dev
 ARG WORKSPACE
 WORKDIR /${WORKSPACE}
 
-# Force the go compiler to use modules
-ENV GO111MODULE=on
 # Copy go mod and sum files
 COPY go.mod .
 COPY go.sum .
