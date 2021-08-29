@@ -25,6 +25,7 @@ func init() {
 		viper.Get("DB_HOST").(string),
 		viper.Get("DB_PORT").(string),
 		viper.Get("DB_DATABASE"))
+	fmt.Printf("connect: %v database\n", setting)
 	DB, err = gorm.Open(viper.Get("DB_CONNECTION").(string), setting)
 
 	if err != nil {

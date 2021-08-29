@@ -5,6 +5,7 @@ import (
 	"base/pkg/library/line/bot/template"
 	"strings"
 
+	underscore "github.com/ahl5esoft/golang-underscore"
 	"github.com/line/line-bot-sdk-go/linebot"
 	log "github.com/sirupsen/logrus"
 )
@@ -36,20 +37,31 @@ func GroupParseTextGenTemplate(lineId LineID, text string) linebot.SendingMessag
 		if len(lbs) == 0 {
 			return template.Text("沒有記帳紀錄哦!")
 		}
-		var sb strings.Builder
-		sb.Grow(len(lbs))
-		for _, lb := range lbs {
-			memberName := "Unknow"
+		dstByUserID := make(map[string]string, 0)
+		underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb LineBilling, _ int) map[string]string {
 			lineMember, err := botClient.GetGroupMemberProfile(lb.GroupID, lb.UserID).Do()
 			if err != nil {
 				log.Fatal("line messaging api get group member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
 			}
-			memberName = lineMember.DisplayName
+			dst := make(map[string]string)
+			dst[lb.UserID] = lineMember.DisplayName
+			return dst
+		}).Value(&dstByUserID)
+		var sb strings.Builder
+		sb.Grow(len(lbs))
+		for _, lb := range lbs {
+			memberName := "Unknow"
+			//check line member display name is exist
+			if _, ok := dstByUserID[lb.UserID]; ok {
+				memberName = dstByUserID[lb.UserID]
+			}
 			amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, helper.ConvertToFloat64(lb.Billing.Amount))
 			text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
 				lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "/" + helper.ConvertToString(amountAvgBase) + " = " + helper.ConvertToString(amountAvg) + " |" + memberName + "|" + lb.Billing.Note + "\n"
 			sb.WriteString(text)
 		}
+		//get user id total amount
+
 		return template.Text(sb.String())
 	// c||記帳|生日聚餐|1234|本人生日
 	case "c", "記帳":

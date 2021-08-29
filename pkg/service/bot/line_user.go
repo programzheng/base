@@ -1,12 +1,10 @@
 package bot
 
 import (
-	"base/pkg/helper"
 	"base/pkg/library/line/bot/template"
 	"strings"
 
 	"github.com/line/line-bot-sdk-go/linebot"
-	log "github.com/sirupsen/logrus"
 )
 
 func UserParseTextGenTemplate(lineId LineID, text string) linebot.SendingMessage {
@@ -16,39 +14,6 @@ func UserParseTextGenTemplate(lineId LineID, text string) linebot.SendingMessage
 
 	}
 	switch parseText[0] {
-	// 記帳列表
-	case "記帳列表":
-		lb := LineBilling{}
-		where := make(map[string]interface{})
-		not := make(map[string]interface{})
-		lbs, err := lb.Get(where, not)
-		if err != nil {
-			log.Fatal("取得記帳列表錯誤", err)
-		}
-		var sb strings.Builder
-		sb.Grow(len(lbs))
-		for _, lb := range lbs {
-			memberName := "Unknow"
-			lineMember, err := botClient.GetProfile(lb.UserID).Do()
-			if err != nil {
-				log.Fatal("line messaging api get member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
-			}
-			memberName = lineMember.DisplayName
-			text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
-				lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "|" + lb.Billing.Note + "|" + memberName + "\n"
-			sb.WriteString(text)
-		}
-		return template.Text(sb.String())
-	// 記帳|測試|300|備註
-	case "記帳":
-		title := parseText[1]
-		amount := helper.ConvertToInt(parseText[2])
-		note := parseText[3]
-		billingAction(lineId, amount, title, note)
-		amountFloat64 := helper.ConvertToFloat64(amount)
-		amountAvgBase := helper.ConvertToFloat64(3)
-		amountAvg := amountFloat64 / amountAvgBase
-		return template.Text(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
 	case "TODO":
 		date := parseText[1]
 		replyText := parseText[2]
