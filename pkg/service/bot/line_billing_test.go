@@ -2,11 +2,11 @@ package bot
 
 import (
 	"base/pkg/helper"
+	"fmt"
 	"strings"
 	"testing"
 
 	underscore "github.com/ahl5esoft/golang-underscore"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -18,7 +18,7 @@ func TestAdd(t *testing.T) {
 	}
 	lineBilling, err := lb.Add()
 	if err != nil {
-		t.Fatalf("Add failed: %v", err)
+		t.Logf("Add failed: %v", err)
 	}
 	t.Log(lineBilling)
 }
@@ -74,15 +74,17 @@ func TestGetDistinctByUserIDAndLineMember(t *testing.T) {
 	if len(lbs) != 1 {
 		t.Log("get results success")
 	} else {
-		t.Errorf("fail")
+		t.Error("fail")
 	}
 	dstByUserID := make(map[string]string, 0)
 	underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb LineBilling, _ int) map[string]string {
+		dst := make(map[string]string)
 		lineMember, err := botClient.GetGroupMemberProfile(lb.GroupID, lb.UserID).Do()
 		if err != nil {
-			log.Fatal("line messaging api get group member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
+			t.Log("line messaging api get group member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
+			dst[lb.UserID] = "Unkonw"
+			return dst
 		}
-		dst := make(map[string]string)
 		dst[lb.UserID] = lineMember.DisplayName
 		return dst
 	}).Value(&dstByUserID)
@@ -106,28 +108,92 @@ func TestGetLineBillingList(t *testing.T) {
 	}
 	dstByUserID := make(map[string]string, 0)
 	underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb LineBilling, _ int) map[string]string {
+		dst := make(map[string]string)
 		lineMember, err := botClient.GetGroupMemberProfile(lb.GroupID, lb.UserID).Do()
 		if err != nil {
-			log.Fatal("line messaging api get group member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
+			t.Log("line messaging api get group member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
+			dst[lb.UserID] = "Unkonw"
+			return dst
 		}
-		dst := make(map[string]string)
 		dst[lb.UserID] = lineMember.DisplayName
 		return dst
 	}).Value(&dstByUserID)
+	lbUserIDAmount := make(map[string]float64, 0)
 	var sb strings.Builder
 	sb.Grow(len(lbs))
 	for _, lb := range lbs {
 		memberName := "Unknow"
+		amountAvg, amountAvgBase := calculateAmount(testGroupID, helper.ConvertToFloat64(lb.Billing.Amount))
 		//check line member display name is exist
 		if _, ok := dstByUserID[lb.UserID]; ok {
 			memberName = dstByUserID[lb.UserID]
+			lbUserIDAmount[lb.UserID] = lbUserIDAmount[lb.UserID] + amountAvg
 		}
-		amountAvg, amountAvgBase := calculateAmount(testGroupID, helper.ConvertToFloat64(lb.Billing.Amount))
 		text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
 			lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "/" + helper.ConvertToString(amountAvgBase) + " = " + helper.ConvertToString(amountAvg) + " |" + memberName + "|" + lb.Billing.Note + "\n"
 		sb.WriteString(text)
 	}
+	t.Logf("%v\n", lbUserIDAmount)
 	t.Log(sb.String())
+}
+
+func TestGetLineBillingListTemplateText(t *testing.T) {
+	var testGroupID string
+	testGroupID = viper.Get("TEST_GET_LINE_BILLING_LIST_GROUP_ID").(string)
+	lb := LineBilling{}
+	where := make(map[string]interface{})
+	where["group_id"] = testGroupID
+	not := make(map[string]interface{})
+	lbs, err := lb.Get(where, not)
+	if err != nil {
+		t.Fatalf("Get failed: %v", err)
+	}
+	if len(lbs) != 1 {
+		t.Logf("%v\n", lbs)
+	} else {
+		t.Errorf("fail")
+	}
+	//user id line member display name
+	dstByUserID := make(map[string]string, 0)
+	//user id total amount
+	lbUserIDAmount := make(map[string]float64, 0)
+	underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb LineBilling, _ int) map[string]string {
+		dst := make(map[string]string)
+		lineMember, err := botClient.GetGroupMemberProfile(lb.GroupID, lb.UserID).Do()
+		if err != nil {
+			t.Log("line messaging api get group member profile group id:"+lb.GroupID+" user id:"+lb.UserID+" error:", err)
+			dst[lb.UserID] = "Unkonw"
+			return dst
+		}
+		dst[lb.UserID] = lineMember.DisplayName
+		return dst
+	}).Value(&dstByUserID)
+	var sbList strings.Builder
+	sbList.Grow(len(lbs))
+	for _, lb := range lbs {
+		var memberName string
+		amountAvg, amountAvgBase := calculateAmount(testGroupID, helper.ConvertToFloat64(lb.Billing.Amount))
+		//check line member display name is exist
+		if _, ok := dstByUserID[lb.UserID]; ok {
+			memberName = dstByUserID[lb.UserID]
+			lbUserIDAmount[lb.UserID] = lbUserIDAmount[lb.UserID] + amountAvg
+		}
+		text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
+			lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "/" + helper.ConvertToString(amountAvgBase) + " = " + helper.ConvertToString(amountAvg) + " |" + memberName + "|" + lb.Billing.Note + "\n"
+		sbList.WriteString(text)
+	}
+	//billing list string
+	t.Log(sbList.String())
+	var sbTotal strings.Builder
+	sbTotal.Grow(len(dstByUserID))
+	text := "總付款金額：\n"
+	sbTotal.WriteString(text)
+	for userID, name := range dstByUserID {
+		text = fmt.Sprintf("%v: *%v*\n", name, helper.ConvertToString(lbUserIDAmount[userID]))
+		sbTotal.WriteString(text)
+	}
+	//user id total string
+	t.Logf(sbTotal.String())
 }
 
 func TestPluck(t *testing.T) {

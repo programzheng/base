@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"reflect"
 	"strings"
 	"time"
 
@@ -64,8 +65,15 @@ func (lineBotRequest *LineBotRequest) Add() (uint, error) {
 	return ID, nil
 }
 
-func LineReplyMessage(replyToken string, messages ...linebot.SendingMessage) {
-	_, err := botClient.ReplyMessage(replyToken, messages...).Do()
+func LineReplyMessage(replyToken string, messages interface{}) {
+	var sendMessages []linebot.SendingMessage
+	rv := reflect.ValueOf(messages)
+	if rv.Kind() == reflect.Slice {
+		sendMessages = messages.([]linebot.SendingMessage)
+	} else {
+		sendMessages = append(sendMessages, messages.(linebot.SendingMessage))
+	}
+	_, err := botClient.ReplyMessage(replyToken, sendMessages...).Do()
 	if err != nil {
 		log.Println("LINE Message API parse Request error:", err)
 	}

@@ -3,11 +3,9 @@ package bot
 import (
 	"base/pkg/library/line/bot/template"
 	"strings"
-
-	"github.com/line/line-bot-sdk-go/linebot"
 )
 
-func UserParseTextGenTemplate(lineId LineID, text string) linebot.SendingMessage {
+func UserParseTextGenTemplate(lineId LineID, text string) interface{} {
 	parseText := strings.Split(text, "|")
 
 	if len(parseText) == 1 {
