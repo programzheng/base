@@ -103,7 +103,7 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		}
 
 	}
-	return linebot.NewTextMessage(text)
+	return nil
 }
 
 func calculateAmount(groupID string, amount float64) (float64, int) {
