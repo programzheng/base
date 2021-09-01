@@ -87,6 +87,12 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		amountFloat64 := helper.ConvertToFloat64(amount)
 		amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, amountFloat64)
 		return linebot.NewTextMessage(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
+	case "我的大頭貼":
+		lineMember, err := botClient.GetGroupMemberProfile(lineId.GroupID, lineId.UserID).Do()
+		if err != nil {
+			return nil
+		}
+		return linebot.NewImageMessage(lineMember.PictureURL, lineMember.PictureURL)
 	case "TODO":
 		date := parseText[1]
 		replyText := parseText[2]
