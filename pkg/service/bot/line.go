@@ -32,6 +32,15 @@ type LineID struct {
 	UserID  string
 }
 
+type LinePostBackAction struct {
+	Action string
+	Data   LineCalculateAmountBalance
+}
+
+type LineCalculateAmountBalance struct {
+	Date string
+}
+
 type LineBotPushMessage struct {
 	Token string `json:"token"`
 	Text  string `json:"text"`
@@ -73,10 +82,11 @@ func LineReplyMessage(replyToken string, messages interface{}) {
 	} else {
 		sendMessages = append(sendMessages, messages.(linebot.SendingMessage))
 	}
-	_, err := botClient.ReplyMessage(replyToken, sendMessages...).Do()
+	basicResponse, err := botClient.ReplyMessage(replyToken, sendMessages...).Do()
 	if err != nil {
-		log.Println("LINE Message API parse Request error:", err)
+		log.Println("LINE Message API reply message Request error:", err)
 	}
+	log.Printf("LINE Message API reply message Request response:%v\n", basicResponse)
 }
 
 func LinePushMessage(toID string, messages ...linebot.SendingMessage) {
