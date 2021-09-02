@@ -109,6 +109,9 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		}
 
 	}
+	if helper.ConvertToBool(viper.Get("LINE_MESSAGING_DEBUG").(string)) {
+		return linebot.NewTextMessage("目前沒有此功能")
+	}
 	return nil
 }
 
