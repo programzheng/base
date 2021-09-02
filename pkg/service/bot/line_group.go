@@ -3,12 +3,17 @@ package bot
 import (
 	"base/pkg/helper"
 	"base/pkg/library/line/bot/template"
+	"base/pkg/model"
+	"base/pkg/model/bot"
+	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	underscore "github.com/ahl5esoft/golang-underscore"
 	"github.com/line/line-bot-sdk-go/linebot"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
@@ -87,6 +92,33 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		amountFloat64 := helper.ConvertToFloat64(amount)
 		amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, amountFloat64)
 		return linebot.NewTextMessage(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
+	// 結算
+	case "結算":
+		date := time.Now().Format(helper.Iso8601)
+		if len(parseText) >= 2 {
+			date = parseText[1]
+		}
+		var lbs []bot.LineBilling
+		err := model.DB.Preload("Billing").Where("updated_at < ?", date).Find(&lbs).Error
+		if err != nil {
+			log.Fatalf("Get failed: %v", err)
+		}
+		listText := getLineBillingList(lineId, lbs)
+		//template
+		postBack := LinePostBackAction{
+			Action: "結算",
+			Data: LineCalculateAmountBalance{
+				Date: date,
+			},
+		}
+		postBackJson, err := json.Marshal(postBack)
+		if err != nil {
+			log.Fatalf("Marshal failed: %v", err)
+		}
+		leftBtn := linebot.NewPostbackAction("是", string(postBackJson), "", "")
+		rightBtn := linebot.NewMessageAction("否", "記帳列表")
+		confirmTemplate := linebot.NewConfirmTemplate(listText, leftBtn, rightBtn)
+		return linebot.NewTemplateMessage("確定要刪除這些紀錄?", confirmTemplate)
 	case "我的大頭貼":
 		lineMember, err := botClient.GetGroupMemberProfile(lineId.GroupID, lineId.UserID).Do()
 		if err != nil {
@@ -113,6 +145,35 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		return linebot.NewTextMessage("目前沒有此功能")
 	}
 	return nil
+}
+
+func getLineBillingList(lineId LineID, lbs []bot.LineBilling) string {
+	//user id line member display name
+	dstByUserID := make(map[string]string, 0)
+	underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb bot.LineBilling, _ int) map[string]string {
+		dst := make(map[string]string)
+		lineMember, err := botClient.GetGroupMemberProfile(lb.GroupID, lb.UserID).Do()
+		if err != nil {
+			dst[lb.UserID] = "Unkonw"
+			return dst
+		}
+		dst[lb.UserID] = lineMember.DisplayName
+		return dst
+	}).Value(&dstByUserID)
+	var sbList strings.Builder
+	sbList.Grow(len(lbs))
+	for _, lb := range lbs {
+		var memberName string
+		amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, helper.ConvertToFloat64(lb.Billing.Amount))
+		//check line member display name is exist
+		if _, ok := dstByUserID[lb.UserID]; ok {
+			memberName = dstByUserID[lb.UserID]
+		}
+		text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
+			lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "/" + helper.ConvertToString(amountAvgBase) + " = " + helper.ConvertToString(amountAvg) + " |" + memberName + "|" + lb.Billing.Note + "\n"
+		sbList.WriteString(text)
+	}
+	return string(sbList.String())
 }
 
 func calculateAmount(groupID string, amount float64) (float64, int) {
