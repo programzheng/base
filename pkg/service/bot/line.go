@@ -34,7 +34,7 @@ type LineID struct {
 
 type LinePostBackAction struct {
 	Action string
-	Data   LineCalculateAmountBalance
+	Data   map[string]interface{}
 }
 
 type LineCalculateAmountBalance struct {
