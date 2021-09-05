@@ -52,7 +52,8 @@ func LineWebHook(ctx *gin.Context) {
 		}
 		switch event.Source.Type {
 		case "user":
-			if event.Type == linebot.EventTypeMessage {
+			switch event.Type {
+			case linebot.EventTypeMessage:
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 					replyTemplateMessage := bot.UserParseTextGenTemplate(lineId, message.Text)
@@ -60,15 +61,22 @@ func LineWebHook(ctx *gin.Context) {
 						bot.LineReplyMessage(event.ReplyToken, replyTemplateMessage)
 					}
 				}
+			case linebot.EventTypePostback:
 			}
 		case "group":
-			if event.Type == linebot.EventTypeMessage {
+			switch event.Type {
+			case linebot.EventTypeMessage:
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 					replyTemplateMessage := bot.GroupParseTextGenTemplate(lineId, message.Text)
 					if replyTemplateMessage != nil {
 						bot.LineReplyMessage(event.ReplyToken, replyTemplateMessage)
 					}
+				}
+			case linebot.EventTypePostback:
+				replyTemplateMessage := bot.GroupParsePostBackGenTemplate(lineId, event.Postback)
+				if replyTemplateMessage != nil {
+					bot.LineReplyMessage(event.ReplyToken, replyTemplateMessage)
 				}
 			}
 		}
