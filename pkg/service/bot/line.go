@@ -37,10 +37,6 @@ type LinePostBackAction struct {
 	Data   map[string]interface{}
 }
 
-type LineCalculateAmountBalance struct {
-	Date string
-}
-
 type LineBotPushMessage struct {
 	Token string `json:"token"`
 	Text  string `json:"text"`
