@@ -177,7 +177,7 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 		if err != nil {
 			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Delete failed: %v", err)
 		}
-		return linebot.NewTextMessage(fmt.Sprintf("成功刪除*%v*以前的記帳資料", date))
+		return linebot.NewTextMessage(fmt.Sprintf("成功刪除 *%v* 以前的記帳資料", date))
 	}
 	return nil
 }
