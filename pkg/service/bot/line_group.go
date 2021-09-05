@@ -23,9 +23,11 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 	if len(parseText) == 1 {
 		switch parseText[0] {
 		case "c helper", "記帳說明", "記帳":
-			return linebot.NewTextMessage("\"記帳\"\n將按照群組人數去做平均計算，使用記帳請使用以下格式輸入\n\"記帳|標題|總金額|備註\"\n例如:\n記帳|生日聚餐|1234|本人生日")
+			return linebot.NewTextMessage("*記帳*\n將按照群組人數去做平均計算，使用記帳請使用以下格式輸入\n\"記帳|標題|總金額|備註\"\n例如:\n記帳|生日聚餐|1234|本人生日")
 		case "c list helper", "記帳列表說明":
-			return linebot.NewTextMessage("\"記帳列表\"\n將回傳記帳紀錄的列表，格式為:\n日期時間 標題|金額| 平均金額 |付款人|備註")
+			return linebot.NewTextMessage("*記帳列表*\n將回傳記帳紀錄的列表，格式為:\n日期時間 標題|金額| 平均金額 |付款人|備註")
+		case "c balance helper", "記帳結算說明", "結算說明":
+			return linebot.NewTextMessage("*記帳結算說明*\n將刪除記帳資料，格式為:\n記帳結算|日期(可選)")
 		}
 	}
 	//功能
@@ -41,6 +43,10 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		lbs, err := lb.Get(where, not)
 		if err != nil {
 			log.Fatalf("Get failed: %v", err)
+		}
+		//沒有記帳資料
+		if len(lbs) == 0 {
+			return linebot.NewTextMessage("目前沒有記帳紀錄哦！")
 		}
 		//user id line member display name
 		dstByUserID := make(map[string]string, 0)
@@ -87,15 +93,20 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 	case "c", "記帳":
 		title := parseText[1]
 		amount := helper.ConvertToInt(parseText[2])
-		note := parseText[3]
+		note := ""
+		//如果有輸入備註
+		if len(parseText) == 4 {
+			note = parseText[3]
+		}
 		billingAction(lineId, amount, title, note)
 		amountFloat64 := helper.ConvertToFloat64(amount)
 		amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, amountFloat64)
 		return linebot.NewTextMessage(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
-	// 結算
-	case "結算":
+	// 記帳結算
+	case "記帳結算", "結算":
 		date := time.Now().Format(helper.Iso8601)
-		if len(parseText) >= 2 {
+		//如果有輸入限制日期
+		if len(parseText) == 2 {
 			date = parseText[1]
 		}
 		var lbs []bot.LineBilling
@@ -103,12 +114,16 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		if err != nil {
 			log.Fatalf("Get failed: %v", err)
 		}
+		//沒有記帳資料
+		if len(lbs) == 0 {
+			return linebot.NewTextMessage(fmt.Sprintf("%v以前沒有記帳紀錄哦！", date))
+		}
 		listText := getLineBillingList(lineId, lbs)
 		//template
 		postBack := LinePostBackAction{
 			Action: "結算",
-			Data: LineCalculateAmountBalance{
-				Date: date,
+			Data: map[string]interface{}{
+				"Date": date,
 			},
 		}
 		postBackJson, err := json.Marshal(postBack)
@@ -143,6 +158,26 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 	}
 	if helper.ConvertToBool(viper.Get("LINE_MESSAGING_DEBUG").(string)) {
 		return linebot.NewTextMessage("目前沒有此功能")
+	}
+	return nil
+}
+
+func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) interface{} {
+	data := []byte(postBack.Data)
+	lpba := LinePostBackAction{}
+	err := json.Unmarshal(data, &lpba)
+	if err != nil {
+		log.Fatalf("line group GroupParsePostBackGenTemplate json unmarshal error: %v", err)
+	}
+	switch lpba.Action {
+	case "結算":
+		date := lpba.Data["Date"].(string)
+		var lbs []bot.LineBilling
+		err := model.DB.Where("updated_at < ?", date).Delete(&lbs).Error
+		if err != nil {
+			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Delete failed: %v", err)
+		}
+		return linebot.NewTextMessage(fmt.Sprintf("成功刪除*%v*以前的記帳資料", date))
 	}
 	return nil
 }
