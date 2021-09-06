@@ -67,7 +67,7 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, amountFloat64)
 		return linebot.NewTextMessage(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
 	// 記帳結算
-	case "記帳結算", "結算":
+	case "記帳結算", "結帳", "結算":
 		messages := []linebot.SendingMessage{}
 
 		date := time.Now().Format(helper.Yyyymmddhhmmss)
@@ -196,11 +196,11 @@ func getLineBillingList(lineId LineID, lbs []bot.LineBilling, dstByUserID map[st
 		if _, ok := dstByUserID[lb.UserID]; ok {
 			memberName = dstByUserID[lb.UserID]
 		}
-		text := fmt.Sprintf("%v %v|%v/%v= *%v* |%v", lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss), lb.Billing.Title, helper.ConvertToString(lb.Billing.Amount), helper.ConvertToString(amountAvgBase), helper.ConvertToString(amountAvg), memberName)
+		text := fmt.Sprintf("%v\n%v|%v/%v= *%v* |%v", lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss), lb.Billing.Title, helper.ConvertToString(lb.Billing.Amount), helper.ConvertToString(amountAvgBase), helper.ConvertToString(amountAvg), memberName)
 		if lb.Billing.Note != "" {
 			text = text + "|" + lb.Billing.Note
 		}
-		if len(lbs) != key {
+		if len(lbs)-1 != key {
 			text = text + "\n"
 		}
 		sbList.WriteString(text)
