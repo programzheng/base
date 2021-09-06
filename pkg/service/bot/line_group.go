@@ -31,6 +31,8 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 			return linebot.NewTextMessage("*記帳結算說明*\n將刪除記帳資料，格式為:\n記帳結算|日期(可選)")
 		}
 	}
+
+	lineIdMap := getLineIDMap(lineId)
 	//功能
 	switch parseText[0] {
 	// c list||記帳列表
@@ -38,7 +40,7 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		messages := []linebot.SendingMessage{}
 
 		var lbs []bot.LineBilling
-		err := model.DB.Preload("Billing").Where("group_id = ?", lineId.GroupID).Find(&lbs).Error
+		err := model.DB.Where(lineIdMap).Preload("Billing").Find(&lbs).Error
 		if err != nil {
 			log.Fatalf("Get failed: %v", err)
 		}
@@ -76,7 +78,7 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 			date = parseText[1]
 		}
 		var lbs []bot.LineBilling
-		err := model.DB.Preload("Billing").Where("updated_at < ?", date).Find(&lbs).Error
+		err := model.DB.Where(lineIdMap).Where("updated_at < ?", date).Preload("Billing").Find(&lbs).Error
 		if err != nil {
 			log.Fatalf("Get failed: %v", err)
 		}
@@ -92,7 +94,8 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		postBack := LinePostBackAction{
 			Action: "結算",
 			Data: map[string]interface{}{
-				"Date": date,
+				"LineUserID": lineId.UserID,
+				"Date":       date,
 			},
 		}
 		postBackJson, err := json.Marshal(postBack)
@@ -141,15 +144,26 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 	if err != nil {
 		log.Fatalf("line group GroupParsePostBackGenTemplate json unmarshal error: %v", err)
 	}
+
+	lineIdMap := getLineIDMap(lineId)
 	switch lpba.Action {
 	case "結算":
+		lineUserID := lpba.Data["LineUserID"].(string)
+		if lineUserID != lineId.UserID {
+			return linebot.NewTextMessage("操作者不同，請自行輸入\"結算\"")
+		}
 		date := lpba.Data["Date"].(string)
 		var lbs []bot.LineBilling
-		err := model.DB.Preload("Billing").Where("user_id = ?", lineId.UserID).Where("updated_at < ?", date).Find(&lbs).Error
+		err := model.DB.Where(lineIdMap).Where("updated_at < ?", date).Preload("Billing").Find(&lbs).Error
 		if err != nil {
 			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Get LineBilling failed: %v", err)
 		}
-
+		memberName := "Unkonw"
+		lineMember, _ := botClient.GetGroupMemberProfile(lineId.GroupID, lineId.UserID).Do()
+		memberName = lineMember.DisplayName
+		if len(lbs) == 0 {
+			return linebot.NewTextMessage(fmt.Sprintf("%v:%v以前沒有記帳紀錄哦", memberName, date))
+		}
 		//delete Billing
 		var bID []uint
 		underscore.Chain(lbs).SelectBy("BillingID").Value(&bID)
@@ -164,9 +178,19 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 		if err != nil {
 			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Delete LineBilling failed: %v", err)
 		}
-		return linebot.NewTextMessage(fmt.Sprintf("成功刪除 *%v* 以前的記帳資料", date))
+
+		return linebot.NewTextMessage(fmt.Sprintf("%v:成功刪除 *%v* 以前的記帳資料", memberName, date))
 	}
 	return nil
+}
+
+func getLineIDMap(lineId LineID) map[string]interface{} {
+	lineIdMap := make(map[string]interface{})
+	lineIdMap["room_id"] = lineId.RoomID
+	lineIdMap["group_id"] = lineId.GroupID
+	lineIdMap["user_id"] = lineId.UserID
+
+	return lineIdMap
 }
 
 func getDistinctByUserID(lbs []bot.LineBilling) map[string]string {
