@@ -5,6 +5,7 @@ import (
 	"base/pkg/library/line/bot/template"
 	"base/pkg/model"
 	"base/pkg/model/bot"
+	"base/pkg/service/billing"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -36,11 +37,8 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 	case "c list", "記帳列表":
 		messages := []linebot.SendingMessage{}
 
-		lb := LineBilling{}
-		where := make(map[string]interface{})
-		where["group_id"] = lineId.GroupID
-		not := make(map[string]interface{})
-		lbs, err := lb.Get(where, not)
+		var lbs []bot.LineBilling
+		err := model.DB.Preload("Billing").Where("group_id = ?", lineId.GroupID).Find(&lbs).Error
 		if err != nil {
 			log.Fatalf("Get failed: %v", err)
 		}
@@ -48,45 +46,11 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		if len(lbs) == 0 {
 			return linebot.NewTextMessage("目前沒有記帳紀錄哦！")
 		}
-		//user id line member display name
-		dstByUserID := make(map[string]string, 0)
-		//user id total amount
-		lbUserIDAmount := make(map[string]float64, 0)
-		underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb LineBilling, _ int) map[string]string {
-			dst := make(map[string]string)
-			lineMember, err := botClient.GetGroupMemberProfile(lb.GroupID, lb.UserID).Do()
-			if err != nil {
-				dst[lb.UserID] = "Unkonw"
-				return dst
-			}
-			dst[lb.UserID] = lineMember.DisplayName
-			return dst
-		}).Value(&dstByUserID)
-		var sbList strings.Builder
-		sbList.Grow(len(lbs))
-		for _, lb := range lbs {
-			var memberName string
-			amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, helper.ConvertToFloat64(lb.Billing.Amount))
-			//check line member display name is exist
-			if _, ok := dstByUserID[lb.UserID]; ok {
-				memberName = dstByUserID[lb.UserID]
-				lbUserIDAmount[lb.UserID] = lbUserIDAmount[lb.UserID] + amountAvg
-			}
-			text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
-				lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "/" + helper.ConvertToString(amountAvgBase) + " = " + helper.ConvertToString(amountAvg) + " |" + memberName + "|" + lb.Billing.Note + "\n"
-			sbList.WriteString(text)
-		}
-		messages = append(messages, linebot.NewTextMessage(sbList.String()))
-		//billing list string
-		var sbTotal strings.Builder
-		sbTotal.Grow(len(dstByUserID))
-		text := "總付款金額：\n"
-		sbTotal.WriteString(text)
-		for userID, name := range dstByUserID {
-			text = fmt.Sprintf("%v: *%v*\n", name, helper.ConvertToString(lbUserIDAmount[userID]))
-			sbTotal.WriteString(text)
-		}
-		messages = append(messages, linebot.NewTextMessage(sbTotal.String()))
+		dstByUserID := getDistinctByUserID(lbs)
+		listText := getLineBillingList(lineId, lbs, dstByUserID)
+		messages = append(messages, linebot.NewTextMessage(listText))
+		totalText := getLineBillingTotalAmount(lineId, lbs, dstByUserID)
+		messages = append(messages, linebot.NewTextMessage(totalText))
 
 		return messages
 	// c||記帳|生日聚餐|1234|本人生日
@@ -104,7 +68,9 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		return linebot.NewTextMessage(title + ":記帳完成," + parseText[2] + "/" + helper.ConvertToString(int(amountAvgBase)) + " = " + "*" + helper.ConvertToString(amountAvg) + "*")
 	// 記帳結算
 	case "記帳結算", "結算":
-		date := time.Now().Format(helper.Iso8601)
+		messages := []linebot.SendingMessage{}
+
+		date := time.Now().Format(helper.Yyyymmddhhmmss)
 		//如果有輸入限制日期
 		if len(parseText) == 2 {
 			date = parseText[1]
@@ -118,7 +84,10 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		if len(lbs) == 0 {
 			return linebot.NewTextMessage(fmt.Sprintf("%v以前沒有記帳紀錄哦！", date))
 		}
-		listText := getLineBillingList(lineId, lbs)
+		dstByUserID := getDistinctByUserID(lbs)
+		listText := getLineBillingList(lineId, lbs, dstByUserID)
+		messages = append(messages, linebot.NewTextMessage(listText))
+
 		//template
 		postBack := LinePostBackAction{
 			Action: "結算",
@@ -132,8 +101,11 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		}
 		leftBtn := linebot.NewPostbackAction("是", string(postBackJson), "", "")
 		rightBtn := linebot.NewMessageAction("否", "記帳列表")
-		confirmTemplate := linebot.NewConfirmTemplate(listText, leftBtn, rightBtn)
-		return linebot.NewTemplateMessage("確定要刪除這些紀錄?", confirmTemplate)
+
+		confirmTemplate := linebot.NewConfirmTemplate("確定要刪除以上紀錄?", leftBtn, rightBtn)
+		messages = append(messages, linebot.NewTemplateMessage("確定要刪除以上紀錄?", confirmTemplate))
+
+		return messages
 	case "我的大頭貼":
 		lineMember, err := botClient.GetGroupMemberProfile(lineId.GroupID, lineId.UserID).Do()
 		if err != nil {
@@ -173,16 +145,31 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 	case "結算":
 		date := lpba.Data["Date"].(string)
 		var lbs []bot.LineBilling
-		err := model.DB.Where("updated_at < ?", date).Delete(&lbs).Error
+		err := model.DB.Preload("Billing").Where("user_id = ?", lineId.UserID).Where("updated_at < ?", date).Find(&lbs).Error
 		if err != nil {
-			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Delete failed: %v", err)
+			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Get LineBilling failed: %v", err)
+		}
+
+		//delete Billing
+		var bID []uint
+		underscore.Chain(lbs).SelectBy("BillingID").Value(&bID)
+		var bs []billing.Billing
+		err = model.DB.Where(bID).Delete(&bs).Error
+		if err != nil {
+			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Delete Billing failed: %v", err)
+		}
+
+		//delete LineBilling
+		err = model.DB.Model(lbs).Delete(&lbs).Error
+		if err != nil {
+			log.Fatalf("line group GroupParsePostBackGenTemplate 結算 Delete LineBilling failed: %v", err)
 		}
 		return linebot.NewTextMessage(fmt.Sprintf("成功刪除 *%v* 以前的記帳資料", date))
 	}
 	return nil
 }
 
-func getLineBillingList(lineId LineID, lbs []bot.LineBilling) string {
+func getDistinctByUserID(lbs []bot.LineBilling) map[string]string {
 	//user id line member display name
 	dstByUserID := make(map[string]string, 0)
 	underscore.Chain(lbs).DistinctBy("UserID").SelectMany(func(lb bot.LineBilling, _ int) map[string]string {
@@ -195,20 +182,49 @@ func getLineBillingList(lineId LineID, lbs []bot.LineBilling) string {
 		dst[lb.UserID] = lineMember.DisplayName
 		return dst
 	}).Value(&dstByUserID)
+
+	return dstByUserID
+}
+
+func getLineBillingList(lineId LineID, lbs []bot.LineBilling, dstByUserID map[string]string) string {
 	var sbList strings.Builder
 	sbList.Grow(len(lbs))
-	for _, lb := range lbs {
+	for key, lb := range lbs {
 		var memberName string
 		amountAvg, amountAvgBase := calculateAmount(lineId.GroupID, helper.ConvertToFloat64(lb.Billing.Amount))
 		//check line member display name is exist
 		if _, ok := dstByUserID[lb.UserID]; ok {
 			memberName = dstByUserID[lb.UserID]
 		}
-		text := lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss) + " " +
-			lb.Billing.Title + "|" + helper.ConvertToString(lb.Billing.Amount) + "/" + helper.ConvertToString(amountAvgBase) + " = " + helper.ConvertToString(amountAvg) + " |" + memberName + "|" + lb.Billing.Note + "\n"
+		text := fmt.Sprintf("%v %v|%v/%v= *%v* |%v", lb.Billing.CreatedAt.Format(helper.Yyyymmddhhmmss), lb.Billing.Title, helper.ConvertToString(lb.Billing.Amount), helper.ConvertToString(amountAvgBase), helper.ConvertToString(amountAvg), memberName)
+		if lb.Billing.Note != "" {
+			text = text + "|" + lb.Billing.Note
+		}
+		if len(lbs) != key {
+			text = text + "\n"
+		}
 		sbList.WriteString(text)
 	}
 	return string(sbList.String())
+}
+
+func getLineBillingTotalAmount(lineId LineID, lbs []bot.LineBilling, dstByUserID map[string]string) string {
+	lbUserIDAmount := make(map[string]float64, 0)
+	var sbTotal strings.Builder
+	sbTotal.Grow(len(dstByUserID))
+	for _, lb := range lbs {
+		amountAvg, _ := calculateAmount(lineId.GroupID, helper.ConvertToFloat64(lb.Billing.Amount))
+		if _, ok := dstByUserID[lb.UserID]; ok {
+			lbUserIDAmount[lb.UserID] = lbUserIDAmount[lb.UserID] + amountAvg
+		}
+	}
+	text := "總付款金額：\n"
+	sbTotal.WriteString(text)
+	for userID, name := range dstByUserID {
+		text = fmt.Sprintf("%v: *%v*\n", name, helper.ConvertToString(lbUserIDAmount[userID]))
+		sbTotal.WriteString(text)
+	}
+	return string(sbTotal.String())
 }
 
 func calculateAmount(groupID string, amount float64) (float64, int) {
