@@ -94,8 +94,10 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		postBack := LinePostBackAction{
 			Action: "結算",
 			Data: map[string]interface{}{
-				"LineUserID": lineId.UserID,
-				"Date":       date,
+				"LineRoomID":  lineId.RoomID,
+				"LineGroupID": lineId.GroupID,
+				"LineUserID":  lineId.UserID,
+				"Date":        date,
 			},
 		}
 		postBackJson, err := json.Marshal(postBack)
