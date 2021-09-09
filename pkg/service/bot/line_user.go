@@ -2,6 +2,7 @@ package bot
 
 import (
 	"base/pkg/library/line/bot/template"
+	"fmt"
 	"strings"
 
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -14,6 +15,9 @@ func UserParseTextGenTemplate(lineId LineID, text string) interface{} {
 
 	}
 	switch parseText[0] {
+	// Line相關資訊
+	case "資訊":
+		return linebot.NewTextMessage(fmt.Sprintf("RoomID:%v\nGroupID:%v\nUserID:%v", lineId.RoomID, lineId.GroupID, lineId.UserID))
 	case "我的大頭貼":
 		lineMember, err := botClient.GetGroupMemberProfile(lineId.GroupID, lineId.UserID).Do()
 		if err != nil {
