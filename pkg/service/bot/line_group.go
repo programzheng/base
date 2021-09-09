@@ -35,6 +35,9 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 	lineIdMap := getLineIDMap(lineId)
 	//功能
 	switch parseText[0] {
+	// Line相關資訊
+	case "資訊":
+		return linebot.NewTextMessage(fmt.Sprintf("RoomID:%v\nGroupID:%v\nUserID:%v", lineId.RoomID, lineId.GroupID, lineId.UserID))
 	// c list||記帳列表
 	case "c list", "記帳列表":
 		messages := []linebot.SendingMessage{}
