@@ -8,6 +8,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.4
+	github.com/go-redis/redis/v8 v8.11.3
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/googollee/go-socket.io v1.6.0
 	github.com/jinzhu/copier v0.3.2
