@@ -39,6 +39,7 @@ func setViper() {
 			log.Error("Fatal error config: ", err)
 		}
 	}
+	viper.AllowEmptyEnv(true)
 	viper.AutomaticEnv()
 }
 
