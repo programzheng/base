@@ -5,7 +5,7 @@ services:
     api:
       build:
         context: .
-        dockerfile: ./Dockerfile.${WORKSPACE}
+        dockerfile: ./Dockerfile
         args:
           - WORKSPACE=${WORKSPACE}
       restart: always
