@@ -2,6 +2,8 @@ package cache
 
 import (
 	_ "base/config"
+	"base/pkg/helper"
+	"crypto/tls"
 	"log"
 	"strconv"
 
@@ -9,11 +11,30 @@ import (
 	"github.com/spf13/viper"
 )
 
-var Rdb = redis.NewClient(&redis.Options{
-	Addr:     viper.Get("REDIS_ADDR").(string),
-	Password: viper.Get("REDIS_PASSWORD").(string),
-	DB:       getDb(),
-})
+func GetRedisClient() *redis.Client {
+	var client = redis.NewClient(&redis.Options{
+		Addr:      viper.Get("REDIS_ADDR").(string),
+		TLSConfig: getTLSConfig(),
+		Password:  viper.Get("REDIS_PASSWORD").(string),
+		DB:        getDb(),
+	})
+
+	return client
+}
+
+func getTLSConfig() *tls.Config {
+	tlsBool := helper.ConvertToBool(viper.Get("REDIS_TLS").(string))
+	if tlsBool {
+		tlsConfig := &tls.Config{}
+		if helper.ConvertToBool(viper.Get("REDIS_TLS_SKIP_VERIFY").(string)) {
+			tlsConfig.InsecureSkipVerify = true
+			return tlsConfig
+		}
+		tlsConfig.MinVersion = tls.VersionTLS12
+		return tlsConfig
+	}
+	return nil
+}
 
 func getDb() int {
 	db, err := strconv.Atoi(viper.Get("REDIS_DB").(string))

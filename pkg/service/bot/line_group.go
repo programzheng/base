@@ -20,6 +20,7 @@ import (
 )
 
 var ctx = context.Background()
+var rdb = cache.GetRedisClient()
 
 func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 	parseText := strings.Split(text, "|")
@@ -132,15 +133,15 @@ func GroupParseTextGenTemplate(lineId LineID, text string) interface{} {
 		key := "rock-paper-scissors-" + lineId.GroupID
 		minutes := "5"
 		m, _ := time.ParseDuration(minutes + "m")
-		exist := cache.Rdb.Exists(ctx, key).Val()
+		exist := rdb.Exists(ctx, key).Val()
 		if exist > 0 {
 			return rockPaperScissorsTemplate(lineId, "已有猜拳正在進行中", minutes)
 		}
-		err := cache.Rdb.SAdd(ctx, key, groupMemberCount).Err()
+		err := rdb.SAdd(ctx, key, groupMemberCount).Err()
 		if err != nil {
 			log.Fatalf("create a rock-paper-scissors error:%v", err)
 		}
-		err = cache.Rdb.Expire(ctx, key, m).Err()
+		err = rdb.Expire(ctx, key, m).Err()
 		if err != nil {
 			log.Fatalf("set expire rock-paper-scissors time error:%v", err)
 		}
@@ -214,36 +215,36 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 		lineGroupID := lpba.Data["LineGroupID"].(string)
 		lineUserID := lpba.Data["LineUserID"].(string)
 		key := "rock-paper-scissors-" + lineGroupID
-		exist := cache.Rdb.Exists(ctx, key).Val()
+		exist := rdb.Exists(ctx, key).Val()
 		if exist == 0 {
 			return linebot.NewTextMessage("請輸入\"猜拳\"開始賽局")
 		}
 		action := lpba.Data["Action"].(string)
-		if ok, _ := cache.Rdb.SIsMember(ctx, key, lineUserID+"-out").Result(); ok {
+		if ok, _ := rdb.SIsMember(ctx, key, lineUserID+"-out").Result(); ok {
 			memberName := "Unknow"
 			lineMember, _ := botClient.GetGroupMemberProfile(lineGroupID, lineUserID).Do()
 			memberName = lineMember.DisplayName
 			return linebot.NewTextMessage(memberName + "已出局")
 		}
-		if ok, _ := cache.Rdb.SIsMember(ctx, key, lineUserID+"-rock").Result(); ok {
+		if ok, _ := rdb.SIsMember(ctx, key, lineUserID+"-rock").Result(); ok {
 			memberName := "Unknow"
 			lineMember, _ := botClient.GetGroupMemberProfile(lineGroupID, lineUserID).Do()
 			memberName = lineMember.DisplayName
 			return linebot.NewTextMessage(memberName + "已出過")
 		}
-		if ok, _ := cache.Rdb.SIsMember(ctx, key, lineUserID+"-paper").Result(); ok {
+		if ok, _ := rdb.SIsMember(ctx, key, lineUserID+"-paper").Result(); ok {
 			memberName := "Unknow"
 			lineMember, _ := botClient.GetGroupMemberProfile(lineGroupID, lineUserID).Do()
 			memberName = lineMember.DisplayName
 			return linebot.NewTextMessage(memberName + "已出過")
 		}
-		if ok, _ := cache.Rdb.SIsMember(ctx, key, lineUserID+"-scissors").Result(); ok {
+		if ok, _ := rdb.SIsMember(ctx, key, lineUserID+"-scissors").Result(); ok {
 			memberName := "Unknow"
 			lineMember, _ := botClient.GetGroupMemberProfile(lineGroupID, lineUserID).Do()
 			memberName = lineMember.DisplayName
 			return linebot.NewTextMessage(memberName + "已出過")
 		}
-		es, err := cache.Rdb.SMembers(ctx, key).Result()
+		es, err := rdb.SMembers(ctx, key).Result()
 		if err != nil {
 			log.Fatalf("get a rock-paper-scissors set error:%v", err)
 		}
@@ -271,11 +272,11 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 					everyBuilder.WriteString(currentMemberName + "出" + convertRockPaperScissors(oldAction) + "\n")
 					//出局
 					if winCount == 0 {
-						err = cache.Rdb.SRem(ctx, key, s).Err()
+						err = rdb.SRem(ctx, key, s).Err()
 						if err != nil {
 							log.Fatalf("rock-paper-scissors out rem error:%v", err)
 						}
-						err = cache.Rdb.SAdd(ctx, key, oldUserId+"-out").Err()
+						err = rdb.SAdd(ctx, key, oldUserId+"-out").Err()
 						if err != nil {
 							log.Fatalf("rock-paper-scissors out add error:%v", err)
 						}
@@ -286,7 +287,7 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 						resultBuilder.WriteString("*" + currentMemberName + "獲勝*\n")
 					} else {
 						tieCount++
-						err = cache.Rdb.SRem(ctx, key, s).Err()
+						err = rdb.SRem(ctx, key, s).Err()
 						if err != nil {
 							log.Fatalf("rock-paper-scissors rem error:%v", err)
 						}
@@ -299,7 +300,7 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 				}
 			}
 			if end {
-				err = cache.Rdb.Del(ctx, key).Err()
+				err = rdb.Del(ctx, key).Err()
 				if err != nil {
 					log.Fatalf("rock-paper-scissors is end error:%v", err)
 				}
@@ -315,7 +316,7 @@ func GroupParsePostBackGenTemplate(lineId LineID, postBack *linebot.Postback) in
 			}
 			return messages
 		}
-		err = cache.Rdb.SAdd(ctx, key, lineUserID+"-"+action).Err()
+		err = rdb.SAdd(ctx, key, lineUserID+"-"+action).Err()
 		if err != nil {
 			log.Fatalf("create a rock-paper-scissors error:%v", err)
 		}
