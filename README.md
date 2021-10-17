@@ -10,8 +10,6 @@ go run .
 docker-compose up -d api
 ```
 ## TODO List
-- [x] Line Bot群組分帳機器人
-- [x] Line Bot單獨User Job 發送訊息通知
 - [x] 後臺基礎jwt驗證登入API
 - [ ] 基礎檔案上下傳機制
 - [ ] 後臺文章編輯功能
