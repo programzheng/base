@@ -2,6 +2,8 @@ package filesystem
 
 import (
 	"mime/multipart"
+	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -15,6 +17,11 @@ type FileSystem interface {
 	GetHostURL() string
 }
 
+var (
+	ex, _    = os.Executable()
+	basepath = filepath.Dir(ex)
+)
+
 var Driver FileSystem
 
 func init() {
@@ -23,7 +30,7 @@ func init() {
 	case "local":
 		Driver = Local{
 			System: viper.Get("FILESYSTEM_DRIVER").(string),
-			Path:   viper.Get("FILESYSTEM_LOCAL_PATH").(string),
+			Path:   filepath.Join(basepath, viper.Get("FILESYSTEM_LOCAL_PATH").(string)),
 		}
 	}
 }

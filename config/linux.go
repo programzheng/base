@@ -5,7 +5,6 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"syscall"
 	"time"
 
@@ -18,8 +17,8 @@ import (
 )
 
 var (
-	_, b, _, _ = runtime.Caller(0)
-	basepath   = filepath.Dir(b)
+	ex, _    = os.Executable()
+	basepath = filepath.Dir(ex)
 )
 
 func init() {
@@ -56,21 +55,22 @@ func setLog() {
 	system := viper.Get("LOG_SYSTEM").(string)
 	switch system {
 	case "file":
-		path := filepath.Join(basepath, "../"+viper.Get("LOG_PATH").(string))
+		path := filepath.Join(basepath, viper.Get("LOG_PATH").(string))
 		//check log path directory exist
 		_, err := os.Stat(path)
 		if os.IsNotExist(err) {
 			//make nested directories
 			mask := syscall.Umask(0)
 			defer syscall.Umask(mask)
-			err = os.MkdirAll(path, 0700)
+			err = os.MkdirAll(path, 0755)
 			if err != nil {
 				log.Fatal("create log directory error:", err)
 			}
 		}
 		fileName := time.Now().Format(helper.Iso8601) + ".log"
 		filePath := filepath.Join(path, fileName)
-		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0700)
+		//set log file permissions
+		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			log.Info("Failed to log to file, using default stderr", err)
 		}
