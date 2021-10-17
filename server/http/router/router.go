@@ -18,6 +18,4 @@ func SetRouter(router *gin.Engine) {
 	}
 	// 設置API Router
 	setAPIRoute(router)
-	// 設置Bot Router
-	setBotRouter(router)
 }
