@@ -33,17 +33,17 @@ func (f *File) Add() (File, error) {
 	return serviceFile, nil
 }
 
-func Get(ids []interface{}) (Files, error) {
-	maps := make(map[string]interface{})
+func Get(ids []interface{}, fn func() map[string]interface{}) (Files, error) {
+	maps := fn()
 	modelFiles, err := file.Get(ids, getMaps(maps))
 	if err != nil {
 		return nil, err
 	}
 	serviceFiles := Files{}
 	copier.Copy(&serviceFiles, &modelFiles)
-	// for _, serviceFile := range serviceFiles {
-	// 	serviceFile.Path = getResponseFilePath() + "/" + serviceFile.Path + serviceFile.Name
-	// }
+	for _, serviceFile := range serviceFiles {
+		serviceFile.Path = getResponseFilePath() + serviceFile.Path + serviceFile.Name
+	}
 	return serviceFiles, nil
 }
 
