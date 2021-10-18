@@ -2,6 +2,7 @@ package model
 
 import (
 	_ "base/config"
+	"base/pkg/helper"
 
 	"fmt"
 
@@ -27,6 +28,7 @@ func init() {
 		viper.Get("DB_DATABASE"))
 	fmt.Printf("connect: %v database\n", setting)
 	DB, err = gorm.Open(viper.Get("DB_CONNECTION").(string), setting)
+	DB.LogMode(helper.ConvertToBool(viper.Get("APP_debug").(string)))
 
 	if err != nil {
 		log.Println("DataBase error:", err)
