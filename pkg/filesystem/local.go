@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 type Local struct {
@@ -47,5 +46,5 @@ func (l Local) Upload(ctx *gin.Context, uploadFile *multipart.FileHeader) error 
 }
 
 func (l Local) GetHostURL() string {
-	return viper.Get("APP_URL").(string)
+	return ""
 }

@@ -1,9 +1,12 @@
 package file
 
 import (
+	"base/pkg/helper"
 	"base/pkg/service/file"
-	"fmt"
+	"errors"
+	"io/ioutil"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,8 +19,18 @@ func Get(ctx *gin.Context) {
 		maps["hash_id"] = hashID
 		return maps
 	})
+
 	if err != nil {
 		log.Fatalf("files get error: %v", err)
 	}
-	fmt.Printf("%v\n", files)
+	if len(files) == 0 {
+		helper.BadRequest(ctx, errors.New("files get not found"))
+		return
+	}
+	file := files[len(files)-1]
+	img, err := ioutil.ReadFile(file.Path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx.Data(http.StatusOK, file.Type, img)
 }

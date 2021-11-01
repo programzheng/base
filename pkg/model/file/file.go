@@ -32,7 +32,7 @@ func init() {
 }
 
 func (f *File) AfterFind() (err error) {
-	f.Path = filesystem.Driver.GetHostURL() + "/" + f.Path + f.Name
+	f.Path = filesystem.Driver.GetHostURL() + f.Path + "/" + f.Name
 	return
 }
 

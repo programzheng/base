@@ -1,4 +1,6 @@
 .vscode/
 
+*.exe
 .env
-/api
+/log
+/upload
