@@ -4,6 +4,7 @@ import (
 	"base/pkg/controller/file"
 	"base/pkg/controller/job"
 	"base/pkg/controller/socketio"
+	"base/pkg/helper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,7 @@ func setRoute(router *gin.Engine) {
 
 	router.GET("files/:hash_id", file.Get)
 
+	router.Static("static", helper.Basepath+"/upload")
 }
 
 func setTestRoute(router *gin.Engine) {
