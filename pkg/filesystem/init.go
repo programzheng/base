@@ -1,9 +1,7 @@
 package filesystem
 
 import (
-	"base/pkg/helper"
 	"mime/multipart"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -25,7 +23,7 @@ func init() {
 	case "local":
 		Driver = Local{
 			System: viper.Get("FILESYSTEM_DRIVER").(string),
-			Path:   filepath.Join(helper.Basepath, viper.Get("FILESYSTEM_LOCAL_PATH").(string)),
+			Path:   viper.Get("FILESYSTEM_LOCAL_PATH").(string),
 		}
 	}
 }
