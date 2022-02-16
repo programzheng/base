@@ -71,7 +71,6 @@ func BatchUpdates(maps interface{}, updates interface{}) (Files, error) {
 		return nil, err
 	}
 
-	return files, nil
 	// err := model.DB.Model(&files).Where(ids).Where(maps).Updates(updates).Find(&files).Error
 
 	// if err != nil && err != gorm.ErrRecordNotFound {
