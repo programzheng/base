@@ -28,7 +28,7 @@ func Get(ctx *gin.Context) {
 		return
 	}
 	file := files[len(files)-1]
-	img, err := ioutil.ReadFile(file.Path)
+	img, err := ioutil.ReadFile(filesystem.Create("local").GetLink(file))
 	if err != nil {
 		log.Fatal(err)
 	}

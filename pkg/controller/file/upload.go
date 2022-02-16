@@ -3,7 +3,6 @@ package file
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
 
 	"base/pkg/filesystem"
 	"base/pkg/helper"
@@ -13,7 +12,7 @@ import (
 )
 
 func init() {
-	filesystem.Driver.Check()
+	filesystem.Create("").Check()
 }
 
 func Upload(ctx *gin.Context) {
@@ -30,29 +29,16 @@ func Upload(ctx *gin.Context) {
 	//TODO: 調整迴圈
 	for _, uploadFiles := range uploadFileList {
 		for _, uploadFile := range uploadFiles {
-			//檔案位置
-			filePath := filesystem.Driver.GetPath()
-			//檔案名稱
-			fileName := filepath.Base(uploadFile.Filename)
-			//檔案副檔名
-			fileExtension := filepath.Ext(fileName)
-			//檔案mimeType
-			fileType := helper.GetFileContentType(fileExtension)
 			//上傳檔案
-			if err := filesystem.Driver.Upload(ctx, uploadFile); err != nil {
-				helper.BadRequest(ctx, errors.New(fmt.Sprintf("upload file err: %s", err.Error())))
+			fileService := filesystem.Create("").Upload(ctx, uploadFile)
+			if fileService == nil {
+				helper.BadRequest(ctx, errors.New("upload file error"))
 				return
 			}
 
-			fileService := file.File{
-				System: filesystem.Driver.GetSystem(),
-				Type:   fileType,
-				Path:   filePath,
-				Name:   fileName,
-			}
 			file, err := fileService.Add()
 			if err != nil {
-				helper.BadRequest(ctx, errors.New(fmt.Sprintf("add file row error: %s", err.Error())))
+				helper.BadRequest(ctx, fmt.Errorf("add file row error: %v", err))
 				return
 			}
 			fileList = append(fileList, file)

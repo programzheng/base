@@ -11,13 +11,10 @@ import (
 )
 
 type File struct {
-	ID        uint       `gorm:"primary_key" json:"-"`
-	HashID    string     `gorm:"unique"`
-	CreatedAt time.Time  `json:"-"`
-	UpdatedAt time.Time  `json:"-"`
-	DeletedAt *time.Time `sql:"index" json:"-"`
-	Reference string     `json:"-"`
-	System    string     `json:"-"`
+	gorm.Model
+	HashID    string `gorm:"unique"`
+	Reference string `json:"-"`
+	System    string `json:"-"`
 	Type      string
 	Path      string `json:"-"`
 	Name      string `json:"-"`

@@ -18,7 +18,7 @@ func setRoute(router *gin.Engine) {
 
 	router.GET("files/:hash_id", file.Get)
 
-	router.Static("static", filesystem.Driver.GetPath())
+	router.Static("static", filepath.Join(helper.RootPath, "/upload"))
 }
 
 func setTestRoute(router *gin.Engine) {

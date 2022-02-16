@@ -2,5 +2,4 @@
 
 *.exe
 .env
-/log
-/upload
+/storage

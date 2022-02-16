@@ -1,11 +1,11 @@
 package helper
 
 import (
-	"os"
 	"path/filepath"
+	"runtime"
 )
 
 var (
-	ex, _    = os.Executable()
-	Basepath = filepath.Dir(ex)
+	_, b, _, _ = runtime.Caller(0)
+	RootPath       = filepath.Join(filepath.Dir(b), "../..")
 )

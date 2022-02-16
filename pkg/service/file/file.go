@@ -7,22 +7,24 @@ import (
 )
 
 type File struct {
-	ID     uint `json:"-"`
-	HashID string
-	System string `json:"-"`
-	Type   string
-	Path   string `json:"-"`
-	Name   string `json:"-"`
+	ID        uint `json:"-"`
+	HashID    string
+	Reference string `json:"-"`
+	System    string `json:"-"`
+	Type      string
+	Path      string `json:"-"`
+	Name      string `json:"-"`
 }
 
 type Files []File
 
 func (f *File) Add() (File, error) {
 	model := file.File{
-		System: f.System,
-		Type:   f.Type,
-		Path:   f.Path,
-		Name:   f.Name,
+		Reference: f.Reference,
+		System:    f.System,
+		Type:      f.Type,
+		Path:      f.Path,
+		Name:      f.Name,
 	}
 	modelFile, err := model.Add()
 	if err != nil {
@@ -42,7 +44,7 @@ func Get(ids []interface{}, fn func() map[string]interface{}) (Files, error) {
 	serviceFiles := Files{}
 	copier.Copy(&serviceFiles, &modelFiles)
 	for _, serviceFile := range serviceFiles {
-		serviceFile.Path = getResponseFilePath() + serviceFile.Path + serviceFile.Name
+		serviceFile.Path = serviceFile.Path + serviceFile.Name
 	}
 	return serviceFiles, nil
 }
