@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"base/pkg/model"
+	"github.com/programzheng/base/pkg/model"
 
 	"github.com/jinzhu/gorm"
 )

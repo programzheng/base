@@ -1,7 +1,7 @@
 package router
 
 import (
-	"base/pkg/middleware"
+	"github.com/programzheng/base/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )

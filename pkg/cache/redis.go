@@ -1,11 +1,12 @@
 package cache
 
 import (
-	_ "base/config"
-	"base/pkg/helper"
 	"crypto/tls"
 	"log"
 	"strconv"
+
+	_ "github.com/programzheng/base/config"
+	"github.com/programzheng/base/pkg/helper"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"

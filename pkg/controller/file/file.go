@@ -1,12 +1,14 @@
 package file
 
 import (
-	"base/pkg/helper"
-	"base/pkg/service/file"
 	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/programzheng/base/pkg/filesystem"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/service/file"
 
 	"github.com/gin-gonic/gin"
 )

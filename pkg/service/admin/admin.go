@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"base/pkg/model/admin"
+	"github.com/programzheng/base/pkg/model/admin"
 
 	"github.com/jinzhu/copier"
 )

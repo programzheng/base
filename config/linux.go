@@ -8,17 +8,12 @@ import (
 	"syscall"
 	"time"
 
-	"base/pkg/helper"
+	"github.com/programzheng/base/pkg/helper"
 
 	log "github.com/sirupsen/logrus"
 
 	//use this get .env setting
 	"github.com/spf13/viper"
-)
-
-var (
-	ex, _    = os.Executable()
-	basepath = filepath.Dir(ex)
 )
 
 func init() {
@@ -28,7 +23,7 @@ func init() {
 }
 
 func setViper() {
-	envFilePath := filepath.Join(basepath, "../.env")
+	envFilePath := filepath.Join(helper.RootPath, ".env")
 	//check .env is exist
 	_, err := os.Stat(envFilePath)
 	if !os.IsNotExist(err) {
@@ -55,7 +50,7 @@ func setLog() {
 	system := viper.Get("LOG_SYSTEM").(string)
 	switch system {
 	case "file":
-		path := filepath.Join(basepath, viper.Get("LOG_PATH").(string))
+		path := filepath.Join(helper.RootPath, viper.Get("LOG_PATH").(string))
 		//check log path directory exist
 		_, err := os.Stat(path)
 		if os.IsNotExist(err) {

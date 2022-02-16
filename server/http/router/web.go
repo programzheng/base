@@ -1,10 +1,12 @@
 package router
 
 import (
-	"base/pkg/controller/file"
-	"base/pkg/controller/job"
-	"base/pkg/controller/socketio"
-	"base/pkg/filesystem"
+	"path/filepath"
+
+	"github.com/programzheng/base/pkg/controller/file"
+	"github.com/programzheng/base/pkg/controller/job"
+	"github.com/programzheng/base/pkg/controller/socketio"
+	"github.com/programzheng/base/pkg/helper"
 
 	"github.com/gin-gonic/gin"
 )

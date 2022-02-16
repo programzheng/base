@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"base/pkg/helper"
+	"github.com/programzheng/base/pkg/helper"
 
 	"github.com/gin-gonic/gin"
 )

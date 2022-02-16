@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"base/pkg/helper"
-	"base/pkg/service/auth"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/service/auth"
 
 	"github.com/gin-gonic/gin"
 )

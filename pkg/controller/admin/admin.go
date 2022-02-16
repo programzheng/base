@@ -3,9 +3,9 @@ package admin
 import (
 	"errors"
 
-	"base/pkg/helper"
-	"base/pkg/service/admin"
-	"base/pkg/service/auth"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/service/admin"
+	"github.com/programzheng/base/pkg/service/auth"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"

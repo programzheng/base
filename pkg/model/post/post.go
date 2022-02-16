@@ -1,8 +1,8 @@
 package post
 
 import (
-	"base/pkg/model"
-	"base/pkg/model/file"
+	"github.com/programzheng/base/pkg/model"
+	"github.com/programzheng/base/pkg/model/file"
 
 	"github.com/jinzhu/gorm"
 )

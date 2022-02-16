@@ -1,8 +1,8 @@
 package seed
 
 import (
-	"base/pkg/helper"
-	"base/pkg/model/admin"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/model/admin"
 
 	"github.com/jinzhu/gorm"
 )

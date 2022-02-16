@@ -1,4 +1,4 @@
-module base
+module github.com/programzheng/base
 
 go 1.16
 

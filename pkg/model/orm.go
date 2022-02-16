@@ -1,8 +1,8 @@
 package model
 
 import (
-	_ "base/config"
-	"base/pkg/helper"
+	_ "github.com/programzheng/base/config"
+	"github.com/programzheng/base/pkg/helper"
 
 	"fmt"
 

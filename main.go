@@ -16,9 +16,9 @@ limitations under the License.
 package main
 
 import (
-	_ "base/config"
+	_ "github.com/programzheng/base/config"
 
-	"base/server/http/router"
+	"github.com/programzheng/base/server/http/router"
 
 	"github.com/bamzi/jobrunner"
 	"github.com/gin-gonic/gin"

@@ -3,9 +3,8 @@ package file
 import (
 	"time"
 
-	"base/pkg/filesystem"
-	"base/pkg/helper"
-	"base/pkg/model"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/model"
 
 	"github.com/jinzhu/gorm"
 )
@@ -26,11 +25,6 @@ func init() {
 	if !model.DB.HasTable(&File{}) {
 		model.DB.CreateTable(&File{})
 	}
-}
-
-func (f *File) AfterFind() (err error) {
-	f.Path = filesystem.Driver.GetHostURL() + f.Path + "/" + f.Name
-	return
 }
 
 func (f *File) AfterCreate(tx *gorm.DB) (err error) {

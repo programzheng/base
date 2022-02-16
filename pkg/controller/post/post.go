@@ -1,8 +1,8 @@
 package post
 
 import (
-	"base/pkg/helper"
-	"base/pkg/service/post"
+	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/service/post"
 
 	"github.com/gin-gonic/gin"
 )
