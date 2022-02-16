@@ -21,9 +21,9 @@ type Cloudinary struct {
 
 func getCloudinary() *cloudinary.Cloudinary {
 	cld, err := cloudinary.NewFromParams(
-		viper.Get("FILESYSTEM_LOCAL_CLOUDINARY_CLOUD_NAME").(string),
-		viper.Get("FILESYSTEM_LOCAL_CLOUDINARY_API_KEY").(string),
-		viper.Get("FILESYSTEM_LOCAL_CLOUDINARY_SECRET").(string),
+		viper.Get("FILESYSTEM_CLOUDINARY_CLOUD_NAME").(string),
+		viper.Get("FILESYSTEM_CLOUDINARY_API_KEY").(string),
+		viper.Get("FILESYSTEM_CLOUDINARY_SECRET").(string),
 	)
 	if err != nil {
 		log.Printf("File system cloudinary getCloudinary error:%v", err)
