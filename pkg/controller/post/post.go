@@ -35,7 +35,7 @@ func Get(ctx *gin.Context) {
 		return
 	}
 	data := make(map[string]interface{})
-	data["list"] = posts
+	data["List"] = posts
 	data["Total"] = len(posts)
 	helper.Success(ctx, data, nil)
 	return
