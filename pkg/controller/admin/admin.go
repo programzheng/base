@@ -62,7 +62,6 @@ func Login(ctx *gin.Context) {
 	}
 
 	helper.Success(ctx, token, nil)
-	return
 }
 
 func Get(ctx *gin.Context) {
@@ -77,8 +76,7 @@ func Get(ctx *gin.Context) {
 		return
 	}
 	data := make(map[string]interface{})
-	data["list"] = admins
-	// data["Total"] = total
+	data["List"] = admins
+	data["Total"] = len(admins)
 	helper.Success(ctx, data, nil)
-	return
 }
