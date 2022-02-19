@@ -14,8 +14,8 @@ var (
 )
 
 type Token struct {
-	Token string
-	Exp   int64
+	Token string `json:"token"`
+	Exp   int64  `json:"exp"`
 }
 
 func CreateJWT(sercrt []byte) (token Token) {
