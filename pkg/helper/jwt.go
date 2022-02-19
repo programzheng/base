@@ -31,6 +31,7 @@ func CreateJWT(sercrt []byte) (token Token) {
 	}
 
 	token.Token = jwtTokenString
+	token.Exp = exp
 
 	return token
 }
