@@ -1,23 +1,30 @@
 package filesystem
 
 import (
-	"mime/multipart"
+	"context"
+	"io"
 	"path/filepath"
 
-	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/service/file"
 
 	"github.com/spf13/viper"
 )
 
 type FileSystem interface {
 	Check()
-	GetLink(file file.File) string
 	GetSystem() string
 	GetPath() string
-	Upload(*gin.Context, *multipart.FileHeader) *file.File
+	Upload(context.Context, string, io.Reader) *StaticFile
 	GetHostURL() string
+}
+
+type StaticFile struct {
+	Reference   *string
+	System      string
+	Type        string
+	Path        string
+	Name        string
+	ThirdPatyID string
 }
 
 func Create(system string) FileSystem {
@@ -39,4 +46,8 @@ func Create(system string) FileSystem {
 	}
 
 	return Driver
+}
+
+func GetEmptyImageLink() string {
+	return "//" + viper.Get("APP_URL").(string) + ":" + viper.Get("APP_PORT").(string) + "/files/image/empty"
 }

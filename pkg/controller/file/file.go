@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/programzheng/base/pkg/filesystem"
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/service/file"
 
@@ -30,7 +29,7 @@ func Get(ctx *gin.Context) {
 		return
 	}
 	file := files[len(files)-1]
-	img, err := ioutil.ReadFile(filesystem.Create("local").GetLink(file))
+	img, err := ioutil.ReadFile(file.GetLocalLink())
 	if err != nil {
 		log.Fatal(err)
 	}

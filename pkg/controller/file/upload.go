@@ -29,11 +29,25 @@ func Upload(ctx *gin.Context) {
 	//TODO: 調整迴圈
 	for _, uploadFiles := range uploadFileList {
 		for _, uploadFile := range uploadFiles {
+			originFileName := uploadFile.Filename
+			uf, err := uploadFile.Open()
+			if err != nil {
+				helper.BadRequest(ctx, errors.New(fmt.Sprintf("upload error: %s", err.Error())))
+				return
+			}
 			//上傳檔案
-			fileService := filesystem.Create("").Upload(ctx, uploadFile)
-			if fileService == nil {
+			staticFile := filesystem.Create("").Upload(ctx, originFileName, uf)
+			if staticFile == nil {
 				helper.BadRequest(ctx, errors.New("upload file error"))
 				return
+			}
+			fileService := file.File{
+				Reference:   staticFile.Reference,
+				System:      staticFile.System,
+				Type:        staticFile.Type,
+				Path:        staticFile.Path,
+				Name:        staticFile.Name,
+				ThirdPatyID: staticFile.ThirdPatyID,
 			}
 
 			file, err := fileService.Add()

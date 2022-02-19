@@ -1,11 +1,6 @@
 package post
 
 import (
-	"encoding/json"
-
-	log "github.com/sirupsen/logrus"
-
-	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/post"
 	"github.com/programzheng/base/pkg/service/file"
 
@@ -13,29 +8,26 @@ import (
 )
 
 type Post struct {
-	ID      uint        `json:"id"`
-	Title   string      `json:"title"`
-	Summary string      `json:"summary"`
-	Detail  string      `json:"detail"`
-	Files   interface{} `json:"files"`
+	ID      uint     `json:"id"`
+	Title   string   `json:"title"`
+	Summary string   `json:"summary"`
+	Detail  string   `json:"detail"`
+	Files   []string `json:"files"`
 
 	PageNum  int `form:"page_num" json:"page_num"`   //頁數*筆數,從0(代表第一頁)開始
 	PageSize int `form:"page_size" json:"page_size"` //從PageNum之後取出的筆數
 }
-
-type Posts []Post
 
 var (
 	module string = "posts"
 )
 
 func (p *Post) Add() (Post, error) {
-	fileReferenceJSON, err := json.Marshal(p.Files)
-	if err != nil {
-		log.Fatal("add "+module+" error", err)
+	fileReference := ""
+	if len(p.Files) > 0 {
+		fileReference = file.AddFileByBase64(p.Files)
 	}
-	fileReferenceJSONString := string(fileReferenceJSON)
-	fileReference := helper.CreateSHA1(fileReferenceJSONString)
+
 	modelPost := post.Post{
 		Title:         p.Title,
 		Summary:       p.Summary,
@@ -51,17 +43,8 @@ func (p *Post) Add() (Post, error) {
 	post := Post{}
 
 	copier.Copy(&post, &result)
-	maps := make(map[string]interface{})
-	for _, value := range p.Files.([]interface{}) {
-		maps["hash_id"] = value
-	}
-	batchUpdates := make(map[string]interface{})
-	batchUpdates["reference"] = fileReference
-	files, err := file.BatchUpdates(maps, batchUpdates)
-	if err != nil {
-		return Post{}, err
-	}
-	post.Files = files
+	post.Files = file.GetFileOpenLinksByReference(modelPost.FileReference)
+
 	return post, nil
 }
 
@@ -70,8 +53,12 @@ func (p *Post) Get() ([]Post, error) {
 	if err != nil {
 		return nil, err
 	}
-	servicePosts := Posts{}
+	servicePosts := make([]Post, len(modelPosts))
 	copier.Copy(&servicePosts, &modelPosts)
+	for index, modelPost := range modelPosts {
+		servicePosts[index].Files = file.GetFileOpenLinksByReference(modelPost.FileReference)
+	}
+
 	return servicePosts, nil
 }
 

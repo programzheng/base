@@ -1,15 +1,14 @@
 package filesystem
 
 import (
-	"mime/multipart"
+	"context"
+	"io"
 	"path/filepath"
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go"
 	"github.com/cloudinary/cloudinary-go/api/uploader"
-	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/service/file"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -43,21 +42,18 @@ func (cldSystem *Cloudinary) GetPath() string {
 	return cldSystem.Path
 }
 
-func (cldSystem *Cloudinary) Upload(ctx *gin.Context, uploadFile *multipart.FileHeader) *file.File {
-	openFile, err := uploadFile.Open()
-	if err != nil {
-		log.Printf("File system cloudinary upload open() error:%v", err)
-	}
-
+func (cldSystem *Cloudinary) Upload(ctx context.Context, originFileName string, uploadFile io.Reader) *StaticFile {
 	//檔案名稱
-	fileName := filepath.Base(uploadFile.Filename)
+	fileName := helper.CreateUuid()
 	//檔案副檔名
-	fileExtension := filepath.Ext(fileName)
+	fileExtension := filepath.Ext(originFileName)
+	//完整檔案名稱
+	fileFullName := fileName + fileExtension
 	//檔案mimeType
 	fileType := helper.GetFileContentType(fileExtension)
 
 	cld := getCloudinary()
-	resp, err := cld.Upload.Upload(ctx, openFile, uploader.UploadParams{})
+	resp, err := cld.Upload.Upload(ctx, uploadFile, uploader.UploadParams{})
 	if err != nil {
 		log.Printf("File system cloudinary upload error:%v", err)
 	}
@@ -68,21 +64,17 @@ func (cldSystem *Cloudinary) Upload(ctx *gin.Context, uploadFile *multipart.File
 		path = strings.Replace(path, "https:", "", 1)
 	}
 
-	fileService := file.File{
-		Reference: resp.PublicID,
-		System:    cldSystem.GetSystem(),
-		Type:      fileType,
-		Path:      path,
-		Name:      fileName,
+	staticFile := StaticFile{
+		System:      cldSystem.GetSystem(),
+		Type:        fileType,
+		Path:        path,
+		Name:        fileFullName,
+		ThirdPatyID: resp.PublicID,
 	}
 
-	return &fileService
+	return &staticFile
 }
 
 func (cldSystem *Cloudinary) GetHostURL() string {
 	return ""
-}
-
-func (cldSystem *Cloudinary) GetLink(file file.File) string {
-	return file.Path
 }

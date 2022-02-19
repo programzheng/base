@@ -19,6 +19,7 @@ func setRoute(router *gin.Engine) {
 
 	// router.GET("/jobrunner/html", job.JobHtml)
 
+	router.StaticFile("files/image/empty", filepath.Join(helper.RootPath, "/dist/image/empty.png"))
 	router.GET("files/:hash_id", file.Get)
 
 	if viper.Get("STATIC_UPLOAD_ROUTE").(string) == "true" {

@@ -1,13 +1,12 @@
 package filesystem
 
 import (
-	"mime/multipart"
+	"context"
+	"io"
 	"os"
 	"path/filepath"
 
-	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/pkg/helper"
-	"github.com/programzheng/base/pkg/service/file"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -37,37 +36,40 @@ func (lSystem *Local) GetPath() string {
 	return lSystem.Path
 }
 
-func (lSystem *Local) Upload(ctx *gin.Context, uploadFile *multipart.FileHeader) *file.File {
+func (lSystem *Local) Upload(ctx context.Context, originFileName string, uploadFile io.Reader) *StaticFile {
 	//檔案位置
 	filePath := lSystem.GetPath()
 	//檔案名稱
-	fileName := filepath.Base(uploadFile.Filename)
+	fileName := helper.CreateUuid()
 	//檔案副檔名
-	fileExtension := filepath.Ext(fileName)
+	fileExtension := filepath.Ext(originFileName)
+	//完整檔案名稱
+	fileFullName := fileName + fileExtension
 	//檔案mimeType
 	fileType := helper.GetFileContentType(fileExtension)
 
 	//利用gin的上傳檔案function
-	err := ctx.SaveUploadedFile(uploadFile, filePath+"/"+fileName)
+	out, err := os.Create(filePath + "/" + fileFullName)
 	if err != nil {
 		log.Printf("filesystem local upload error:%v", err)
-		return nil
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, uploadFile)
+	if err != nil {
+		log.Printf("filesystem local upload error:%v", err)
 	}
 
-	fileService := file.File{
+	staticFile := StaticFile{
 		System: lSystem.GetSystem(),
 		Type:   fileType,
 		Path:   filePath,
-		Name:   fileName,
+		Name:   fileFullName,
 	}
 
-	return &fileService
+	return &staticFile
 }
 
 func (lSystem *Local) GetHostURL() string {
 	return ""
-}
-
-func (lSystem *Local) GetLink(file file.File) string {
-	return file.Path + "/" + file.Name
 }

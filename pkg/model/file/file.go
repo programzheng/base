@@ -11,12 +11,13 @@ import (
 
 type File struct {
 	gorm.Model
-	HashID    string `gorm:"unique"`
-	Reference string `json:"-"`
-	System    string `json:"-"`
-	Type      string
-	Path      string `json:"-"`
-	Name      string `json:"-"`
+	HashID      string  `gorm:"unique"`
+	Reference   *string `json:"-"`
+	System      string  `json:"-"`
+	Type        string
+	Path        string `json:"-"`
+	Name        string `json:"-"`
+	ThirdPatyID string `json:"-"`
 }
 
 type Files []*File
@@ -63,9 +64,10 @@ func Get(ids []interface{}, maps interface{}) (Files, error) {
 	return files, nil
 }
 
-func BatchUpdates(maps interface{}, updates interface{}) (Files, error) {
+func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files, error) {
+	maps := fn()
 	var files Files
-	err := model.DB.Model(&files).Where(maps).Updates(updates).Find(&files).Error
+	err := model.GetDB().Model(&files).Where(maps).Updates(updates).Find(&files).Error
 
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
