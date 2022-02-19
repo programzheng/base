@@ -7,6 +7,7 @@ import (
 	"github.com/programzheng/base/pkg/controller/job"
 	"github.com/programzheng/base/pkg/controller/socketio"
 	"github.com/programzheng/base/pkg/helper"
+	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +21,9 @@ func setRoute(router *gin.Engine) {
 
 	router.GET("files/:hash_id", file.Get)
 
-	router.Static("static", filepath.Join(helper.RootPath, "/upload"))
+	if viper.Get("STATIC_UPLOAD_ROUTE").(string) == "true" {
+		router.Static("static", filepath.Join(helper.RootPath, "/storage/upload"))
+	}
 }
 
 func setTestRoute(router *gin.Engine) {
