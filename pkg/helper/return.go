@@ -25,7 +25,7 @@ func Response(ctx *gin.Context, value interface{}, err error) {
 		Error: customError,
 	}
 	ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-		"Result": result,
+		"result": result,
 	})
 }
 
@@ -36,8 +36,8 @@ func BadRequest(ctx *gin.Context, err error) {
 		customError = nil
 	}
 	ctx.JSON(http.StatusBadRequest, gin.H{
-		"Code":    http.StatusBadRequest,
-		"Message": customError,
+		"code":    http.StatusBadRequest,
+		"message": customError,
 	})
 	ctx.AbortWithStatus(http.StatusBadRequest)
 }
@@ -49,8 +49,8 @@ func Fail(ctx *gin.Context, err error) {
 		customError = nil
 	}
 	ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-		"Code":    http.StatusUnprocessableEntity,
-		"Message": customError,
+		"code":    http.StatusUnprocessableEntity,
+		"message": customError,
 	})
 	ctx.AbortWithStatus(http.StatusUnprocessableEntity)
 }
@@ -62,8 +62,8 @@ func Unauthorized(ctx *gin.Context, err error) {
 		customError = nil
 	}
 	ctx.JSON(http.StatusUnauthorized, gin.H{
-		"Code":    http.StatusUnauthorized,
-		"Message": customError,
+		"code":    http.StatusUnauthorized,
+		"message": customError,
 	})
 	ctx.AbortWithStatus(http.StatusUnauthorized)
 }
@@ -71,14 +71,14 @@ func Unauthorized(ctx *gin.Context, err error) {
 func Success(ctx *gin.Context, value interface{}, message interface{}) {
 	if message != nil {
 		ctx.JSON(http.StatusOK, gin.H{
-			"Code":    http.StatusOK,
-			"Value":   value,
-			"Message": message,
+			"code":    http.StatusOK,
+			"value":   value,
+			"message": message,
 		})
 	} else {
 		ctx.JSON(http.StatusOK, gin.H{
-			"Code":  http.StatusOK,
-			"Value": value,
+			"code":  http.StatusOK,
+			"value": value,
 		})
 	}
 	ctx.AbortWithStatus(http.StatusOK)
@@ -88,14 +88,14 @@ func Success(ctx *gin.Context, value interface{}, message interface{}) {
 func UploadSuccess(ctx *gin.Context, value interface{}, message interface{}) {
 	if message != nil {
 		ctx.JSON(http.StatusCreated, gin.H{
-			"Code":    http.StatusCreated,
-			"Value":   value,
-			"Message": message,
+			"code":    http.StatusCreated,
+			"value":   value,
+			"message": message,
 		})
 	} else {
 		ctx.JSON(http.StatusCreated, gin.H{
-			"Code":  http.StatusCreated,
-			"Value": value,
+			"code":  http.StatusCreated,
+			"value": value,
 		})
 	}
 	ctx.AbortWithStatus(http.StatusCreated)
