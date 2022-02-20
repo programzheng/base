@@ -18,7 +18,7 @@ type Admin struct {
 }
 
 type AdminProfile struct {
-	AdminID uint
+	AdminID uint   `json:"admin_id"`
 	Name    string `json:"name"`
 }
 
