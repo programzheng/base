@@ -15,7 +15,7 @@ services:
         - ${DATA_PATH_HOST}/${WORKSPACE}/${APP_NAME}/upload:/${WORKSPACE}/upload
         - ${DATA_PATH_HOST}/${WORKSPACE}/${APP_NAME}/log:/${WORKSPACE}/log
       ports:
-        - ${LOCAL_PORT}:${APP_PORT}
+        - ${APP_PORT}:80
       networks:
         - backend
 
