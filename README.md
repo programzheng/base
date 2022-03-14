@@ -13,4 +13,3 @@ docker-compose up -d api
 - [x] 後臺基礎jwt驗證登入API
 - [ ] 基礎檔案上下傳機制
 - [ ] 後臺文章編輯功能
-- [ ] socketio server
