@@ -85,12 +85,12 @@ func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files,
 	return serviceFiles, nil
 }
 
-func BatchUpdatesByHashIDs(hashIDs []string, fn func() map[string]interface{}, updates interface{}) (Files, error) {
+func BatchUpdatesByHashIDs(hashIDs []string, fn func() map[string]interface{}, updates map[string]interface{}) (Files, error) {
 	maps := fn()
 
 	var modelFiles []file.File
 
-	err := model.GetDB().Model(&modelFiles).Where("hash_id IN (?)", hashIDs).Where(maps).Updates(updates).Find(&modelFiles).Error
+	err := model.GetDB().Model(&modelFiles).Select("reference").Where("hash_id IN (?)", hashIDs).Where(maps).Updates(updates).Find(&modelFiles).Error
 	if err != nil {
 		return nil, err
 	}

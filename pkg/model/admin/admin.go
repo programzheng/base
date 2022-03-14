@@ -3,7 +3,7 @@ package admin
 import (
 	"github.com/programzheng/base/pkg/model"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type Admin struct {
@@ -21,16 +21,16 @@ type AdminProfile struct {
 }
 
 func init() {
-	if !model.DB.HasTable(&Admin{}) {
-		model.DB.CreateTable(&Admin{})
+	if !model.HasTable(&Admin{}) {
+		model.CreateTable(&Admin{})
 	}
-	if !model.DB.HasTable(&AdminProfile{}) {
-		model.DB.CreateTable(&AdminProfile{})
+	if !model.HasTable(&AdminProfile{}) {
+		model.CreateTable(&AdminProfile{})
 	}
 }
 
 func (a Admin) Add() (Admin, error) {
-	if err := model.DB.Create(&a).Error; err != nil {
+	if err := model.GetDB().Create(&a).Error; err != nil {
 		return Admin{}, err
 	}
 
@@ -38,7 +38,7 @@ func (a Admin) Add() (Admin, error) {
 }
 
 func (a Admin) GetForLogin() (*Admin, error) {
-	if err := model.DB.Where(&a).First(&a).Error; err != nil {
+	if err := model.GetDB().Where(&a).First(&a).Error; err != nil {
 		return nil, err
 	}
 	return &a, nil
@@ -46,7 +46,7 @@ func (a Admin) GetForLogin() (*Admin, error) {
 
 func Get(pageNum int, pageSize int, maps interface{}) ([]*Admin, error) {
 	var models []*Admin
-	err := model.DB.Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&models).Error
+	err := model.GetDB().Preload("Profile").Where(maps).Offset(pageNum).Limit(pageSize).Find(&models).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

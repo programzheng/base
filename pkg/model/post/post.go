@@ -4,26 +4,26 @@ import (
 	"github.com/programzheng/base/pkg/model"
 	"github.com/programzheng/base/pkg/model/file"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type Post struct {
 	gorm.Model
 	Title         string
 	Summary       string
-	Detail        string `sql:"type:text"`
-	FileReference string
-	Files         []file.File `gorm:"unique;foreignkey:Reference;association_foreignkey:FileReference"`
+	Detail        string      `gorm:"type:longtext"`
+	FileReference *string     `gorm:"unique"`
+	Files         []file.File `gorm:"foreignKey:Reference;references:FileReference;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
 func init() {
-	if !model.DB.HasTable(&Post{}) {
-		model.DB.CreateTable(&Post{})
+	if !model.HasTable(&Post{}) {
+		model.CreateTable(&Post{})
 	}
 }
 
 func (p Post) Add() (Post, error) {
-	if err := model.DB.Create(&p).Error; err != nil {
+	if err := model.GetDB().Create(&p).Error; err != nil {
 		return Post{}, err
 	}
 
@@ -32,7 +32,7 @@ func (p Post) Add() (Post, error) {
 
 func Get(pageNum int, pageSize int, maps interface{}) ([]*Post, error) {
 	var posts []*Post
-	err := model.DB.Preload("Files").Where(maps).Offset(pageNum).Limit(pageSize).Find(&posts).Error
+	err := model.GetDB().Preload("Files").Where(maps).Offset(pageNum).Limit(pageSize).Find(&posts).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

@@ -1,6 +1,8 @@
 package post
 
 import (
+	"log"
+
 	"github.com/programzheng/base/pkg/model/post"
 	"github.com/programzheng/base/pkg/service/file"
 
@@ -23,16 +25,17 @@ var (
 )
 
 func (p *Post) Add() (Post, error) {
+	fileHashIds := []string{}
 	fileReference := ""
 	if len(p.Files) > 0 {
-		fileReference = file.AddFileByBase64(p.Files)
+		fileHashIds, fileReference = file.AddFileByBase64(p.Files)
 	}
 
 	modelPost := post.Post{
 		Title:         p.Title,
 		Summary:       p.Summary,
 		Detail:        p.Detail,
-		FileReference: fileReference,
+		FileReference: &fileReference,
 	}
 
 	result, err := modelPost.Add()
@@ -40,10 +43,20 @@ func (p *Post) Add() (Post, error) {
 		return Post{}, err
 	}
 
+	batchUpdates := make(map[string]interface{}, 1)
+	batchUpdates["reference"] = fileReference
+	_, err = file.BatchUpdatesByHashIDs(fileHashIds, func() map[string]interface{} {
+		maps := make(map[string]interface{})
+		return maps
+	}, batchUpdates)
+	if err != nil {
+		log.Fatalf("BatchUpdatesByHashIDs error:%v", err)
+	}
+
 	post := Post{}
 
 	copier.Copy(&post, &result)
-	post.Files = file.GetFileOpenLinksByReference(modelPost.FileReference)
+	post.Files = file.GetFileOpenLinksByReference(*modelPost.FileReference)
 
 	return post, nil
 }
@@ -56,7 +69,7 @@ func (p *Post) Get() ([]Post, error) {
 	servicePosts := make([]Post, len(modelPosts))
 	copier.Copy(&servicePosts, &modelPosts)
 	for index, modelPost := range modelPosts {
-		servicePosts[index].Files = file.GetFileOpenLinksByReference(modelPost.FileReference)
+		servicePosts[index].Files = file.GetFileOpenLinksByReference(*modelPost.FileReference)
 	}
 
 	return servicePosts, nil

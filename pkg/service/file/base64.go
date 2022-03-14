@@ -67,7 +67,7 @@ func (b64File *Base64File) Base64FileConvertToFile(filePath string, fileFullName
 	return f
 }
 
-func AddFileByBase64(b64s []string) string {
+func AddFileByBase64(b64s []string) ([]string, string) {
 	ctx, cancel := context.WithCancel(context.Background())
 	fileHashIds := make([]string, len(b64s))
 	for b64Index, b64 := range b64s {
@@ -82,7 +82,6 @@ func AddFileByBase64(b64s []string) string {
 			log.Fatal("add by file error")
 		}
 		fileService := File{
-			Reference:   staticFile.Reference,
 			System:      staticFile.System,
 			Type:        staticFile.Type,
 			Path:        staticFile.Path,
@@ -100,12 +99,5 @@ func AddFileByBase64(b64s []string) string {
 
 	reference := helper.CreateMD5(strings.Join(fileHashIds, ","))
 
-	batchUpdates := make(map[string]string, 1)
-	batchUpdates["reference"] = reference
-	BatchUpdatesByHashIDs(fileHashIds, func() map[string]interface{} {
-		maps := make(map[string]interface{})
-		return maps
-	}, batchUpdates)
-
-	return reference
+	return fileHashIds, reference
 }

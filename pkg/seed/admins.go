@@ -4,7 +4,7 @@ import (
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/admin"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 func CreateAdmin(db *gorm.DB, account string, password string) error {

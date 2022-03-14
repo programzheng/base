@@ -6,7 +6,7 @@ import (
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type File struct {
@@ -23,8 +23,8 @@ type File struct {
 type Files []*File
 
 func init() {
-	if !model.DB.HasTable(&File{}) {
-		model.DB.CreateTable(&File{})
+	if !model.HasTable(&File{}) {
+		model.CreateTable(&File{})
 	}
 }
 
@@ -37,8 +37,8 @@ func (f *File) AfterCreate(tx *gorm.DB) (err error) {
 }
 
 func (f File) Add() (File, error) {
-	model.Migrate(&f)
-	if err := model.DB.Save(&f).Error; err != nil {
+	model.SetupTableModel(&f)
+	if err := model.GetDB().Save(&f).Error; err != nil {
 		return File{}, err
 	}
 	return f, nil
@@ -47,7 +47,7 @@ func (f File) Add() (File, error) {
 func Get(ids []interface{}, maps interface{}) (Files, error) {
 	var files Files
 	if ids == nil {
-		err := model.DB.Where(maps).Find(&files).Error
+		err := model.GetDB().Where(maps).Find(&files).Error
 
 		if err != nil && err != gorm.ErrRecordNotFound {
 			return nil, err
@@ -55,7 +55,7 @@ func Get(ids []interface{}, maps interface{}) (Files, error) {
 
 		return files, nil
 	}
-	err := model.DB.Where(ids).Where(maps).Find(&files).Error
+	err := model.GetDB().Where(ids).Where(maps).Find(&files).Error
 
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
@@ -73,7 +73,7 @@ func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files,
 		return nil, err
 	}
 
-	// err := model.DB.Model(&files).Where(ids).Where(maps).Updates(updates).Find(&files).Error
+	// err := model.GetDB().Model(&files).Where(ids).Where(maps).Updates(updates).Find(&files).Error
 
 	// if err != nil && err != gorm.ErrRecordNotFound {
 	// 	return nil, err
@@ -83,7 +83,7 @@ func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files,
 }
 
 func (f File) Update() (File, error) {
-	if err := model.DB.Save(&f).Error; err != nil {
+	if err := model.GetDB().Save(&f).Error; err != nil {
 		return File{}, err
 	}
 	return f, nil
