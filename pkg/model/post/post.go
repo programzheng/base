@@ -30,9 +30,21 @@ func (p Post) Add() (Post, error) {
 	return p, nil
 }
 
-func Get(pageNum int, pageSize int, maps interface{}) ([]*Post, error) {
+func GetTotalNumber(maps interface{}) (int64, error) {
+	var count int64
+
+	err := model.GetDB().Model(&Post{}).Where(maps).Count(&count).Error
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func Get(offset int, limit int, maps interface{}) ([]*Post, error) {
 	var posts []*Post
-	err := model.GetDB().Preload("Files").Where(maps).Offset(pageNum).Limit(pageSize).Find(&posts).Error
+	err := model.GetDB().Preload("Files").Where(maps).Limit(limit).Offset(offset).Find(&posts).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

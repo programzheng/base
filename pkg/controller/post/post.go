@@ -2,6 +2,7 @@ package post
 
 import (
 	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/service"
 	"github.com/programzheng/base/pkg/service/post"
 
 	"github.com/gin-gonic/gin"
@@ -29,14 +30,26 @@ func Get(ctx *gin.Context) {
 		helper.BadRequest(ctx, err)
 		return
 	}
-	posts, err := postService.Get()
+	page := service.Page{}
+	if err := ctx.Bind(&page); err != nil {
+		helper.BadRequest(ctx, err)
+		return
+	}
+
+	posts, err := postService.Get(page)
+	if err != nil {
+		helper.Fail(ctx, err)
+		return
+	}
+	count, err := postService.GetTotalNumber()
 	if err != nil {
 		helper.Fail(ctx, err)
 		return
 	}
 	data := make(map[string]interface{})
 	data["list"] = posts
-	data["total"] = len(posts)
+	data["total"] = count
+	data["page"] = page
+
 	helper.Success(ctx, data, nil)
-	return
 }

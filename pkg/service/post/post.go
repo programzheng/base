@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/programzheng/base/pkg/model/post"
+	"github.com/programzheng/base/pkg/service"
 	"github.com/programzheng/base/pkg/service/file"
 
 	"github.com/jinzhu/copier"
@@ -15,9 +16,6 @@ type Post struct {
 	Summary string   `json:"summary"`
 	Detail  string   `json:"detail"`
 	Files   []string `json:"files"`
-
-	PageNum  int `form:"page_num" json:"page_num"`   //頁數*筆數,從0(代表第一頁)開始
-	PageSize int `form:"page_size" json:"page_size"` //從PageNum之後取出的筆數
 }
 
 var (
@@ -60,9 +58,16 @@ func (p *Post) Add() (Post, error) {
 
 	return post, nil
 }
+func (p *Post) GetTotalNumber() (int64, error) {
+	count, err := post.GetTotalNumber(p.getMaps())
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
 
-func (p *Post) Get() ([]Post, error) {
-	modelPosts, err := post.Get(p.PageNum, p.PageSize, p.getMaps())
+func (p *Post) Get(page service.Page) ([]Post, error) {
+	modelPosts, err := post.Get(page.GetSqlOffset(), page.GetSqlLimit(), p.getMaps())
 	if err != nil {
 		return nil, err
 	}
