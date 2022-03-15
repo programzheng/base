@@ -16,4 +16,4 @@ make up
 ## feature
 - [x] admin user jwt authorization api
 - [x] file upload and file response api
-- [ ] admin post manager
+- [ ] admin manage post
