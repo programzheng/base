@@ -51,7 +51,7 @@ func Get(ids []interface{}, fn func() map[string]interface{}) (Files, error) {
 	return serviceFiles, nil
 }
 
-func GetFileOpenLinksByReference(reference string) []string {
+func GetFileOpenLinksByReference(reference *string) []string {
 	serviceFiles, err := Get(nil, func() map[string]interface{} {
 		maps := make(map[string]interface{}, 1)
 		maps["reference"] = reference

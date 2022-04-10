@@ -24,7 +24,7 @@ var (
 
 func (p *Post) Add() (Post, error) {
 	fileHashIds := []string{}
-	fileReference := ""
+	var fileReference *string
 	if len(p.Files) > 0 {
 		fileHashIds, fileReference = file.AddFileByBase64(p.Files)
 	}
@@ -33,7 +33,7 @@ func (p *Post) Add() (Post, error) {
 		Title:         p.Title,
 		Summary:       p.Summary,
 		Detail:        p.Detail,
-		FileReference: &fileReference,
+		FileReference: fileReference,
 	}
 
 	result, err := modelPost.Add()
@@ -54,7 +54,7 @@ func (p *Post) Add() (Post, error) {
 	post := Post{}
 
 	copier.Copy(&post, &result)
-	post.Files = file.GetFileOpenLinksByReference(*modelPost.FileReference)
+	post.Files = file.GetFileOpenLinksByReference(modelPost.FileReference)
 
 	return post, nil
 }
@@ -74,7 +74,7 @@ func (p *Post) Get(page service.Page) ([]Post, error) {
 	servicePosts := make([]Post, len(modelPosts))
 	copier.Copy(&servicePosts, &modelPosts)
 	for index, modelPost := range modelPosts {
-		servicePosts[index].Files = file.GetFileOpenLinksByReference(*modelPost.FileReference)
+		servicePosts[index].Files = file.GetFileOpenLinksByReference(modelPost.FileReference)
 	}
 
 	return servicePosts, nil
