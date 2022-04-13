@@ -15,4 +15,6 @@ func SetRouter(router *gin.Engine) {
 	}
 	// 設置API Router
 	setAPIRoute(router)
+	// 設置graphql router
+	setGraphqlRouter(router)
 }

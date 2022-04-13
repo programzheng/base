@@ -3,6 +3,8 @@ module github.com/programzheng/base
 go 1.16
 
 require (
+	github.com/99designs/gqlgen v0.17.2
+	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/bamzi/jobrunner v1.0.0
 	github.com/cloudinary/cloudinary-go v1.6.0
 	github.com/gin-contrib/cors v1.3.1
@@ -17,8 +19,10 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
+	github.com/vektah/gqlparser/v2 v2.4.1
 	golang.org/x/crypto v0.0.0-20220313003712-b769efc7c000
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f // indirect
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/gorm v1.23.2
 )

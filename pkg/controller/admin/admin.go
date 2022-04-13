@@ -8,7 +8,6 @@ import (
 	"github.com/programzheng/base/pkg/service/auth"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 var adminService admin.Admin
@@ -37,27 +36,9 @@ func Login(ctx *gin.Context) {
 		helper.BadRequest(ctx, err)
 		return
 	}
-	admin, err := (&admin.Admin{
-		Account: login.Account,
-	}).GetForLogin()
+	token, err := admin.Login(ctx.ClientIP(), login.Account, login.Password)
 	if err != nil {
-		helper.Fail(ctx, errors.New("帳號錯誤"))
-		return
-	}
-	err = helper.CheckHash(admin.Password, login.Password)
-	if err != nil {
-		helper.Fail(ctx, errors.New("密碼錯誤"))
-		return
-	}
-	secret := []byte(viper.Get("JWT_SECRET").(string))
-	token := helper.CreateJWT(secret)
-	adminLogin := auth.AdminLogin{
-		AdminID: admin.ID,
-		Token:   token.Token,
-		IP:      ctx.ClientIP(),
-	}
-	if err := adminLogin.AddAdminLogin(); err != nil {
-		helper.Fail(ctx, err)
+		helper.Fail(ctx, errors.New("登入失敗"))
 		return
 	}
 

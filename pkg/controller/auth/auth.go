@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func VaildAdmin(ctx *gin.Context) {
+func VaildAdminLoginLog(ctx *gin.Context) {
 	requestToken := ctx.GetHeader("Authorization")
 	splitToken := strings.Split(requestToken, "Bearer")
 	if len(splitToken) != 2 {
@@ -26,7 +26,7 @@ func VaildAdmin(ctx *gin.Context) {
 		Token: token,
 	}).GetAdminLogin()
 
-	if adminLogin.ID == 0 && err != nil {
+	if err != nil {
 		helper.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}

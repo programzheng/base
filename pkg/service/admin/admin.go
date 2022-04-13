@@ -1,8 +1,11 @@
 package admin
 
 import (
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/admin"
 	"github.com/programzheng/base/pkg/service"
+	"github.com/programzheng/base/pkg/service/auth"
+	"github.com/spf13/viper"
 
 	"github.com/jinzhu/copier"
 )
@@ -52,6 +55,32 @@ func (a *Admin) GetForLogin() (*admin.Admin, error) {
 		return nil, err
 	}
 	return model, nil
+}
+
+func Login(clientIp string, account string, password string) (*helper.Token, error) {
+	admin, err := (&Admin{
+		Account: account,
+	}).GetForLogin()
+	if err != nil {
+		return nil, err
+	}
+	err = helper.CheckHash(admin.Password, password)
+	if err != nil {
+		return nil, err
+	}
+	secret := []byte(viper.Get("JWT_SECRET").(string))
+	token := helper.CreateJWT(secret)
+
+	adminLogin := auth.AdminLogin{
+		AdminID: admin.ID,
+		Token:   token.Token,
+		IP:      clientIp,
+	}
+	if err := adminLogin.AddAdminLogin(); err != nil {
+		return nil, err
+	}
+
+	return &token, nil
 }
 
 func (a *Admin) Get() ([]Admin, error) {
