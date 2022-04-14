@@ -40,9 +40,10 @@ func setAPIRoute(router *gin.Engine) {
 			postsGroup.POST("", post.Add)
 			// postsGroup.GET("/:id", post.GetForID)
 			postsGroup.GET("", post.Get)
+			postsGroup.PUT("/:id", post.PutByID)
 			// postsGroup.PATCH("/:id", post.SaveForID)
 			// postsGroup.PATCH("", post.Save)
-			// postsGroup.DELETE("/:id", post.DelForID)
+			postsGroup.DELETE("/:id", post.DelByID)
 			// postsGroup.DELETE("", post.Del)
 		}
 	}

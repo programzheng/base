@@ -19,6 +19,12 @@ type File struct {
 	ThirdPatyID string `json:"-"`
 }
 
+type LinkFile struct {
+	HashID string `json:"hash_id"`
+	Type   string `json:"type"`
+	Value  string `json:"value"`
+}
+
 type Files []File
 
 func (f *File) Add() (File, error) {
@@ -51,7 +57,21 @@ func Get(ids []interface{}, fn func() map[string]interface{}) (Files, error) {
 	return serviceFiles, nil
 }
 
-func GetFileOpenLinksByReference(reference *string) []string {
+func GetHashIdsAndReferenceByBase64LinkFiles(lfs []LinkFile) (*[]string, *string) {
+	b64s := make([]string, 0, len(lfs))
+	for _, lf := range lfs {
+		//new file hashID is ""
+		if lf.HashID != "" {
+			continue
+		}
+		b64s = append(b64s, lf.Value)
+	}
+
+	fileHashIds, fileReference := AddFileByBase64(b64s)
+	return &fileHashIds, fileReference
+}
+
+func GetLinkFilesByReference(reference *string) []LinkFile {
 	serviceFiles, err := Get(nil, func() map[string]interface{} {
 		maps := make(map[string]interface{}, 1)
 		maps["reference"] = reference
@@ -61,12 +81,14 @@ func GetFileOpenLinksByReference(reference *string) []string {
 		return nil
 	}
 
-	links := make([]string, len(serviceFiles))
+	lfs := make([]LinkFile, len(serviceFiles))
 	for index, serviceFile := range serviceFiles {
-		links[index] = serviceFile.GetOpenLink()
+		lfs[index].HashID = serviceFile.HashID
+		lfs[index].Type = serviceFile.Type
+		lfs[index].Value = serviceFile.GetOpenLink()
 	}
 
-	return links
+	return lfs
 }
 
 func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files, error) {
@@ -85,9 +107,7 @@ func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files,
 	return serviceFiles, nil
 }
 
-func BatchUpdatesByHashIDs(hashIDs []string, fn func() map[string]interface{}, updates map[string]interface{}) (Files, error) {
-	maps := fn()
-
+func BatchUpdatesByHashIDs(hashIDs []string, maps map[string]interface{}, updates map[string]interface{}) (Files, error) {
 	var modelFiles []file.File
 
 	err := model.GetDB().Model(&modelFiles).Select("reference").Where("hash_id IN (?)", hashIDs).Where(maps).Updates(updates).Find(&modelFiles).Error
@@ -98,6 +118,14 @@ func BatchUpdatesByHashIDs(hashIDs []string, fn func() map[string]interface{}, u
 	copier.Copy(&serviceFiles, &modelFiles)
 
 	return serviceFiles, nil
+}
+
+func DeleteByReference(reference string) error {
+	err := model.GetDB().Where("reference", reference).Delete(&file.File{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func getMaps(maps map[string]interface{}) map[string]interface{} {

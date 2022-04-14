@@ -53,3 +53,37 @@ func Get(ctx *gin.Context) {
 
 	helper.Success(ctx, data, nil)
 }
+
+func PutByID(ctx *gin.Context) {
+	if err := ctx.Bind(&postService); err != nil {
+		helper.BadRequest(ctx, err)
+		return
+	}
+	id := ctx.Param("id")
+	uid := helper.ConvertToUint(id)
+
+	post, err := postService.UpdateByID(uid)
+	if err != nil {
+		helper.Fail(ctx, err)
+		return
+	}
+
+	data := map[string]interface{}{
+		"post": post,
+	}
+	helper.Success(ctx, data, nil)
+}
+
+func DelByID(ctx *gin.Context) {
+	id := ctx.Param("id")
+	uid := helper.ConvertToUint(id)
+
+	err := postService.DelByID(uid)
+
+	if err != nil {
+		helper.Fail(ctx, err)
+		return
+	}
+
+	helper.Success(ctx, nil, "Delete Success")
+}

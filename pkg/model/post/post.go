@@ -51,3 +51,46 @@ func Get(offset int, limit int, maps interface{}) ([]*Post, error) {
 
 	return posts, nil
 }
+
+func FindById(id uint) (*Post, error) {
+	var post *Post
+	err := model.GetDB().Preload("Files").First(&post, id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return post, nil
+}
+
+func Update(maps interface{}, updates interface{}) (*Post, error) {
+	var post Post
+	err := model.GetDB().Model(&post).Where(maps).Updates(updates).Find(&post).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &post, nil
+}
+
+func UpdateByModel(m Post, updates interface{}) (*Post, error) {
+	var post Post
+	err := model.GetDB().Model(&m).Updates(updates).Find(&post).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &post, nil
+}
+
+func DelByID(id uint) error {
+	var post Post
+	err := model.GetDB().First(&post, id).Error
+	if err != nil {
+		return err
+	}
+	err = model.GetDB().Delete(&post).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
