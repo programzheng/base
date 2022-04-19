@@ -69,7 +69,8 @@ func Login(clientIp string, account string, password string) (*helper.Token, err
 		return nil, err
 	}
 	secret := []byte(viper.Get("JWT_SECRET").(string))
-	token := helper.CreateJWT(secret)
+	expiresSeconds := helper.ConvertToInt64(viper.Get("JWT_EXPIRES_SECONDS").(string))
+	token := helper.CreateJWT(secret, expiresSeconds)
 
 	adminLogin := auth.AdminLogin{
 		AdminID: admin.ID,

@@ -42,6 +42,25 @@ func ConvertToInt(any interface{}) int {
 	return -1
 }
 
+func ConvertToInt64(any interface{}) int64 {
+	switch value := any.(type) {
+	case int:
+		return int64(value)
+	case float64:
+		return int64(value)
+	case string:
+		t, err := strconv.ParseInt(value, 10, 64)
+		if err != nil {
+			log.Panic("convert string to int error:", err)
+		}
+		i := int64(t)
+		return i
+	default:
+		log.Panic("ConvertToInt error")
+	}
+	return -1
+}
+
 func ConvertToUint(any interface{}) uint {
 	switch value := any.(type) {
 	case int:

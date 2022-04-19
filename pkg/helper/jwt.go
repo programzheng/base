@@ -18,8 +18,11 @@ type Token struct {
 	Exp   int64  `json:"exp"`
 }
 
-func CreateJWT(sercrt []byte) (token Token) {
-	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
+func CreateJWT(sercrt []byte, exp int64) (token Token) {
+	if exp < 0 {
+		exp = 0
+	}
+	exp = time.Now().Add(time.Second * time.Duration(exp)).Unix()
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp": exp,
 		"iat": time.Now().Unix(),
