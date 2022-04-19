@@ -1,6 +1,11 @@
 package file
 
 import (
+	"bytes"
+	"io/ioutil"
+	"net/http"
+	"strings"
+
 	"github.com/programzheng/base/pkg/model/file"
 	"github.com/spf13/viper"
 
@@ -120,6 +125,16 @@ func getMaps(maps map[string]interface{}) map[string]interface{} {
 	return maps
 }
 
+func ReplaceProtocolEmpty(path string) string {
+	if strings.HasPrefix(path, "https:") {
+		path = strings.Replace(path, "https:", "", 1)
+	}
+	if strings.HasPrefix(path, "http:") {
+		path = strings.Replace(path, "http:", "", 1)
+	}
+	return path
+}
+
 func (f *File) GetOpenLink() string {
 	link := ""
 	switch f.System {
@@ -140,4 +155,29 @@ func (f *File) GetLocalLink() string {
 		link = f.Path
 	}
 	return link
+}
+
+func (f *File) GetBytes() ([]byte, error) {
+	var bs []byte
+	switch f.System {
+	case "local":
+		tmpBs, err := ioutil.ReadFile(f.GetLocalLink())
+		if err != nil {
+			return nil, err
+		}
+		bs = tmpBs
+	case "cloudinary":
+		response, err := http.Get(f.GetOpenLink())
+		if err != nil {
+			return nil, err
+		}
+
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(response.Body)
+		reader := response.Body
+		defer reader.Close()
+		bs = buf.Bytes()
+	}
+
+	return bs, nil
 }

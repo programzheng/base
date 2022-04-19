@@ -2,7 +2,6 @@ package file
 
 import (
 	"errors"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -14,12 +13,9 @@ import (
 
 func Get(ctx *gin.Context) {
 	hashID := ctx.Param("hash_id")
-
-	files, err := file.Get(nil, func() map[string]interface{} {
-		maps := make(map[string]interface{})
-		maps["hash_id"] = hashID
-		return maps
-	})
+	where := make(map[string]interface{}, 1)
+	where["hash_id"] = hashID
+	files, err := file.Get(where)
 
 	if err != nil {
 		log.Fatalf("files get error: %v", err)
@@ -29,7 +25,7 @@ func Get(ctx *gin.Context) {
 		return
 	}
 	file := files[len(files)-1]
-	img, err := ioutil.ReadFile(file.GetLocalLink())
+	img, err := file.GetBytes()
 	if err != nil {
 		log.Fatal(err)
 	}
