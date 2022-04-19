@@ -1,7 +1,6 @@
 package file
 
 import (
-	"github.com/programzheng/base/pkg/model"
 	"github.com/programzheng/base/pkg/model/file"
 	"github.com/spf13/viper"
 
@@ -45,9 +44,8 @@ func (f *File) Add() (File, error) {
 	return serviceFile, nil
 }
 
-func Get(ids []interface{}, fn func() map[string]interface{}) (Files, error) {
-	maps := fn()
-	modelFiles, err := file.Get(ids, getMaps(maps))
+func Get(where map[string]interface{}) (Files, error) {
+	modelFiles, err := file.Get(getMaps(where))
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +55,7 @@ func Get(ids []interface{}, fn func() map[string]interface{}) (Files, error) {
 	return serviceFiles, nil
 }
 
-func GetHashIdsAndReferenceByBase64LinkFiles(lfs []LinkFile) (*[]string, *string) {
+func GetHashIdsAndReferenceByBase64LinkFiles(lfs []LinkFile) ([]string, *string) {
 	b64s := make([]string, 0, len(lfs))
 	for _, lf := range lfs {
 		//new file hashID is ""
@@ -68,15 +66,13 @@ func GetHashIdsAndReferenceByBase64LinkFiles(lfs []LinkFile) (*[]string, *string
 	}
 
 	fileHashIds, fileReference := AddFileByBase64(b64s)
-	return &fileHashIds, fileReference
+	return fileHashIds, fileReference
 }
 
 func GetLinkFilesByReference(reference *string) []LinkFile {
-	serviceFiles, err := Get(nil, func() map[string]interface{} {
-		maps := make(map[string]interface{}, 1)
-		maps["reference"] = reference
-		return maps
-	})
+	where := make(map[string]interface{}, 1)
+	where["reference"] = reference
+	serviceFiles, err := Get(where)
 	if err != nil {
 		return nil
 	}
@@ -91,26 +87,8 @@ func GetLinkFilesByReference(reference *string) []LinkFile {
 	return lfs
 }
 
-func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files, error) {
-	maps := fn()
-
-	var modelFiles []file.File
-
-	err := model.GetDB().Model(&modelFiles).Where(maps).Updates(updates).Find(&modelFiles).Error
-	if err != nil {
-		return nil, err
-	}
-
-	serviceFiles := Files{}
-	copier.Copy(&serviceFiles, &modelFiles)
-
-	return serviceFiles, nil
-}
-
-func BatchUpdatesByHashIDs(hashIDs []string, maps map[string]interface{}, updates map[string]interface{}) (Files, error) {
-	var modelFiles []file.File
-
-	err := model.GetDB().Model(&modelFiles).Select("reference").Where("hash_id IN (?)", hashIDs).Where(maps).Updates(updates).Find(&modelFiles).Error
+func BatchUpdates(where map[string]interface{}, updates map[string]interface{}) (Files, error) {
+	modelFiles, err := file.BatchUpdates(where, updates)
 	if err != nil {
 		return nil, err
 	}
@@ -120,8 +98,17 @@ func BatchUpdatesByHashIDs(hashIDs []string, maps map[string]interface{}, update
 	return serviceFiles, nil
 }
 
-func DeleteByReference(reference string) error {
-	err := model.GetDB().Where("reference", reference).Delete(&file.File{}).Error
+func GetHashIDsByLinkFiles(lfs []LinkFile) []string {
+	hashIDs := make([]string, len(lfs))
+	for _, lf := range lfs {
+		hashIDs = append(hashIDs, lf.HashID)
+	}
+
+	return hashIDs
+}
+
+func Delete(where map[string]interface{}) error {
+	err := file.Delete(where)
 	if err != nil {
 		return err
 	}

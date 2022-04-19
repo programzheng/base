@@ -44,18 +44,9 @@ func (f File) Add() (File, error) {
 	return f, nil
 }
 
-func Get(ids []interface{}, maps interface{}) (Files, error) {
+func Get(where map[string]interface{}) (Files, error) {
 	var files Files
-	if ids == nil {
-		err := model.GetDB().Where(maps).Find(&files).Error
-
-		if err != nil && err != gorm.ErrRecordNotFound {
-			return nil, err
-		}
-
-		return files, nil
-	}
-	err := model.GetDB().Where(ids).Where(maps).Find(&files).Error
+	err := model.GetDB().Where(where).Find(&files).Error
 
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
@@ -64,20 +55,13 @@ func Get(ids []interface{}, maps interface{}) (Files, error) {
 	return files, nil
 }
 
-func BatchUpdates(fn func() map[string]interface{}, updates interface{}) (Files, error) {
-	maps := fn()
+func BatchUpdates(where map[string]interface{}, updates map[string]interface{}) (Files, error) {
 	var files Files
-	err := model.GetDB().Model(&files).Where(maps).Updates(updates).Find(&files).Error
+	err := model.GetDB().Model(&files).Where(where).Updates(updates).Find(&files).Error
 
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-
-	// err := model.GetDB().Model(&files).Where(ids).Where(maps).Updates(updates).Find(&files).Error
-
-	// if err != nil && err != gorm.ErrRecordNotFound {
-	// 	return nil, err
-	// }
 
 	return files, nil
 }
@@ -87,4 +71,12 @@ func (f File) Update() (File, error) {
 		return File{}, err
 	}
 	return f, nil
+}
+
+func Delete(where map[string]interface{}) error {
+	err := model.GetDB().Where(where).Delete(File{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

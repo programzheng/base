@@ -30,10 +30,11 @@ func (p *Post) Add() (*Post, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	where := make(map[string]interface{}, 1)
+	where["hash_id"] = fileHashIds
 	batchUpdates := make(map[string]interface{}, 1)
 	batchUpdates["reference"] = fileReference
-	_, err = file.BatchUpdatesByHashIDs(*fileHashIds, nil, batchUpdates)
+	_, err = file.BatchUpdates(where, batchUpdates)
 	if err != nil {
 		return nil, err
 	}
@@ -96,9 +97,11 @@ func (p *Post) UpdateByID(id uint) (*Post, error) {
 		return nil, err
 	}
 
+	where := make(map[string]interface{}, 1)
+	where["hash_id"] = fileHashIds
 	batchUpdates := make(map[string]interface{}, 1)
 	batchUpdates["reference"] = result.FileReference
-	_, err = file.BatchUpdatesByHashIDs(*fileHashIds, nil, batchUpdates)
+	_, err = file.BatchUpdates(where, batchUpdates)
 	if err != nil {
 		return nil, err
 	}
