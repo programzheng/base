@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/resource"
 	"github.com/programzheng/base/pkg/service/file"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +25,7 @@ func Get(ctx *gin.Context) {
 		log.Fatalf("files get error: %v", err)
 	}
 	if len(files) == 0 {
-		helper.BadRequest(ctx, errors.New("files get not found"))
+		resource.BadRequest(ctx, errors.New("files get not found"))
 		return
 	}
 	file := files[len(files)-1]

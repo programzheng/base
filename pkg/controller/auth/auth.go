@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/resource"
 	"github.com/programzheng/base/pkg/service/auth"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func VaildAdminLoginLog(ctx *gin.Context) {
 	splitToken := strings.Split(requestToken, "Bearer")
 	if len(splitToken) != 2 {
 		//return not vaild
-		helper.Unauthorized(ctx, errors.New("驗證失敗"))
+		resource.Unauthorized(ctx, errors.New("驗證失敗"))
 		return
 	}
 
@@ -27,13 +28,13 @@ func VaildAdminLoginLog(ctx *gin.Context) {
 	}).GetAdminLogin()
 
 	if err != nil {
-		helper.Unauthorized(ctx, errors.New("請重新登入"))
+		resource.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}
 
 	vaildResult := helper.ValidJSONWebToken(token)
 	if !vaildResult {
-		helper.Unauthorized(ctx, errors.New("請重新登入"))
+		resource.Unauthorized(ctx, errors.New("請重新登入"))
 		return
 	}
 
@@ -41,6 +42,6 @@ func VaildAdminLoginLog(ctx *gin.Context) {
 
 	}
 
-	helper.Success(ctx, nil, nil)
+	resource.Success(ctx, nil, nil)
 	return
 }

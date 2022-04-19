@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/programzheng/base/pkg/filesystem"
-	"github.com/programzheng/base/pkg/helper"
+	"github.com/programzheng/base/pkg/resource"
 	"github.com/programzheng/base/pkg/service/file"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +19,7 @@ func Upload(ctx *gin.Context) {
 	//取得所有Mulitpart Form
 	form, err := ctx.MultipartForm()
 	if err != nil {
-		helper.BadRequest(ctx, errors.New(fmt.Sprintf("get form error: %s", err.Error())))
+		resource.BadRequest(ctx, errors.New(fmt.Sprintf("get form error: %s", err.Error())))
 		return
 	}
 	//取得所有File map[]
@@ -32,13 +32,13 @@ func Upload(ctx *gin.Context) {
 			originFileName := uploadFile.Filename
 			uf, err := uploadFile.Open()
 			if err != nil {
-				helper.BadRequest(ctx, errors.New(fmt.Sprintf("upload error: %s", err.Error())))
+				resource.BadRequest(ctx, errors.New(fmt.Sprintf("upload error: %s", err.Error())))
 				return
 			}
 			//上傳檔案
 			staticFile := filesystem.Create("").Upload(ctx, originFileName, uf)
 			if staticFile == nil {
-				helper.BadRequest(ctx, errors.New("upload file error"))
+				resource.BadRequest(ctx, errors.New("upload file error"))
 				return
 			}
 			fileService := file.File{
@@ -52,11 +52,11 @@ func Upload(ctx *gin.Context) {
 
 			file, err := fileService.Add()
 			if err != nil {
-				helper.BadRequest(ctx, fmt.Errorf("add file row error: %v", err))
+				resource.BadRequest(ctx, fmt.Errorf("add file row error: %v", err))
 				return
 			}
 			fileList = append(fileList, file)
 		}
 	}
-	helper.UploadSuccess(ctx, fileList, "上傳成功")
+	resource.UploadSuccess(ctx, fileList, "上傳成功")
 }

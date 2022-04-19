@@ -7,8 +7,8 @@ import (
 	"github.com/programzheng/base/pkg/controller/auth"
 	"github.com/programzheng/base/pkg/controller/file"
 	"github.com/programzheng/base/pkg/controller/post"
-	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/middleware"
+	"github.com/programzheng/base/pkg/resource"
 )
 
 func setAPIRoute(router *gin.Engine) {
@@ -22,7 +22,7 @@ func setAPIRoute(router *gin.Engine) {
 	adminGroup.Use(middleware.ValidJSONWebToken())
 	{
 		adminGroup.POST("auth", func(ctx *gin.Context) {
-			helper.Success(ctx, nil, "success")
+			resource.Success(ctx, nil, "success")
 		})
 	}
 	apiGroup.Use(middleware.ValidJSONWebToken())
