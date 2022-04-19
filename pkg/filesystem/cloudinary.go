@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"path/filepath"
-	"strings"
 
 	"github.com/cloudinary/cloudinary-go"
 	"github.com/cloudinary/cloudinary-go/api/uploader"
@@ -58,16 +57,10 @@ func (cldSystem *Cloudinary) Upload(ctx context.Context, originFileName string, 
 		log.Printf("File system cloudinary upload error:%v", err)
 	}
 
-	//replace https to ""
-	path := resp.SecureURL
-	if strings.HasPrefix(path, "https:") {
-		path = strings.Replace(path, "https:", "", 1)
-	}
-
 	staticFile := StaticFile{
 		System:      cldSystem.GetSystem(),
 		Type:        fileType,
-		Path:        path,
+		Path:        resp.SecureURL,
 		Name:        fileFullName,
 		ThirdPatyID: resp.PublicID,
 	}
