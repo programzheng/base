@@ -17,7 +17,12 @@ type Post struct {
 }
 
 func (p *Post) Add() (*Post, error) {
-	fileHashIds, fileReference := file.GetHashIdsAndReferenceByBase64LinkFiles(p.Files)
+	var fileHashIds []string
+	var fileReference *string
+
+	if len(p.Files) > 0 {
+		fileHashIds, fileReference = file.GetHashIdsAndReferenceByBase64LinkFiles(p.Files)
+	}
 
 	modelPost := post.Post{
 		Title:         p.Title,
