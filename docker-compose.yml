@@ -10,7 +10,7 @@ services:
           - WORKSPACE=${WORKSPACE}
       restart: always
       env_file:
-        - .env
+        - .env.docker
       volumes:
         - ${DATA_PATH_HOST}/${WORKSPACE}/${APP_NAME}/upload:/${WORKSPACE}/upload
         - ${DATA_PATH_HOST}/${WORKSPACE}/${APP_NAME}/log:/${WORKSPACE}/log
