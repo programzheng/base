@@ -1,11 +1,12 @@
 package router
 
 import (
+	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/programzheng/base/pkg/controller/file"
 	"github.com/programzheng/base/pkg/controller/job"
-	"github.com/programzheng/base/pkg/controller/socketio"
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/spf13/viper"
 
@@ -30,6 +31,9 @@ func setRoute(router *gin.Engine) {
 func setTestRoute(router *gin.Engine) {
 	testGroup := router.Group("/test")
 	{
-		testGroup.GET("socketio", socketio.View)
+		testGroup.GET("graceful_shutdown", func(ctx *gin.Context) {
+			time.Sleep(5 * time.Second)
+			ctx.String(http.StatusOK, "graceful shutdown test")
+		})
 	}
 }
