@@ -45,13 +45,13 @@ func Run() {
 	}
 	route := gin.Default()
 	router.SetRouter(route)
-	port := viper.Get("APP_PORT")
-	if port == nil {
-		port = "80"
-	}
 
+	port := "80"
+	if port = viper.GetString("PORT"); port == "" {
+		port = viper.GetString("APP_PORT")
+	}
 	srv := &http.Server{
-		Addr:    ":" + port.(string),
+		Addr:    ":" + port,
 		Handler: route,
 	}
 
