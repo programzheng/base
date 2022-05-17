@@ -16,12 +16,6 @@ type Post struct {
 	Files         []file.File `gorm:"foreignKey:Reference;references:FileReference;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
-func init() {
-	if !model.HasTable(&Post{}) {
-		model.CreateTable(&Post{})
-	}
-}
-
 func (p Post) Add() (Post, error) {
 	if err := model.GetDB().Create(&p).Error; err != nil {
 		return Post{}, err

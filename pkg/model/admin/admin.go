@@ -20,15 +20,6 @@ type AdminProfile struct {
 	Name    string
 }
 
-func init() {
-	if !model.HasTable(&Admin{}) {
-		model.CreateTable(&Admin{})
-	}
-	if !model.HasTable(&AdminProfile{}) {
-		model.CreateTable(&AdminProfile{})
-	}
-}
-
 func (a Admin) Add() (Admin, error) {
 	if err := model.GetDB().Create(&a).Error; err != nil {
 		return Admin{}, err
