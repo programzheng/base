@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine as build_base
+FROM golang:1.18-alpine as build_base
 RUN apk add bash ca-certificates git gcc g++ libc-dev
 
 ARG WORKSPACE
@@ -18,4 +18,4 @@ RUN go build -o main .
 
 EXPOSE 80
 
-CMD ["./main"]
+CMD ["./main", "http"]
