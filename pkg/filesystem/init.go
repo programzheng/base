@@ -5,9 +5,8 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/helper"
-
-	"github.com/spf13/viper"
 )
 
 type FileSystem interface {
@@ -29,14 +28,14 @@ type StaticFile struct {
 
 func Create(system string) FileSystem {
 	if system == "" {
-		system = viper.Get("FILESYSTEM_DRIVER").(string)
+		system = config.Cfg.GetString("FILESYSTEM_DRIVER")
 	}
 	var Driver FileSystem
 	switch system {
 	case "local":
 		Driver = &Local{
 			System: system,
-			Path:   filepath.Join(helper.RootPath, viper.Get("FILESYSTEM_LOCAL_PATH").(string)),
+			Path:   filepath.Join(helper.RootPath, config.Cfg.GetString("FILESYSTEM_LOCAL_PATH")),
 		}
 	case "cloudinary":
 		Driver = &Cloudinary{
@@ -49,5 +48,5 @@ func Create(system string) FileSystem {
 }
 
 func GetEmptyImageLink() string {
-	return "//" + viper.Get("APP_URL").(string) + ":" + viper.Get("APP_PORT").(string) + "/files/image/empty"
+	return "//" + config.Cfg.GetString("APP_URL") + ":" + config.Cfg.GetString("APP_PORT") + "/files/image/empty"
 }

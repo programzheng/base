@@ -7,7 +7,7 @@ import (
 	"text/template"
 
 	"github.com/jordan-wright/email"
-	"github.com/spf13/viper"
+	"github.com/programzheng/base/config"
 )
 
 type Email struct {
@@ -48,10 +48,10 @@ func (e *Email) SendEmailByHtml() error {
 	newEmail.HTML = e.HTML
 
 	err := newEmail.Send(
-		viper.GetString("NOTIFICATION_EMAIL_HOST")+":"+viper.GetString("NOTIFICATION_EMAIL_PORT"),
-		smtp.PlainAuth("", viper.GetString("NOTIFICATION_EMAIL_USERNAME"),
-			viper.GetString("NOTIFICATION_EMAIL_PASSWORD"),
-			viper.GetString("NOTIFICATION_EMAIL_HOST"),
+		config.Cfg.GetString("NOTIFICATION_EMAIL_HOST")+":"+config.Cfg.GetString("NOTIFICATION_EMAIL_PORT"),
+		smtp.PlainAuth("", config.Cfg.GetString("NOTIFICATION_EMAIL_USERNAME"),
+			config.Cfg.GetString("NOTIFICATION_EMAIL_PASSWORD"),
+			config.Cfg.GetString("NOTIFICATION_EMAIL_HOST"),
 		),
 	)
 

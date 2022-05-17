@@ -2,11 +2,11 @@ package socketio
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
+	"github.com/programzheng/base/config"
 )
 
 func View(ctx *gin.Context) {
 	ctx.HTML(200, "socketio.html", gin.H{
-		"API": viper.Get("SOCKETIO_URL"),
+		"API": config.Cfg.GetString("SOCKETIO_URL"),
 	})
 }
