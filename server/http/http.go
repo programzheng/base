@@ -1,4 +1,4 @@
-package serve
+package http
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/programzheng/base/server/http/router"
 )
 
-func RunHttpServer() {
+func Run() {
 	jobrunner.Start()
 	if config.GetProductionStatus() {
 		gin.SetMode(gin.ReleaseMode)
