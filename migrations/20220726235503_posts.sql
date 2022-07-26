@@ -16,5 +16,5 @@ CREATE TABLE `posts` (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS `posts`
+DROP TABLE IF EXISTS `posts`;
 -- +goose StatementEnd

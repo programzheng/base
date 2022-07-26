@@ -14,5 +14,5 @@ CREATE TABLE `admin_profiles` (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS `admin_profiles`
+DROP TABLE IF EXISTS `admin_profiles`;
 -- +goose StatementEnd

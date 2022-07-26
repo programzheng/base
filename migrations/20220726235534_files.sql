@@ -19,5 +19,5 @@ CREATE TABLE `files` (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS `files`
+DROP TABLE IF EXISTS `files`;
 -- +goose StatementEnd
