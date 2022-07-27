@@ -7,6 +7,7 @@ import (
 	"github.com/programzheng/base/pkg/controller/auth"
 	"github.com/programzheng/base/pkg/controller/file"
 	"github.com/programzheng/base/pkg/controller/post"
+	"github.com/programzheng/base/pkg/controller/user"
 	"github.com/programzheng/base/pkg/middleware"
 	"github.com/programzheng/base/pkg/resource"
 )
@@ -25,6 +26,11 @@ func setAPIRoute(router *gin.Engine) {
 			resource.Success(ctx, nil, "success")
 		})
 	}
+	userGroup := apiGroup.Group("/users")
+	{
+		userGroup.POST("", user.Register)
+	}
+
 	apiGroup.Use(middleware.ValidJSONWebToken())
 	{
 		adminsGroup := apiGroup.Group("/admins")
