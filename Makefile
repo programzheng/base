@@ -4,7 +4,7 @@ export $(shell sed 's/=.*//' ./.env)
 
 #當前年-月-日
 DATE=$(shell date +"%F")
-COMPOSE=docker-compose
+COMPOSE=docker compose
 BASH?=bash
 SERVICES=api
 
