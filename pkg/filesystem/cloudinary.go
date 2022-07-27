@@ -7,9 +7,9 @@ import (
 
 	"github.com/cloudinary/cloudinary-go"
 	"github.com/cloudinary/cloudinary-go/api/uploader"
+	"github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/helper"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 type Cloudinary struct {
@@ -19,9 +19,9 @@ type Cloudinary struct {
 
 func getCloudinary() *cloudinary.Cloudinary {
 	cld, err := cloudinary.NewFromParams(
-		viper.Get("FILESYSTEM_CLOUDINARY_CLOUD_NAME").(string),
-		viper.Get("FILESYSTEM_CLOUDINARY_API_KEY").(string),
-		viper.Get("FILESYSTEM_CLOUDINARY_SECRET").(string),
+		config.Cfg.GetString("FILESYSTEM_CLOUDINARY_CLOUD_NAME"),
+		config.Cfg.GetString("FILESYSTEM_CLOUDINARY_API_KEY"),
+		config.Cfg.GetString("FILESYSTEM_CLOUDINARY_SECRET"),
 	)
 	if err != nil {
 		log.Printf("File system cloudinary getCloudinary error:%v", err)

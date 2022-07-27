@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/model/file"
-	"github.com/spf13/viper"
 
 	"github.com/jinzhu/copier"
 )
@@ -139,7 +139,7 @@ func (f *File) GetOpenLink() string {
 	link := ""
 	switch f.System {
 	case "local":
-		link = "//" + viper.Get("APP_URL").(string) + ":" + viper.Get("APP_PORT").(string) + "/files/" + f.HashID
+		link = "//" + config.Cfg.GetString("APP_URL") + ":" + config.Cfg.GetString("APP_PORT") + "/files/" + f.HashID
 	case "cloudinary":
 		link = f.Path
 	}

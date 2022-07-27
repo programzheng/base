@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package base;
+
+option go_package="github.com/programzheng/base";
+
+service Greeter {
+  rpc RandomTicket (RandomTicketRequest) returns (RandomTicketResponse) {}
+}
+
+message RandomTicketRequest {
+  int64 count = 1;
+}
+
+message RandomTicketResponse {
+  string message = 1;
+}

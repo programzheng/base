@@ -1,11 +1,11 @@
 package admin
 
 import (
+	"github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/admin"
 	"github.com/programzheng/base/pkg/service"
 	"github.com/programzheng/base/pkg/service/auth"
-	"github.com/spf13/viper"
 
 	"github.com/jinzhu/copier"
 )
@@ -68,8 +68,8 @@ func Login(clientIp string, account string, password string) (*helper.Token, err
 	if err != nil {
 		return nil, err
 	}
-	secret := []byte(viper.Get("JWT_SECRET").(string))
-	expiresSeconds := helper.ConvertToInt64(viper.Get("JWT_EXPIRES_SECONDS").(string))
+	secret := []byte(config.Cfg.GetString("JWT_SECRET"))
+	expiresSeconds := helper.ConvertToInt64(config.Cfg.GetString("JWT_EXPIRES_SECONDS"))
 	token := helper.CreateJWT(secret, expiresSeconds)
 
 	adminLogin := auth.AdminLogin{

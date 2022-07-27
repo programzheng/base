@@ -5,10 +5,10 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/programzheng/base/config"
 	"github.com/programzheng/base/pkg/controller/file"
 	"github.com/programzheng/base/pkg/controller/job"
 	"github.com/programzheng/base/pkg/helper"
-	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ func setRoute(router *gin.Engine) {
 	router.StaticFile("files/image/empty", filepath.Join(helper.RootPath, "/dist/image/empty.png"))
 	router.GET("files/:hash_id", file.Get)
 
-	if viper.Get("STATIC_UPLOAD_ROUTE").(string) == "true" {
+	if config.Cfg.GetString("STATIC_UPLOAD_ROUTE") == "true" {
 		router.Static("static", filepath.Join(helper.RootPath, "/storage/upload"))
 	}
 }

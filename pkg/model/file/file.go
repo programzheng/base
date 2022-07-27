@@ -22,12 +22,6 @@ type File struct {
 
 type Files []*File
 
-func init() {
-	if !model.HasTable(&File{}) {
-		model.CreateTable(&File{})
-	}
-}
-
 func (f *File) AfterCreate(tx *gorm.DB) (err error) {
 	// 設定給前端呼叫圖片的ID
 	hashID := helper.ConvertToString(f.ID) + "_" + helper.ConvertToString(time.Now().Unix())
