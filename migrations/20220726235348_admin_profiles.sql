@@ -9,7 +9,7 @@ CREATE TABLE `admin_profiles` (
     `name` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_admin_profiles_deleted_at` (`deleted_at`)
-)
+);
 -- +goose StatementEnd
 
 -- +goose Down

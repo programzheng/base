@@ -12,7 +12,7 @@ CREATE TABLE `admins` (
     UNIQUE KEY `account` (`account`),
     UNIQUE KEY `password` (`password`),
     KEY `idx_admins_deleted_at` (`deleted_at`)
-)
+);
 -- +goose StatementEnd
 
 -- +goose Down

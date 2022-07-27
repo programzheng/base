@@ -11,7 +11,7 @@ CREATE TABLE `posts` (
     `file_reference` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_posts_deleted_at` (`deleted_at`)
-)
+);
 -- +goose StatementEnd
 
 -- +goose Down

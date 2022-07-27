@@ -14,7 +14,7 @@ CREATE TABLE `files` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `hash_id` (`hash_id`),
     KEY `idx_files_deleted_at` (`deleted_at`)
-)
+);
 -- +goose StatementEnd
 
 -- +goose Down
