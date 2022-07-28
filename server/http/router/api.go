@@ -29,6 +29,7 @@ func setAPIRoute(router *gin.Engine) {
 	userGroup := apiGroup.Group("/users")
 	{
 		userGroup.POST("", user.Register)
+		userGroup.POST("login", user.Login)
 	}
 
 	apiGroup.Use(middleware.ValidJSONWebToken())

@@ -25,3 +25,11 @@ func (u *User) Add() (*User, error) {
 
 	return u, nil
 }
+
+func (u *User) First() (*User, error) {
+	if err := model.GetDB().First(&u).Error; err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
