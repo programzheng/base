@@ -72,3 +72,38 @@ func loginRecord(u *user.User, token *helper.Token) (*user.UserLogin, error) {
 
 	return ul, nil
 }
+
+func Auth(uar *UserAuthRequest) (*user.User, error) {
+	token := uar.Token
+	if token == "" {
+		return nil, fmt.Errorf("auth requires a jwt string")
+	}
+
+	verifyResult := helper.ValidJSONWebToken(token)
+	if !verifyResult {
+		return nil, errors.New("invalid token")
+	}
+
+	u, err := GetUserByToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
+
+func GetUserByToken(token string) (*user.User, error) {
+	modelUserLogin := &user.UserLogin{
+		Token: token,
+	}
+	ul, err := modelUserLogin.First()
+	if err != nil {
+		return nil, err
+	}
+	u := &ul.User
+	if u == nil {
+		return nil, errors.New("user not found")
+	}
+
+	return u, nil
+}

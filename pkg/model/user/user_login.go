@@ -8,6 +8,7 @@ import (
 type UserLogin struct {
 	gorm.Model
 	UserID   uint
+	User     User
 	Token    string
 	ClientIP *string
 }
@@ -21,7 +22,7 @@ func (ul *UserLogin) Add() (*UserLogin, error) {
 }
 
 func (ul *UserLogin) First() (*UserLogin, error) {
-	if err := model.GetDB().First(&ul).Error; err != nil {
+	if err := model.GetDB().Joins("User").First(&ul).Error; err != nil {
 		return nil, err
 	}
 

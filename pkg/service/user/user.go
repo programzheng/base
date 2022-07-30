@@ -38,7 +38,3 @@ func (ur *UserRequest) GenerateUser() (*user.User, error) {
 
 	return user, nil
 }
-
-// func GetUserByToken(token string) (*user.User, error) {
-
-// }
