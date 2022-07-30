@@ -18,7 +18,7 @@ type Token struct {
 	Exp   int64  `json:"exp"`
 }
 
-func CreateJWT(sercrt []byte, exp int64) (token *Token) {
+func CreateJWT(sercrt []byte, exp int64) *Token {
 	if exp < 0 {
 		exp = 0
 	}
@@ -33,8 +33,7 @@ func CreateJWT(sercrt []byte, exp int64) (token *Token) {
 		log.Fatal(err)
 	}
 
-	token.Token = jwtTokenString
-	token.Exp = exp
+	token := &Token{Token: jwtTokenString, Exp: exp}
 
 	return token
 }

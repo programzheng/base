@@ -28,8 +28,8 @@ func (ul *UserLogin) First() (*UserLogin, error) {
 	return ul, nil
 }
 
-func (ul *UserLogin) Update(update map[string]interface{}) (*UserLogin, error) {
-	if err := model.GetDB().Model(&ul).Updates(update).Error; err != nil {
+func (ul *UserLogin) Update(where map[string]interface{}, update map[string]interface{}) (*UserLogin, error) {
+	if err := model.GetDB().Model(&ul).Where(where).Updates(update).Error; err != nil {
 		return nil, err
 	}
 

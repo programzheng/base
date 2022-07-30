@@ -81,7 +81,7 @@ func Login(clientIp string, account string, password string) (*helper.Token, err
 		return nil, err
 	}
 
-	return &token, nil
+	return token, nil
 }
 
 func (a *Admin) Get() ([]Admin, error) {

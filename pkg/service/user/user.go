@@ -90,18 +90,12 @@ func (ulgr *UserLoginRequest) Login() (*helper.Token, error) {
 
 func loginRecord(u *user.User, token *helper.Token) (*user.UserLogin, error) {
 	var modelUserLogin user.UserLogin
-	_, err := modelUserLogin.BatchForceDelete(map[string]interface{}{
+
+	ul, err := modelUserLogin.Update(map[string]interface{}{
 		"user_id": u.ID,
+	}, map[string]interface{}{
+		"token": token.Token,
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	modelUserLogin.UserID = u.ID
-	modelUserLogin.Token = token.Token
-
-	ul, err := modelUserLogin.Add()
-
 	if err != nil {
 		return nil, err
 	}
