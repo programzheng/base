@@ -79,7 +79,7 @@ func (ulgr *UserLoginRequest) Login() (*helper.Token, error) {
 	expiresSeconds := helper.ConvertToInt64(config.Cfg.GetString("JWT_EXPIRES_SECONDS"))
 	token := helper.CreateJWT(secret, expiresSeconds)
 
-	//add user login
+	//add user login record
 	_, err = loginRecord(u, token)
 	if err != nil {
 		return nil, err
