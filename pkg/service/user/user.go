@@ -1,10 +1,6 @@
 package user
 
 import (
-	"fmt"
-
-	"github.com/programzheng/base/config"
-	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/user"
 )
 
@@ -43,62 +39,6 @@ func (ur *UserRequest) GenerateUser() (*user.User, error) {
 	return user, nil
 }
 
-func generateHashPassword(password string) string {
-	hash := helper.CreateHash(password)
+// func GetUserByToken(token string) (*user.User, error) {
 
-	return hash
-}
-
-func checkHashPassword(hash string, password string) error {
-	err := helper.CheckHash(hash, password)
-	if err != nil {
-		return err
-	}
-
-	return err
-}
-
-func (ulgr *UserLoginRequest) Login() (*helper.Token, error) {
-	modelUser := user.User{
-		Account: ulgr.Account,
-	}
-
-	u, err := modelUser.First()
-	if err != nil {
-		return nil, err
-	}
-
-	//check hash password
-	err = checkHashPassword(u.Password, ulgr.Password)
-	if err != nil {
-		return nil, fmt.Errorf("check password is error: %v", err)
-	}
-
-	//generate jwt token
-	secret := []byte(config.Cfg.GetString("JWT_SECRET"))
-	expiresSeconds := helper.ConvertToInt64(config.Cfg.GetString("JWT_EXPIRES_SECONDS"))
-	token := helper.CreateJWT(secret, expiresSeconds)
-
-	//add user login record
-	_, err = loginRecord(u, token)
-	if err != nil {
-		return nil, err
-	}
-
-	return token, nil
-}
-
-func loginRecord(u *user.User, token *helper.Token) (*user.UserLogin, error) {
-	var modelUserLogin user.UserLogin
-
-	ul, err := modelUserLogin.Update(map[string]interface{}{
-		"user_id": u.ID,
-	}, map[string]interface{}{
-		"token": token.Token,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return ul, nil
-}
+// }
