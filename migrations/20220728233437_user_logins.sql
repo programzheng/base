@@ -9,7 +9,8 @@ CREATE TABLE `user_logins` (
     `token` varchar(255) DEFAULT NULL,
     `client_ip` varchar(50) DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY `idx_user_logins_deleted_at` (`deleted_at`)
+    KEY `idx_user_logins_deleted_at` (`deleted_at`),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 -- +goose StatementEnd
 
