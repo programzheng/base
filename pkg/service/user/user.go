@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/model/user"
 )
 
@@ -24,6 +25,7 @@ func (ur *UserRequest) GenerateUser() (*user.User, error) {
 	ur.Password = generateHashPassword(ur.Password)
 
 	modelUser := user.User{
+		UUID:     helper.CreateUuid(),
 		Account:  ur.Account,
 		Password: ur.Password,
 		Profile: user.UserProfile{

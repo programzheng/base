@@ -7,6 +7,7 @@ import (
 
 type User struct {
 	gorm.Model
+	UUID     string `gorm:"unique; not null"`
 	Account  string `gorm:"unique; not null"`
 	Password string `gorm:"unique; not null" json:"-"`
 	Profile  UserProfile
