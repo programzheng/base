@@ -2,24 +2,19 @@ package user
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/programzheng/base/pkg/controller"
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/programzheng/base/pkg/resource"
 	"github.com/programzheng/base/pkg/service/user"
 )
 
 func Auth(ctx *gin.Context) {
-	requestToken := ctx.GetHeader("Authorization")
-	splitToken := strings.Split(requestToken, "Bearer")
-	if len(splitToken) != 2 {
-		//return vaild fail
-		resource.Unauthorized(ctx, errors.New("沒有token"))
-		return
+	token, err := controller.GetTokenByGinContext(ctx)
+	if err != nil {
+		resource.Unauthorized(ctx, err)
 	}
-
-	token := strings.TrimSpace(splitToken[1])
 
 	verifyResult := helper.ValidJSONWebToken(token)
 	if !verifyResult {
