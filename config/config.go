@@ -4,6 +4,7 @@ var Cfg = New()
 
 type Config interface {
 	GetString(name string) string
+	Set(key string, value interface{})
 }
 
 func New() Config {

@@ -43,3 +43,7 @@ func NewViper() *viper.Viper {
 func (i *Instance) GetString(name string) string {
 	return i.Package.GetString(name)
 }
+
+func (i *Instance) Set(key string, value interface{}) {
+	i.Package.Set(key, value)
+}
