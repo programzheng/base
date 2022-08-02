@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: games.proto
 
-package base
+package games
 
 import (
 	context "context"
@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreeterClient interface {
 	RandomTicket(ctx context.Context, in *RandomTicketRequest, opts ...grpc.CallOption) (*RandomTicketResponse, error)
+	AssignRandomIssuedTicketToThirdPartyUser(ctx context.Context, in *AssignRandomIssuedTicketToThirdPartyUserRequest, opts ...grpc.CallOption) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error)
 }
 
 type greeterClient struct {
@@ -35,7 +36,16 @@ func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
 
 func (c *greeterClient) RandomTicket(ctx context.Context, in *RandomTicketRequest, opts ...grpc.CallOption) (*RandomTicketResponse, error) {
 	out := new(RandomTicketResponse)
-	err := c.cc.Invoke(ctx, "/base.Greeter/RandomTicket", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/games.Greeter/RandomTicket", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) AssignRandomIssuedTicketToThirdPartyUser(ctx context.Context, in *AssignRandomIssuedTicketToThirdPartyUserRequest, opts ...grpc.CallOption) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error) {
+	out := new(AssignRandomIssuedTicketToThirdPartyUserResponse)
+	err := c.cc.Invoke(ctx, "/games.Greeter/AssignRandomIssuedTicketToThirdPartyUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,6 +57,7 @@ func (c *greeterClient) RandomTicket(ctx context.Context, in *RandomTicketReques
 // for forward compatibility
 type GreeterServer interface {
 	RandomTicket(context.Context, *RandomTicketRequest) (*RandomTicketResponse, error)
+	AssignRandomIssuedTicketToThirdPartyUser(context.Context, *AssignRandomIssuedTicketToThirdPartyUserRequest) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedGreeterServer struct {
 
 func (UnimplementedGreeterServer) RandomTicket(context.Context, *RandomTicketRequest) (*RandomTicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RandomTicket not implemented")
+}
+func (UnimplementedGreeterServer) AssignRandomIssuedTicketToThirdPartyUser(context.Context, *AssignRandomIssuedTicketToThirdPartyUserRequest) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignRandomIssuedTicketToThirdPartyUser not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -80,10 +94,28 @@ func _Greeter_RandomTicket_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/base.Greeter/RandomTicket",
+		FullMethod: "/games.Greeter/RandomTicket",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GreeterServer).RandomTicket(ctx, req.(*RandomTicketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_AssignRandomIssuedTicketToThirdPartyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignRandomIssuedTicketToThirdPartyUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).AssignRandomIssuedTicketToThirdPartyUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/games.Greeter/AssignRandomIssuedTicketToThirdPartyUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).AssignRandomIssuedTicketToThirdPartyUser(ctx, req.(*AssignRandomIssuedTicketToThirdPartyUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -92,12 +124,16 @@ func _Greeter_RandomTicket_Handler(srv interface{}, ctx context.Context, dec fun
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Greeter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "base.Greeter",
+	ServiceName: "games.Greeter",
 	HandlerType: (*GreeterServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "RandomTicket",
 			Handler:    _Greeter_RandomTicket_Handler,
+		},
+		{
+			MethodName: "AssignRandomIssuedTicketToThirdPartyUser",
+			Handler:    _Greeter_AssignRandomIssuedTicketToThirdPartyUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

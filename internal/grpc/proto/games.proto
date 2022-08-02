@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-package base;
+package games;
 
-option go_package="github.com/programzheng/base";
+option go_package="github.com/programzheng/games";
 
 service Greeter {
   rpc RandomTicket (RandomTicketRequest) returns (RandomTicketResponse) {}
+  rpc AssignRandomIssuedTicketToThirdPartyUser (AssignRandomIssuedTicketToThirdPartyUserRequest) returns (AssignRandomIssuedTicketToThirdPartyUserResponse) {}
 }
 
 message RandomTicketRequest {
@@ -14,4 +15,14 @@ message RandomTicketRequest {
 
 message RandomTicketResponse {
   string message = 1;
+}
+
+message AssignRandomIssuedTicketToThirdPartyUserRequest {
+  string code = 1;
+  string thirdPartyID = 2;
+}
+
+message AssignRandomIssuedTicketToThirdPartyUserResponse {
+  string name = 1;
+  string code = 2;
 }

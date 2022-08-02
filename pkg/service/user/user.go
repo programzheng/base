@@ -40,3 +40,14 @@ func (ur *UserRequest) GenerateUser() (*user.User, error) {
 
 	return user, nil
 }
+
+func GetUserByUUID(userUUID string) (*user.User, error) {
+	user, err := (&user.User{
+		UUID: userUUID,
+	}).First()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

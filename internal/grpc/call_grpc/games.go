@@ -2,28 +2,24 @@ package call_grpc
 
 import (
 	"context"
-	"flag"
 	"log"
 	"time"
 
 	pb "github.com/programzheng/base/internal/grpc/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-)
-
-var (
-	addr = flag.String("addr", "localhost:50051", "the address to connect to")
+	"github.com/programzheng/base/pkg/service/game"
+	"github.com/programzheng/base/pkg/service/user"
 )
 
 func RandomTicket(count int) {
-	flag.Parse()
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := game.GetGamesGRPCConnection()
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Fatalf("could not get games grpc connection: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
+	c, err := game.GetGamesGRPCClient(conn)
+	if err != nil {
+		log.Fatalf("could not get games grpc client: %v", err)
+	}
 
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -33,4 +29,35 @@ func RandomTicket(count int) {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetMessage())
+}
+
+func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string) {
+	user, err := user.GetUserByUUID(userUUID)
+	if err != nil {
+		log.Fatalf("could not get user by uuid: %v", err)
+	}
+
+	conn, err := game.GetGamesGRPCConnection()
+	if err != nil {
+		log.Fatalf("could not get games grpc connection: %v", err)
+	}
+	defer conn.Close()
+	c, err := game.GetGamesGRPCClient(conn)
+	if err != nil {
+		log.Fatalf("could not get games grpc client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.AssignRandomIssuedTicketToThirdPartyUser(
+		ctx,
+		&pb.AssignRandomIssuedTicketToThirdPartyUserRequest{
+			Code:         agentCode,
+			ThirdPartyID: user.UUID,
+		},
+	)
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetCode())
 }

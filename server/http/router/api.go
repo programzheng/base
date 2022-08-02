@@ -6,6 +6,7 @@ import (
 	"github.com/programzheng/base/pkg/controller/admin"
 	"github.com/programzheng/base/pkg/controller/auth"
 	"github.com/programzheng/base/pkg/controller/file"
+	"github.com/programzheng/base/pkg/controller/game"
 	"github.com/programzheng/base/pkg/controller/post"
 	"github.com/programzheng/base/pkg/controller/user"
 	"github.com/programzheng/base/pkg/middleware"
@@ -53,6 +54,10 @@ func setAPIRoute(router *gin.Engine) {
 			// postsGroup.PATCH("", post.Save)
 			postsGroup.DELETE("/:id", post.DelByID)
 			// postsGroup.DELETE("", post.Del)
+		}
+		gamesGroup := apiGroup.Group("/games")
+		{
+			gamesGroup.POST("play", game.Play)
 		}
 	}
 
