@@ -13,12 +13,12 @@ import (
 func RandomTicket(count int) {
 	conn, err := game.GetGamesGRPCConnection()
 	if err != nil {
-		log.Fatalf("could not get games grpc connection: %v", err)
+		log.Printf("could not get games grpc connection: %v", err)
 	}
 	defer conn.Close()
 	c, err := game.GetGamesGRPCClient(conn)
 	if err != nil {
-		log.Fatalf("could not get games grpc client: %v", err)
+		log.Printf("could not get games grpc client: %v", err)
 	}
 
 	// Contact the server and print out its response.
@@ -26,7 +26,7 @@ func RandomTicket(count int) {
 	defer cancel()
 	r, err := c.RandomTicket(ctx, &pb.RandomTicketRequest{Count: int64(count)})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Printf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetMessage())
 }
@@ -34,17 +34,17 @@ func RandomTicket(count int) {
 func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string) {
 	user, err := user.GetUserByUUID(userUUID)
 	if err != nil {
-		log.Fatalf("could not get user by uuid: %v", err)
+		log.Printf("could not get user by uuid: %v", err)
 	}
 
 	conn, err := game.GetGamesGRPCConnection()
 	if err != nil {
-		log.Fatalf("could not get games grpc connection: %v", err)
+		log.Printf("could not get games grpc connection: %v", err)
 	}
 	defer conn.Close()
 	c, err := game.GetGamesGRPCClient(conn)
 	if err != nil {
-		log.Fatalf("could not get games grpc client: %v", err)
+		log.Printf("could not get games grpc client: %v", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -57,7 +57,7 @@ func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string)
 		},
 	)
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Printf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetCode())
 }
