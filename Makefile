@@ -41,3 +41,6 @@ down:
 #移除多餘的image
 prune:
 	docker system prune
+
+build-image:
+	docker build -t programzheng/base -f Dockerfile.linux --platform linux/amd64 .
