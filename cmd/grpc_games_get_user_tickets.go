@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/programzheng/base/internal/grpc/call_grpc"
+	"github.com/programzheng/base/internal/grpc/invokegrpc"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 		agentCode := args[0]
-		call_grpc.GetIssuedUserTicketsByAgentCode(agentCode)
+		invokegrpc.GetIssuedUserTicketsByAgentCode(agentCode)
 	},
 }
 

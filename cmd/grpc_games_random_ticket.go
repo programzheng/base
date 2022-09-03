@@ -1,13 +1,12 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
 
-	"github.com/programzheng/base/internal/grpc/call_grpc"
+	"github.com/programzheng/base/internal/grpc/invokegrpc"
 	"github.com/programzheng/base/pkg/helper"
 	"github.com/spf13/cobra"
 )
@@ -32,7 +31,7 @@ to quickly create a Cobra application.`,
 			fmt.Println("count is require greater than zero")
 			return
 		}
-		call_grpc.RandomTicket(count)
+		invokegrpc.RandomTicket(count)
 	},
 }
 

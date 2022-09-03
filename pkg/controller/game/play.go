@@ -3,7 +3,7 @@ package game
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/programzheng/base/config"
-	"github.com/programzheng/base/internal/grpc/call_grpc"
+	"github.com/programzheng/base/internal/grpc/invokegrpc"
 	"github.com/programzheng/base/pkg/controller"
 	"github.com/programzheng/base/pkg/resource"
 	"github.com/programzheng/base/pkg/service/user"
@@ -24,5 +24,5 @@ func Play(ctx *gin.Context) {
 
 	agentCode := config.Cfg.GetString("GAMES_AGENT_CODE")
 
-	call_grpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
+	invokegrpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
 }

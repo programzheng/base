@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -8,7 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/programzheng/base/internal/grpc/call_grpc"
+	"github.com/programzheng/base/internal/grpc/invokegrpc"
 	"github.com/programzheng/base/pkg/service/game"
 	"github.com/programzheng/base/pkg/service/user"
 	"github.com/spf13/cobra"
@@ -43,7 +42,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatal(err)
 		}
-		call_grpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, user.UUID)
+		invokegrpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, user.UUID)
 	},
 }
 
