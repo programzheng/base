@@ -1,4 +1,4 @@
-package response
+package entity
 
 type UserTicket struct {
 	Code string

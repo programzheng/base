@@ -13,6 +13,7 @@ func Play(ctx *gin.Context) {
 	token, err := controller.GetTokenByGinContext(ctx)
 	if err != nil {
 		resource.Unauthorized(ctx, err)
+		return
 	}
 
 	u, err := user.Auth(&user.UserAuthRequest{
@@ -20,9 +21,16 @@ func Play(ctx *gin.Context) {
 	})
 	if err != nil {
 		resource.Unauthorized(ctx, err)
+		return
 	}
 
 	agentCode := config.Cfg.GetString("GAMES_AGENT_CODE")
 
-	invokegrpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
+	userTicket, err := invokegrpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
+	if err != nil {
+		resource.Fail(ctx, err)
+		return
+	}
+
+	resource.Success(ctx, userTicket, nil)
 }

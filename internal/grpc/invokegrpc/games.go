@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/programzheng/base/internal/grpc/entity"
 	pb "github.com/programzheng/base/internal/grpc/proto"
 	"github.com/programzheng/base/pkg/service/game"
 	"github.com/programzheng/base/pkg/service/user"
@@ -31,20 +32,23 @@ func RandomTicket(count int) {
 	log.Printf("Greeting: %s", r.GetMessage())
 }
 
-func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string) {
+func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string) (*entity.UserTicket, error) {
 	user, err := user.GetUserByUUID(userUUID)
 	if err != nil {
 		log.Printf("could not get user by uuid: %v", err)
+		return nil, err
 	}
 
 	conn, err := game.GetGamesGRPCConnection()
 	if err != nil {
 		log.Printf("could not get games grpc connection: %v", err)
+		return nil, err
 	}
 	defer conn.Close()
 	c, err := game.GetGamesGRPCClient(conn)
 	if err != nil {
 		log.Printf("could not get games grpc client: %v", err)
+		return nil, err
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -58,9 +62,16 @@ func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string)
 	)
 	if err != nil {
 		log.Printf("could not greet: %v", err)
+		return nil, err
 	}
-	userTicket := r.GetUserTicket()
-	log.Printf("Greeting: %v", userTicket)
+	grpcUserTicket := r.GetUserTicket()
+
+	userTicket := entity.UserTicket{
+		Code: grpcUserTicket.Code,
+		Name: grpcUserTicket.Name,
+	}
+
+	return &userTicket, nil
 }
 
 func GetIssuedUserTicketsByAgentCode(agentCode string) {
