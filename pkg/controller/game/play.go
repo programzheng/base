@@ -22,5 +22,7 @@ func Play(ctx *gin.Context) {
 		resource.Unauthorized(ctx, err)
 	}
 
-	call_grpc.AssignRandomIssuedTicketToThirdPartyUser(config.Cfg.GetString("AGENT_CODE"), u.UUID)
+	agentCode := config.Cfg.GetString("GAMES_AGENT_CODE")
+
+	call_grpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
 }

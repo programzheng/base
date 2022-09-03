@@ -59,5 +59,32 @@ func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string)
 	if err != nil {
 		log.Printf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetCode())
+	userTicket := r.GetUserTicket()
+	log.Printf("Greeting: %v", userTicket)
+}
+
+func GetIssuedUserTicketsByAgentCode(agentCode string) {
+	conn, err := game.GetGamesGRPCConnection()
+	if err != nil {
+		log.Printf("could not get games grpc connection: %v", err)
+	}
+	defer conn.Close()
+	c, err := game.GetGamesGRPCClient(conn)
+	if err != nil {
+		log.Printf("could not get games grpc client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.GetIssuedUserTicketsByAgentCode(
+		ctx,
+		&pb.GetIssuedUserTicketsByAgentCodeRequest{
+			Code: agentCode,
+		},
+	)
+	if err != nil {
+		log.Printf("could not greet: %v", err)
+	}
+
+	log.Printf("Greeting: %v", r.GetUserTickets())
 }
