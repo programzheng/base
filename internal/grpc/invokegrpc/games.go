@@ -32,6 +32,48 @@ func RandomTicket(count int) {
 	log.Printf("Greeting: %s", r.GetMessage())
 }
 
+func AssignOnceRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string) (*entity.UserTicket, error) {
+	user, err := user.GetUserByUUID(userUUID)
+	if err != nil {
+		log.Printf("could not get user by uuid: %v", err)
+		return nil, err
+	}
+
+	conn, err := game.GetGamesGRPCConnection()
+	if err != nil {
+		log.Printf("could not get games grpc connection: %v", err)
+		return nil, err
+	}
+	defer conn.Close()
+	c, err := game.GetGamesGRPCClient(conn)
+	if err != nil {
+		log.Printf("could not get games grpc client: %v", err)
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.AssignOnceRandomIssuedTicketToThirdPartyUser(
+		ctx,
+		&pb.AssignOnceRandomIssuedTicketToThirdPartyUserRequest{
+			Code:         agentCode,
+			ThirdPartyID: user.UUID,
+		},
+	)
+	if err != nil {
+		log.Printf("could not greet: %v", err)
+		return nil, err
+	}
+	grpcUserTicket := r.GetUserTicket()
+
+	userTicket := entity.UserTicket{
+		Code: grpcUserTicket.Code,
+		Name: grpcUserTicket.Name,
+	}
+
+	return &userTicket, nil
+}
+
 func AssignRandomIssuedTicketToThirdPartyUser(agentCode string, userUUID string) (*entity.UserTicket, error) {
 	user, err := user.GetUserByUUID(userUUID)
 	if err != nil {

@@ -26,7 +26,7 @@ func Play(ctx *gin.Context) {
 
 	agentCode := config.Cfg.GetString("GAMES_AGENT_CODE")
 
-	userTicket, err := invokegrpc.AssignRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
+	userTicket, err := invokegrpc.AssignOnceRandomIssuedTicketToThirdPartyUser(agentCode, u.UUID)
 	if err != nil {
 		resource.Fail(ctx, err)
 		return

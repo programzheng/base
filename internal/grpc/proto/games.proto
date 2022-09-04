@@ -7,6 +7,7 @@ option go_package="github.com/programzheng/games";
 service Greeter {
   rpc RandomTicket (RandomTicketRequest) returns (RandomTicketResponse) {}
   rpc GetIssuedUserTicketsByAgentCode (GetIssuedUserTicketsByAgentCodeRequest) returns (GetIssuedUserTicketsByAgentCodeResponse) {}
+  rpc AssignOnceRandomIssuedTicketToThirdPartyUser (AssignOnceRandomIssuedTicketToThirdPartyUserRequest) returns (AssignOnceRandomIssuedTicketToThirdPartyUserResponse) {}
   rpc AssignRandomIssuedTicketToThirdPartyUser (AssignRandomIssuedTicketToThirdPartyUserRequest) returns (AssignRandomIssuedTicketToThirdPartyUserResponse) {}
 }
 
@@ -21,6 +22,15 @@ message RandomTicketResponse {
 message UserTicket {
   string code = 1;
   string name = 2;
+}
+
+message AssignOnceRandomIssuedTicketToThirdPartyUserRequest {
+  string code = 1;
+  string thirdPartyID = 2;
+}
+
+message AssignOnceRandomIssuedTicketToThirdPartyUserResponse {
+  UserTicket userTicket = 1;
 }
 
 message AssignRandomIssuedTicketToThirdPartyUserRequest {

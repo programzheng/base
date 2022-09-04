@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type GreeterClient interface {
 	RandomTicket(ctx context.Context, in *RandomTicketRequest, opts ...grpc.CallOption) (*RandomTicketResponse, error)
 	GetIssuedUserTicketsByAgentCode(ctx context.Context, in *GetIssuedUserTicketsByAgentCodeRequest, opts ...grpc.CallOption) (*GetIssuedUserTicketsByAgentCodeResponse, error)
+	AssignOnceRandomIssuedTicketToThirdPartyUser(ctx context.Context, in *AssignOnceRandomIssuedTicketToThirdPartyUserRequest, opts ...grpc.CallOption) (*AssignOnceRandomIssuedTicketToThirdPartyUserResponse, error)
 	AssignRandomIssuedTicketToThirdPartyUser(ctx context.Context, in *AssignRandomIssuedTicketToThirdPartyUserRequest, opts ...grpc.CallOption) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error)
 }
 
@@ -53,6 +54,15 @@ func (c *greeterClient) GetIssuedUserTicketsByAgentCode(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *greeterClient) AssignOnceRandomIssuedTicketToThirdPartyUser(ctx context.Context, in *AssignOnceRandomIssuedTicketToThirdPartyUserRequest, opts ...grpc.CallOption) (*AssignOnceRandomIssuedTicketToThirdPartyUserResponse, error) {
+	out := new(AssignOnceRandomIssuedTicketToThirdPartyUserResponse)
+	err := c.cc.Invoke(ctx, "/games.Greeter/AssignOnceRandomIssuedTicketToThirdPartyUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *greeterClient) AssignRandomIssuedTicketToThirdPartyUser(ctx context.Context, in *AssignRandomIssuedTicketToThirdPartyUserRequest, opts ...grpc.CallOption) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error) {
 	out := new(AssignRandomIssuedTicketToThirdPartyUserResponse)
 	err := c.cc.Invoke(ctx, "/games.Greeter/AssignRandomIssuedTicketToThirdPartyUser", in, out, opts...)
@@ -68,6 +78,7 @@ func (c *greeterClient) AssignRandomIssuedTicketToThirdPartyUser(ctx context.Con
 type GreeterServer interface {
 	RandomTicket(context.Context, *RandomTicketRequest) (*RandomTicketResponse, error)
 	GetIssuedUserTicketsByAgentCode(context.Context, *GetIssuedUserTicketsByAgentCodeRequest) (*GetIssuedUserTicketsByAgentCodeResponse, error)
+	AssignOnceRandomIssuedTicketToThirdPartyUser(context.Context, *AssignOnceRandomIssuedTicketToThirdPartyUserRequest) (*AssignOnceRandomIssuedTicketToThirdPartyUserResponse, error)
 	AssignRandomIssuedTicketToThirdPartyUser(context.Context, *AssignRandomIssuedTicketToThirdPartyUserRequest) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error)
 	mustEmbedUnimplementedGreeterServer()
 }
@@ -81,6 +92,9 @@ func (UnimplementedGreeterServer) RandomTicket(context.Context, *RandomTicketReq
 }
 func (UnimplementedGreeterServer) GetIssuedUserTicketsByAgentCode(context.Context, *GetIssuedUserTicketsByAgentCodeRequest) (*GetIssuedUserTicketsByAgentCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIssuedUserTicketsByAgentCode not implemented")
+}
+func (UnimplementedGreeterServer) AssignOnceRandomIssuedTicketToThirdPartyUser(context.Context, *AssignOnceRandomIssuedTicketToThirdPartyUserRequest) (*AssignOnceRandomIssuedTicketToThirdPartyUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignOnceRandomIssuedTicketToThirdPartyUser not implemented")
 }
 func (UnimplementedGreeterServer) AssignRandomIssuedTicketToThirdPartyUser(context.Context, *AssignRandomIssuedTicketToThirdPartyUserRequest) (*AssignRandomIssuedTicketToThirdPartyUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignRandomIssuedTicketToThirdPartyUser not implemented")
@@ -134,6 +148,24 @@ func _Greeter_GetIssuedUserTicketsByAgentCode_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_AssignOnceRandomIssuedTicketToThirdPartyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignOnceRandomIssuedTicketToThirdPartyUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).AssignOnceRandomIssuedTicketToThirdPartyUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/games.Greeter/AssignOnceRandomIssuedTicketToThirdPartyUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).AssignOnceRandomIssuedTicketToThirdPartyUser(ctx, req.(*AssignOnceRandomIssuedTicketToThirdPartyUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Greeter_AssignRandomIssuedTicketToThirdPartyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AssignRandomIssuedTicketToThirdPartyUserRequest)
 	if err := dec(in); err != nil {
@@ -166,6 +198,10 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetIssuedUserTicketsByAgentCode",
 			Handler:    _Greeter_GetIssuedUserTicketsByAgentCode_Handler,
+		},
+		{
+			MethodName: "AssignOnceRandomIssuedTicketToThirdPartyUser",
+			Handler:    _Greeter_AssignOnceRandomIssuedTicketToThirdPartyUser_Handler,
 		},
 		{
 			MethodName: "AssignRandomIssuedTicketToThirdPartyUser",
