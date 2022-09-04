@@ -22,3 +22,4 @@ protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=p
 - [x] admin user jwt authorization api
 - [x] file upload and file response api
 - [ ] admin manage post
+- [ ] grpc play games
