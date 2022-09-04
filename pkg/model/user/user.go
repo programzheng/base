@@ -28,7 +28,7 @@ func (u *User) Add() (*User, error) {
 }
 
 func (u *User) First() (*User, error) {
-	if err := model.GetDB().First(&u).Error; err != nil {
+	if err := model.GetDB().Where(&u).First(&u).Error; err != nil {
 		return nil, err
 	}
 
