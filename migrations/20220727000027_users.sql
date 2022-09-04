@@ -9,7 +9,8 @@ CREATE TABLE `users` (
     `account` varchar(255) NOT NULL,
     `password` varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `account` (`uuid`,`account`),
+    UNIQUE KEY `account` (`account`),
+    UNIQUE KEY `uuid` (`uuid`),
     KEY `idx_users_deleted_at` (`deleted_at`)
 );
 -- +goose StatementEnd
