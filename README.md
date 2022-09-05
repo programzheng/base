@@ -23,3 +23,6 @@ protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=p
 - [x] file upload and file response api
 - [ ] admin manage post
 - [ ] grpc play games
+
+## test tool
+[k6.io](https://github.com/programzheng/k6-test/tree/main/base)
