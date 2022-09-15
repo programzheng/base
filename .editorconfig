@@ -11,6 +11,9 @@ trim_trailing_whitespace = true
 [*.{graphql,graphqls}]
 indent_size = 2
 
+[Makefile]
+indent_style = tab
+
 [docker-compose.yml]
 indent_size = 4
 
