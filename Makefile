@@ -44,3 +44,6 @@ prune:
 
 build-image:
 	docker build -t programzheng/base -f Dockerfile.linux --platform linux/amd64 .
+
+push-image:
+	docker push programzheng/base
