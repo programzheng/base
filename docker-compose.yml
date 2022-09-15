@@ -11,12 +11,11 @@ services:
         context: .
         dockerfile: ./Dockerfile
         args:
-          - WORKSPACE=${WORKSPACE}
+          - WORKSPACE=app
       restart: always
       env_file: .env
       volumes:
-        - ${DATA_PATH_HOST}/${WORKSPACE}/${APP_NAME}/upload:/${WORKSPACE}/upload
-        - ${DATA_PATH_HOST}/${WORKSPACE}/${APP_NAME}/log:/${WORKSPACE}/log
+        - ./storage:/app/storage
       ports:
         - ${APP_PORT}:${APP_PORT}
       networks:

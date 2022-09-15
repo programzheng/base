@@ -1,8 +1,7 @@
 FROM golang:1.18-alpine as build_base
 RUN apk add bash ca-certificates git gcc g++ libc-dev
 
-ARG WORKSPACE
-WORKDIR /$WORKSPACE
+WORKDIR /app
 
 # Copy go mod and sum files
 COPY go.mod .
