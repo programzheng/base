@@ -48,5 +48,5 @@ func Create(system string) FileSystem {
 }
 
 func GetEmptyImageLink() string {
-	return "//" + config.Cfg.GetString("APP_URL") + ":" + config.Cfg.GetString("APP_PORT") + "/files/image/empty"
+	return "//" + config.Cfg.GetString("APP_URL") + "/files/image/empty"
 }
